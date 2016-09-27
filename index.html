@@ -4,16 +4,25 @@
   <meta charset="utf-8">
   <link rel='shortcut icon' href='favicon.ico' type='image/x-icon'/>
   <title>Learn Too Fun</title>
-  <!-- Javascript Import -->
-  <script src="js\pageScript.js"></script>
+
   <!--Stylesheet Import -->
   <link rel="stylesheet" href="css\style.css"/>
   <!-- JQuery Javascript -->
   <script src="js\jquery-3.1.1.min.js"></script>
-  <!--Bootstrap Stylesheet Import -->
+
+  <!-- JQuery UI Javascript -->
+  <script src="js\jquery-ui-1.12.1\jquery-ui.js"></script>
+  <!-- JQuery UI Stylesheet Import -->
+  <link rel="stylesheet" href="js\jquery-ui-1.12.1\jquery-ui.css"/>
+
+  <!-- Javascript Import -->
+  <script src="js\pageScript.js"></script>
+
+  <!-- Bootstrap Stylesheet Import -->
   <link rel="stylesheet" href="js\bootstrap-3.3.7-dist\css\bootstrap.css"/>
-  <!--Bootstrap Javascript Import -->
+  <!-- Bootstrap Javascript Import -->
   <script src="js\bootstrap-3.3.7-dist\js\bootstrap.js" ></script>
+
   </head>
   <body>
     <!-- Banner / Title / Log in, Log out -->
@@ -39,10 +48,10 @@
       <!-- Sidebar -->
       <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
-          <li role="navigation" class="active sidebar-brand"><a href="#">Navigation</a></li>
+          <li role="navigation" class="active sidebar-brand"><a href="#" id="navHeader">Navigation</a></li>
           <li role="navigation" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="#"><span class="caret"></span> Math Game</a>
             <ul class="dropdown-menu">
-              <li><a href="#">New Game</a></li>
+              <li><a href="#" class="btn-math">New Game</a></li>
               <li><a href="#">High Scores</a></li>
             </ul>
           </li>
@@ -77,7 +86,7 @@
               <div class="row">
                 <div class="col-lg-3 col-md-2 col-sm-1 col-xs-0"></div>
                 <div class="form-group col-lg-6 col-md-8 col-sm-10 col-xs-12">
-                  <button type="button" class="btn btn-info form-control">Math</button>
+                  <button type="button" class="btn btn-math btn-info form-control">Math</button>
                   <button type="button" class="btn btn-warning form-control">Writing</button>
                   <button type="button" class="btn btn-danger form-control">Reading</button>
                 </div>
@@ -90,6 +99,7 @@
   </div>
 <!-- Footer -->
 <!-- End Footer -->
+  <canvas id='game'></canvas>
 </body>
   <!-- Invisible Div that appears when user clicks the sign up button -->
   <div id="signUp">

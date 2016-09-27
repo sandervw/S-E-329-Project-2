@@ -27,7 +27,13 @@
   overflow:auto
 }
 
-div#popupSignUp {
+#game {
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+
+#popupSignUp {
 border: 3px solid #cc5050;
 position:absolute;
 padding: 15px;
