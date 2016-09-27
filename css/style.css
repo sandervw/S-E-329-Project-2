@@ -13,6 +13,55 @@
 #display{
   background-color: #eeeeee;
 }
+
+#signUp{
+    z-index: 21;
+  width:100%;
+  height:100%;
+  opacity:.95;
+  top:0;
+  left:0;
+  display:none;
+  position:fixed;
+  background-color:#333333;
+  overflow:auto
+}
+
+div#popupSignUp {
+border: 3px solid #cc5050;
+position:absolute;
+padding: 15px;
+left:45%;
+top:17%;
+width:550px;
+background: #fff;
+margin-left:-202px;
+}
+
+#logIn{
+  z-index: 21;
+  width:100%;
+  height:100%;
+  opacity:.95;
+  top:0;
+  left:0;
+  display:none;
+  position:fixed;
+  background-color:#333333;
+  overflow:auto
+}
+
+div#popupLogIn {
+border: 3px solid #cc5050;
+position:absolute;
+padding: 15px;
+left:45%;
+top:17%;
+width:550px;
+background: #fff;
+margin-left:-202px;
+}
+
 /*!
  * Start Bootstrap - Simple Sidebar (http://startbootstrap.com/)
  * Copyright 2013-2016 Start Bootstrap
@@ -38,7 +87,7 @@
 }
 
 #sidebar-wrapper {
-    z-index: 1000;
+    z-index: 20;
     position: fixed;
     left: 250px;
     width: 0;
