@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <title>Learn Too Fun</title>
+  <!--Stylesheet Import -->
+  <link rel="stylesheet" href="css\style.css"/>
+  <!-- JQuery Javascript -->
+  <script src="js\jquery-3.1.1.min.js"></script>
+  <!--Bootstrap Stylesheet Import -->
+  <link rel="stylesheet" href="js\bootstrap-3.3.7-dist\css\bootstrap.css"/>
+  <!--Bootstrap Javascript Import -->
+  <script src="js\bootstrap-3.3.7-dist\js\bootstrap.js" ></script>
+  </head>
+  <body>
+    <!-- Banner / Title / Log in, Log out -->
+    <div id="banner" class="container-fluid">
+      <div class="row">
+        <div class="col-xs-9">
+          <h1>Learn Too Fun<br><small>A C+=1; Project</small></h1>
+        </div>
+        <div class=col-xs-3>
+          <!-- Log in and sign up buttons, these should convert to log out / profile buttons after they are logged in -->
+          <div class="col-xs-6 form-group" style="margin-top: 24px; width: 110px;">
+            <button type="button" class="form-control btn btn-primary">Log In</button>
+          </div>
+          <div class="col-xs-6 form-group"style="margin-top: 24px; width: 110px;">
+            <button type="button" class="form-control btn btn-success">Sign Up</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Banner -->
+    <!-- Main Container -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+          <li role="navigation" class="active sidebar-brand"><a href="#">Navigation</a></li>
+          <li role="navigation" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="#"><span class="caret"></span> Math Game</a>
+            <ul class="dropdown-menu">
+              <li><a href="#">New Game</a></li>
+              <li><a href="#">High Scores</a></li>
+            </ul>
+          </li>
+          <li role="navigation" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="#"><span class="caret"></span> Writing Game</a>
+            <ul class="dropdown-menu">
+              <li><a href="#">New Game</a></li>
+              <li><a href="#">High Scores</a></li>
+            </ul>
+          </li>
+          <li role="navigation" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="#"><span class="caret"></span> Reading Game</a>
+            <ul class="dropdown-menu">
+              <li><a href="#">New Game</a></li>
+              <li><a href="#">High Scores</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    <!-- End Sidebar -->
+    <!-- Content -->
+    <div id="page-content-wrapper" >
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-12">
+              <h1> Welcome to Learn Too Fun!<br>
+                <small>Where learning happens</small></h1>
+              <p>Here at Learn Too Fun, we strive to make learning fun by using interactive games and puzzles.
+              These games are artfully crafted by the finest of software and computer engineers and will make you smarter, faster, and way cooler. Don't believe us? Take a game for a spin
+              by clicking on a game type below! Have fun!</p>
+              <p>Sincerely,<br>
+                The C+=1; Team
+              </p>
+              <div class="form-group">
+                <button type="button" class="btn btn-info form-control">Math</button>
+                <button type="button" class="btn btn-warning form-control">Writing</button>
+                <button type="button" class="btn btn-danger form-control">Reading</button>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Content -->
+</div>
+<!-- Footer -->
+<!-- End Footer -->
+  </body>
+</html>
