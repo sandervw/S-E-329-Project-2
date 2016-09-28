@@ -101,7 +101,6 @@ $(document).ready(function(){
     },
 
     update: function() {
-      console.log("looping");
     },
 
     render: function() {
