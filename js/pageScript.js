@@ -37,7 +37,8 @@ $(document).ready(function(){
     hide_Banner_And_Nav();
     $('body').css({height: "100%"});
     $('html').css({height: "100%"});
-    $("#page-content-wrapper").html("");
+    $('#wrapper').hide();
+
     $("#game").show();
     // http://paulirish.com/2011/requestanimationframe-for-smart-animating
     // shim layer with setTimeout fallback
