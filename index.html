@@ -26,6 +26,7 @@
   </head>
   <body>
     <!-- Banner / Title / Log in, Log out -->
+    <div id="mainPage">
     <div id="banner" class="container-fluid">
       <div class="row">
         <div id="logo" class="col-xs-1">
@@ -54,19 +55,19 @@
           <li role="navigation" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="#"><span class="caret"></span> Math Game</a>
             <ul class="dropdown-menu">
               <li><a href="#" class="btn-math">New Game</a></li>
-              <li><a href="#">High Scores</a></li>
+              <li id="mathHS"><a href="#">High Scores</a></li>
             </ul>
           </li>
           <li role="navigation" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="#"><span class="caret"></span> Writing Game</a>
             <ul class="dropdown-menu">
               <li><a href="#">New Game</a></li>
-              <li><a href="#">High Scores</a></li>
+              <li id="writingHS"><a href="#">High Scores</a></li>
             </ul>
           </li>
           <li role="navigation" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="#"><span class="caret"></span> Reading Game</a>
             <ul class="dropdown-menu">
               <li><a href="#">New Game</a></li>
-              <li><a href="#">High Scores</a></li>
+              <li id="readingHS"><a href="#">High Scores</a></li>
             </ul>
           </li>
         </ul>
@@ -118,6 +119,7 @@
         </div>
       </div>
     </div>
+  </div>
     <!-- End Content -->
   </div>
 <!-- Footer -->
@@ -128,11 +130,19 @@
   <div id="signUp">
     <div id="popupSignUp">
       <h2>Join the PED:O Community!<br><small>It's fun, we promise</small></h2>
+      <form>
       <div class="form-group">
+        <!-- Notification Divs -->
+        <div id="signUp_Success" class="alert alert-success" role="alert">
+          <strong>Done!</strong> You successfully signed up!
+        </div>
+        <div id="signUp_Failure" class="alert alert-danger" role="alert">
+          <strong>Whoops!</strong>
+        </div>
         <label for="name">Name:</label>
-        <input class="form-control" id="name" name="name" placeholder="FirstName LastName" type="text">
+        <input class="form-control" id="name" maxLength="25" name="name" placeholder="FirstName LastName" type="text">
         <label for="email">Email:</label>
-        <input class="form-control" id="email" name="email" placeholder="username@domain.com" type="text">
+        <input class="form-control" id="email" name="email" placeholder="username@domain.com" type="email">
         <label for="username">Username:</label>
         <input class="form-control" id="username" name="username" placeholder="ExampleGuy1247" type="text">
         <label for="password">Password:</label>
@@ -141,16 +151,18 @@
         <input class="form-control" id="cfrmpassword" name="cfrmpassword" placeholder="Enter the same password to confirm you typed it correctly" type="password">
         <br>
         Ask your parents for permission before signing up.
+
         <div class=row>
           <div class="col-xs-1"></div>
           <div class="col-xs-8">
-            <button id="SignUp" class="btn btn-success" onclick ="signUp_hide()">Sign Up</button>
+            <button type="button" id="btnSignUp" class="btn btn-success">Sign Up</button>
           </div>
           <div class="col-xs-2">
             <button id="close" class="btn btn-danger" onclick ="signUp_hide()">Cancel</button>
           </div>
         </div>
       </div>
+    </form>
     </div>
   </div>
   <!-- End sign up prompt -->
