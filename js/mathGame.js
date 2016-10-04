@@ -20,8 +20,7 @@ function start_MathGame(){
 	mathGame.init();
 
 	new Audio('sounds/MathIsFun.mp3').play()
-
-	foo.start();
+	
 	console.log(mathGame);
 	window.addEventListener('resize', mathGame.resize, false);
 }
@@ -48,9 +47,9 @@ var mathGame = {
 		mathGame.currentHeight = mathGame.HEIGHT;
 		mathGame.currentWidth = mathGame.WIDTH;
 		mathGame.ctx = mathGame.canvas.getContext('2d');
-		mathGame.ctx.drawImage(background,0,0);
+		//mathGame.ctx.drawImage(background,0,0);
 		background.onload = function(){
-			mathgame.ctx.drawImage(background,0,0);   
+			mathGame.ctx.drawImage(background,0,0);   
 		}
 		mathGame.ua = navigator.userAgent.toLowerCase();
 		mathGame.android = mathGame.ua.indexOf('android') > -1 ? true : false;
