@@ -24,6 +24,9 @@ $(document).ready(function(){
   $(".btn-math").click(function(){
   	start_MathGame();
 	});
+  $(".btn-writing").click(function(){
+  	start_WritingGame();
+	});
 
   $("#mathHS").click(function(){
     //Start table
