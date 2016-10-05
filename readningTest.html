@@ -2,7 +2,9 @@
  <head>
   <script type="application/javascript">
 var intervalId;
-var ID_GLOBAL = 1;
+var ID_GLOBAL = 0;
+var tiles = [];
+
 this.init = function init(){
   clock();
 
@@ -20,35 +22,57 @@ var option = function(text, ids){
 var nxttile = function(nextid, displaytext)
 {
 this.nextid = nextid;
-this.displaytext = displatext;
+this.displaytext = displaytext;
 }
 
-//A tile has a scenario text and an array of options.
+//A tile has a scenario text and an array of nxttiles
 //It will make a button for each option
 //It also has an id
 var tile = function(scenariotext, options)
 {
 	this.id = ID_GLOBAL++;
 	this.scenariotext = scenariotext
-	for(i = 0; i < options.length; i++)
-	{
-		//processbuttonmaking process
-	}
+	this.options = options; //This assumes things are pushed in the order of order. A key,value pair would be better
+	tiles.push(this);//Add to global array
 }
 
-var loadTile = function(tile)
+var loadTile = function(id)
 {
+	console.log("Id: " + id);
+	console.log(tiles);
+	console.log(tiles[id]);
+	
+	var tile = tiles[id];
 	var qid = document.getElementById('question');
+	var cid = document.getElementById("choices");
+	cid.innerHTML = "";
 	qid.innerHTML = tile.scenariotext;
+	console.log("length: " + tile.options.length);
+	for(i = 0; i < tile.options.length; i++)
+	{
+		var btn = document.createElement("BUTTON"); 
+		btn.next = tile.options[i].nextid;
+		btn.onclick = function(){
+			console.log()
+			//Here be errors--when we actually click it, tile.options is meaningless
+			console.log("clicked: " +  this.next);
+			loadTile(this.next);
+			};
+		
+		
+		
+		cid.appendChild(btn);
+		
+	}
 }
 
 var start;
 var reported = false;
+
+
+
+
 function clock(){
-
-var t = new tile("this is a test", [5,3]);
-loadTile(t);
-
 
 
   // no notification when we get unloaded/replaced, so check here
@@ -58,39 +82,36 @@ loadTile(t);
     return;
   }
 
-var time = Math.round((new Date().getTime() - start)/1000)      
-var lastend = Math.PI * 3/2;
-      var context = canvas.getContext('2d');
+	var time = Math.round((new Date().getTime() - start)/1000)      
+	var lastend = Math.PI * 3/2;
+	var context = canvas.getContext('2d');
+	
+	var centerX = canvas.width / 2;
+	var centerY = canvas.height / 2;
+	var radius = 70;
+	var amount = 5;
 
-      var centerX = canvas.width / 2;
-      var centerY = canvas.height / 2;
-      var radius = 70;
-      var amount = 5;
-
-
-
-    context.beginPath();
-      context.arc(centerX, centerY, radius, 0 * Math.PI, 2 * Math.PI, false);
-      context.fillStyle = 'red';
-      //context.fill();
-      context.lineWidth = 5;
-      context.strokeStyle = '#003300';
-      context.stroke();
-
+	context.beginPath();
+	context.arc(centerX, centerY, radius, 0 * Math.PI, 2 * Math.PI, false);
+	context.fillStyle = 'red';
+	//context.fill();
+	context.lineWidth = 5;
+	context.strokeStyle = '#003300';
+	context.stroke();
   
-      context.beginPath();
-      context.moveTo(canvas.width / 2, canvas.height / 2);
-      context.arc(canvas.width / 2, canvas.height / 2, canvas.height / 2, lastend, lastend + (Math.PI * 2 * (time / amount)), false);
-  context.lineTo(canvas.width / 2, canvas.height / 2);
+	context.beginPath();
+	context.moveTo(canvas.width / 2, canvas.height / 2);
+	context.arc(canvas.width / 2, canvas.height / 2, canvas.height / 2, lastend, lastend + (Math.PI * 2 * (time / amount)), false);
+	context.lineTo(canvas.width / 2, canvas.height / 2);
 
- context.fill();
+	context.fill();
 
- lastend += (Math.PI * 2 * (time / amount)) % Math.PI;
- if (time > amount && !reported)
-{
-//alert("expired");
-reported = true;
-}
+	lastend += (Math.PI * 2 * (time / amount)) % Math.PI;
+	 if (time > amount && !reported)
+	{
+		//alert("expired");
+		reported = true;
+	}
 
 }
   </script>
@@ -101,10 +122,18 @@ reported = true;
    <center> 
 		<div id="question">Question</div>
 		<div id="choices"></div>
-		
-   
    </center>
  </body>
  <script>  start = new Date().getTime();</script>
- <script>this.init();</script>
+ <script>this.init();
+ var tmp = new nxttile(1, "go to one");
+ var nxts = [tmp];
+var t = new tile("this is a test", nxts);
+new tile("This is number one", [5,3]);
+loadTile(t.id);
+
+ 
+ 
+ 
+ </script>
 </html>
