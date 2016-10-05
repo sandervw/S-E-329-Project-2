@@ -18,8 +18,6 @@ function start_MathGame(){
 		};
 	})();
 	mathGame.init();
-
-	new Audio('sounds/MathIsFun.mp3').play();
 	
 	console.log(mathGame);
 	window.addEventListener('resize', mathGame.resize, false);
@@ -38,8 +36,6 @@ var mathGame = {
 	ios:  null,
 	init: function(){
 		mathGame.canvas = document.getElementsByTagName('canvas')[0];
-		var background = new Image();
-		background.src = 'images/mathgamebackground.jpg';
 		mathGame.WIDTH = $(window).width();
 		mathGame.HEIGHT = $(window).height();
 		mathGame.canvas.width = mathGame.WIDTH;
@@ -47,10 +43,6 @@ var mathGame = {
 		mathGame.currentHeight = mathGame.HEIGHT;
 		mathGame.currentWidth = mathGame.WIDTH;
 		mathGame.ctx = mathGame.canvas.getContext('2d');
-		//mathGame.ctx.drawImage(background,0,0);
-		background.onload = function(){
-			mathGame.ctx.drawImage(background,0,0);   
-		}
 		mathGame.ua = navigator.userAgent.toLowerCase();
 		mathGame.android = mathGame.ua.indexOf('android') > -1 ? true : false;
 		mathGame.ios = ( mathGame.ua.indexOf('iphone') > -1 || mathGame.ua.indexOf('ipad') > -1  ) ? true : false;

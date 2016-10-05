@@ -1,5 +1,5 @@
 //Function to Start the Math Game
-function start_MathGame(){
+function start_WritingGame(){
 	//  hide_Banner_And_Nav();
 	$('#mainPage').hide();
 	$('body').css({height: "100%"});
@@ -19,7 +19,7 @@ function start_MathGame(){
 	})();
 	mathGame.init();
 
-	new Audio('sounds/MathIsFun.mp3').play();
+	new Audio('sounds/MathIsFun.mp3').play()
 	
 	console.log(mathGame);
 	window.addEventListener('resize', mathGame.resize, false);
