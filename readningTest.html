@@ -2,13 +2,54 @@
  <head>
   <script type="application/javascript">
 var intervalId;
+var ID_GLOBAL = 1;
 this.init = function init(){
   clock();
 
   intervalId = setInterval(clock, 1000);
 }
+
+//An option has an id for next tile
+//And text / replcement
+var option = function(text, ids){
+	this.text = text;//TODO make translate function that parses for difficulty level
+	this.ids = ids;//An array of tiles that each button goes to.
+	//Actually array is an array of nxttiles containing nextid and displaytext
+}
+
+var nxttile = function(nextid, displaytext)
+{
+this.nextid = nextid;
+this.displaytext = displatext;
+}
+
+//A tile has a scenario text and an array of options.
+//It will make a button for each option
+//It also has an id
+var tile = function(scenariotext, options)
+{
+	this.id = ID_GLOBAL++;
+	this.scenariotext = scenariotext
+	for(i = 0; i < options.length; i++)
+	{
+		//processbuttonmaking process
+	}
+}
+
+var loadTile = function(tile)
+{
+	var qid = document.getElementById('question');
+	qid.innerHTML = tile.scenariotext;
+}
+
 var start;
+var reported = false;
 function clock(){
+
+var t = new tile("this is a test", [5,3]);
+loadTile(t);
+
+
 
   // no notification when we get unloaded/replaced, so check here
   var canvas = document.getElementById('canvas');
@@ -18,33 +59,51 @@ function clock(){
   }
 
 var time = Math.round((new Date().getTime() - start)/1000)      
-var lastend = 0;
+var lastend = Math.PI * 3/2;
       var context = canvas.getContext('2d');
+
       var centerX = canvas.width / 2;
       var centerY = canvas.height / 2;
       var radius = 70;
-      var amount = 10;
+      var amount = 5;
 
 
-      context.beginPath();
+
+    context.beginPath();
       context.arc(centerX, centerY, radius, 0 * Math.PI, 2 * Math.PI, false);
       context.fillStyle = 'red';
       //context.fill();
       context.lineWidth = 5;
       context.strokeStyle = '#003300';
       context.stroke();
+
+  
       context.beginPath();
       context.moveTo(canvas.width / 2, canvas.height / 2);
       context.arc(canvas.width / 2, canvas.height / 2, canvas.height / 2, lastend, lastend + (Math.PI * 2 * (time / amount)), false);
   context.lineTo(canvas.width / 2, canvas.height / 2);
-  context.fill();
-  lastend += Math.PI * 2 * (time / amount);
+
+ context.fill();
+
+ lastend += (Math.PI * 2 * (time / amount)) % Math.PI;
+ if (time > amount && !reported)
+{
+//alert("expired");
+reported = true;
+}
 
 }
   </script>
  </head>
  <body>
    <canvas id="canvas" width="150" height="150"></canvas>
+   <div><br><br></div>
+   <center> 
+		<div id="question">Question</div>
+		<div id="choices"></div>
+		
+   
+   </center>
  </body>
  <script>  start = new Date().getTime();</script>
  <script>this.init();</script>
