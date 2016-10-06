@@ -1,5 +1,10 @@
 var express = require('express');
 var app = express();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+var fs = require('fs');
+
+// Routes and io.on statement with listeners on 'connection'
 
 /*
     localhost:4000 and localhost:4000/index.html will send the main page
@@ -11,24 +16,18 @@ var app = express();
 base_dir = __dirname.substr(0,__dirname.length-4);
 app.use(express.static(base_dir));
 
-app.listen(4000);
-
-console.log("app server readied");
-
 //Web Socket code follows
 
-var io = require('socket.io').listen(5000);
-var fs = require('fs');
-
-var usersOn = [];//Array of everybody online, so th
+var usersOn = [];//Array of everybody online, so the
 var usersActive = [];//Users in lobby for multiplayer games
 
 //When somebody connects, add these handlers
 io.sockets.on('connection', function(socket) {
     //Handle username/password validation, add to UsersOn/UsersActive
     socket.on('login', function(loginData) {
+        console.log("user: "+loginData.split(" ")[0]);
         
-        var users = fs.readFileSync("Portfolio 3/users.txt");
+        var users = fs.readFileSync(__dirname+"\\users.txt");
         users = users.toString().split('\n');
 
         var success = false;
@@ -61,6 +60,7 @@ io.sockets.on('connection', function(socket) {
     });
     //Handle logging out and taking the user out of the user arrays
     socket.on('logout', function(username){
+        console.log("got logout request!");
         var index = usersOn.indexOf(username);
         if(index > -1){
             usersOn.splice(index, 1);
@@ -109,7 +109,7 @@ io.sockets.on('connection', function(socket) {
     });
     //Notify players of an update to the users array
     function sendUsersActive(){
-		io.sockets.emit('updateAvailable');
+		socket.emit('updateAvailable');
     }
     //Handle game initialization by gametype
     function initializeGame(users,gameType){
@@ -121,4 +121,7 @@ io.sockets.on('connection', function(socket) {
     }
 });
 
+server.listen(4000);
+console.log("app server readied");
+io.listen(5000);
 console.log("Web sockets readied");
