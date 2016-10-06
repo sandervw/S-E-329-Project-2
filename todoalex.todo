@@ -1,0 +1,6 @@
+
+Make lose condition (if expired...)
+#	don't forget to reset expired on new tile.
+Change global array to a global map for easier insertion
+Change buttons to have text
+See if we can make an XML type loader for tiles

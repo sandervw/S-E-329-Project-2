@@ -4,6 +4,8 @@
 var intervalId;
 var ID_GLOBAL = 0;
 var tiles = [];
+var amount = 5; //Default value
+var lastend = Math.PI * 3/2;
 
 this.init = function init(){
   clock();
@@ -28,16 +30,18 @@ this.displaytext = displaytext;
 //A tile has a scenario text and an array of nxttiles
 //It will make a button for each option
 //It also has an id
-var tile = function(scenariotext, options)
+var tile = function(scenariotext, options, time)
 {
 	this.id = ID_GLOBAL++;
 	this.scenariotext = scenariotext
 	this.options = options; //This assumes things are pushed in the order of order. A key,value pair would be better
 	tiles.push(this);//Add to global array
+	this.time = time;
 }
 
 var loadTile = function(id)
 {
+	context.clearRect(0, 0, canvas.width, canvas.height);
 	console.log("Id: " + id);
 	console.log(tiles);
 	console.log(tiles[id]);
@@ -48,6 +52,13 @@ var loadTile = function(id)
 	cid.innerHTML = "";
 	qid.innerHTML = tile.scenariotext;
 	console.log("length: " + tile.options.length);
+	
+	//reset
+	amount = tile.time;
+	//lastend = Math.PI * 3/2;
+	start = new Date().getTime();
+	expired = false;
+	
 	for(i = 0; i < tile.options.length; i++)
 	{
 		var btn = document.createElement("BUTTON"); 
@@ -67,11 +78,11 @@ var loadTile = function(id)
 }
 
 var start;
-var reported = false;
+var expired = false;
 
 
 
-
+//Called every second
 function clock(){
 
 
@@ -83,13 +94,13 @@ function clock(){
   }
 
 	var time = Math.round((new Date().getTime() - start)/1000)      
-	var lastend = Math.PI * 3/2;
+	lastend = Math.PI * 3/2;
 	var context = canvas.getContext('2d');
 	
 	var centerX = canvas.width / 2;
 	var centerY = canvas.height / 2;
 	var radius = 70;
-	var amount = 5;
+	//amount = 5;
 
 	context.beginPath();
 	context.arc(centerX, centerY, radius, 0 * Math.PI, 2 * Math.PI, false);
@@ -107,10 +118,10 @@ function clock(){
 	context.fill();
 
 	lastend += (Math.PI * 2 * (time / amount)) % Math.PI;
-	 if (time > amount && !reported)
+	 if (time > amount && !expired)
 	{
 		//alert("expired");
-		reported = true;
+		expired = true;
 	}
 
 }
@@ -126,10 +137,13 @@ function clock(){
  </body>
  <script>  start = new Date().getTime();</script>
  <script>this.init();
+ var canvas = document.getElementById('canvas');
+var context = canvas.getContext('2d');
+ 
  var tmp = new nxttile(1, "go to one");
  var nxts = [tmp];
-var t = new tile("this is a test", nxts);
-new tile("This is number one", [5,3]);
+var t = new tile("this is a test", nxts, 10);
+new tile("This is number one", [5,3], 20);
 loadTile(t.id);
 
  
