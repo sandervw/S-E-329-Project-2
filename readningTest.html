@@ -3,7 +3,10 @@
   <script type="application/javascript">
 var intervalId;
 var ID_GLOBAL = 0;
-var tiles = [];
+var rooms = {}; //We're just going to use a map
+
+var amount = 5; //Default value
+var lastend = Math.PI * 3/2;
 
 this.init = function init(){
   clock();
@@ -11,70 +14,57 @@ this.init = function init(){
   intervalId = setInterval(clock, 1000);
 }
 
-//An option has an id for next tile
-//And text / replcement
-var option = function(text, ids){
-	this.text = text;//TODO make translate function that parses for difficulty level
-	this.ids = ids;//An array of tiles that each button goes to.
-	//Actually array is an array of nxttiles containing nextid and displaytext
-}
-
-var nxttile = function(nextid, displaytext)
+//Display text should appear on a button
+var nxttile = function(nextname, displaytext)
 {
-this.nextid = nextid;
+this.nextname = nextname;
 this.displaytext = displaytext;
 }
 
 //A tile has a scenario text and an array of nxttiles
 //It will make a button for each option
 //It also has an id
-var tile = function(scenariotext, options)
+var tile = function(name, scenariotext, options, time)
 {
-	this.id = ID_GLOBAL++;
+	this.name = name
 	this.scenariotext = scenariotext
-	this.options = options; //This assumes things are pushed in the order of order. A key,value pair would be better
-	tiles.push(this);//Add to global array
+	this.options = options; 
+	this.time = time;
+	rooms[name] = this;//Add to global map
 }
 
-var loadTile = function(id)
+var loadTile = function(name)
 {
-	console.log("Id: " + id);
-	console.log(tiles);
-	console.log(tiles[id]);
-	
-	var tile = tiles[id];
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	var tile = rooms[name];//tiles[id];
 	var qid = document.getElementById('question');
 	var cid = document.getElementById("choices");
 	cid.innerHTML = "";
 	qid.innerHTML = tile.scenariotext;
-	console.log("length: " + tile.options.length);
+	
+	//reset
+	amount = tile.time;
+	//lastend = Math.PI * 3/2;
+	start = new Date().getTime();
+	expired = false;
+	
 	for(i = 0; i < tile.options.length; i++)
 	{
 		var btn = document.createElement("BUTTON"); 
-		btn.next = tile.options[i].nextid;
+		btn.next = tile.options[i].nextname;
 		btn.onclick = function(){
-			console.log()
-			//Here be errors--when we actually click it, tile.options is meaningless
-			console.log("clicked: " +  this.next);
 			loadTile(this.next);
 			};
 		
-		
-		
 		cid.appendChild(btn);
-		
 	}
 }
 
 var start;
-var reported = false;
+var expired = false;
 
-
-
-
+//Called every second
 function clock(){
-
-
   // no notification when we get unloaded/replaced, so check here
   var canvas = document.getElementById('canvas');
   if (!canvas) {
@@ -83,18 +73,17 @@ function clock(){
   }
 
 	var time = Math.round((new Date().getTime() - start)/1000)      
-	var lastend = Math.PI * 3/2;
+	lastend = Math.PI * 3/2;
 	var context = canvas.getContext('2d');
 	
 	var centerX = canvas.width / 2;
 	var centerY = canvas.height / 2;
 	var radius = 70;
-	var amount = 5;
+	//amount = 5;
 
 	context.beginPath();
 	context.arc(centerX, centerY, radius, 0 * Math.PI, 2 * Math.PI, false);
 	context.fillStyle = 'red';
-	//context.fill();
 	context.lineWidth = 5;
 	context.strokeStyle = '#003300';
 	context.stroke();
@@ -107,12 +96,10 @@ function clock(){
 	context.fill();
 
 	lastend += (Math.PI * 2 * (time / amount)) % Math.PI;
-	 if (time > amount && !reported)
+	 if (time > amount && !expired)//Only trigger expire once. You ran out of time, yo.
 	{
-		//alert("expired");
-		reported = true;
+		expired = true;
 	}
-
 }
   </script>
  </head>
@@ -126,11 +113,14 @@ function clock(){
  </body>
  <script>  start = new Date().getTime();</script>
  <script>this.init();
- var tmp = new nxttile(1, "go to one");
+ var canvas = document.getElementById('canvas');
+var context = canvas.getContext('2d');
+ 
+ var tmp = new nxttile("first_room", "go to one");
  var nxts = [tmp];
-var t = new tile("this is a test", nxts);
-new tile("This is number one", [5,3]);
-loadTile(t.id);
+var t = new tile("start_room", "this is a test", nxts, 10);
+new tile("first_room", "This is number one", [5,3], 20);
+loadTile(t.name);
 
  
  
