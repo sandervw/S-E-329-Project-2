@@ -3,7 +3,6 @@
   <script type="application/javascript">
 var intervalId;
 var ID_GLOBAL = 0;
-//var tiles = [];
 var rooms = {}; //We're just going to use a map
 
 var amount = 5; //Default value
@@ -14,14 +13,6 @@ this.init = function init(){
 
   intervalId = setInterval(clock, 1000);
 }
-
-////An option has an id for next tile
-////And text / replcement
-//var option = function(text, ids){
-//	this.text = text;//TODO make translate function that parses for difficulty level
-//	this.ids = ids;//An array of tiles that each button goes to.
-//	//Actually array is an array of nxttiles containing nextid and displaytext
-//}
 
 //Display text should appear on a button
 var nxttile = function(nextname, displaytext)
@@ -36,10 +27,8 @@ this.displaytext = displaytext;
 var tile = function(name, scenariotext, options, time)
 {
 	this.name = name
-	//this.id = ID_GLOBAL++;
 	this.scenariotext = scenariotext
-	this.options = options; //This assumes things are pushed in the order of order. A key,value pair would be better
-	//tiles.push(this);//Add to global array
+	this.options = options; 
 	this.time = time;
 	rooms[name] = this;//Add to global map
 }
@@ -47,18 +36,11 @@ var tile = function(name, scenariotext, options, time)
 var loadTile = function(name)
 {
 	context.clearRect(0, 0, canvas.width, canvas.height);
-	//console.log("Id: " + id);
-	//console.log(tiles);
-	//console.log(tiles[id]);
-	
-	console.log(rooms)
 	var tile = rooms[name];//tiles[id];
-	console.log( tile)
 	var qid = document.getElementById('question');
 	var cid = document.getElementById("choices");
 	cid.innerHTML = "";
 	qid.innerHTML = tile.scenariotext;
-	console.log("length: " + tile.options.length);
 	
 	//reset
 	amount = tile.time;
@@ -71,28 +53,18 @@ var loadTile = function(name)
 		var btn = document.createElement("BUTTON"); 
 		btn.next = tile.options[i].nextname;
 		btn.onclick = function(){
-			console.log()
-			//Here be errors--when we actually click it, tile.options is meaningless
-			console.log("clicked: " +  this.next);
 			loadTile(this.next);
 			};
 		
-		
-		
 		cid.appendChild(btn);
-		
 	}
 }
 
 var start;
 var expired = false;
 
-
-
 //Called every second
 function clock(){
-
-
   // no notification when we get unloaded/replaced, so check here
   var canvas = document.getElementById('canvas');
   if (!canvas) {
@@ -112,7 +84,6 @@ function clock(){
 	context.beginPath();
 	context.arc(centerX, centerY, radius, 0 * Math.PI, 2 * Math.PI, false);
 	context.fillStyle = 'red';
-	//context.fill();
 	context.lineWidth = 5;
 	context.strokeStyle = '#003300';
 	context.stroke();
@@ -125,12 +96,10 @@ function clock(){
 	context.fill();
 
 	lastend += (Math.PI * 2 * (time / amount)) % Math.PI;
-	 if (time > amount && !expired)
+	 if (time > amount && !expired)//Only trigger expire once. You ran out of time, yo.
 	{
-		//alert("expired");
 		expired = true;
 	}
-
 }
   </script>
  </head>
