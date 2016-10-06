@@ -3,7 +3,9 @@
   <script type="application/javascript">
 var intervalId;
 var ID_GLOBAL = 0;
-var tiles = [];
+//var tiles = [];
+var rooms = {}; //We're just going to use a map
+
 var amount = 5; //Default value
 var lastend = Math.PI * 3/2;
 
@@ -13,40 +15,45 @@ this.init = function init(){
   intervalId = setInterval(clock, 1000);
 }
 
-//An option has an id for next tile
-//And text / replcement
-var option = function(text, ids){
-	this.text = text;//TODO make translate function that parses for difficulty level
-	this.ids = ids;//An array of tiles that each button goes to.
-	//Actually array is an array of nxttiles containing nextid and displaytext
-}
+////An option has an id for next tile
+////And text / replcement
+//var option = function(text, ids){
+//	this.text = text;//TODO make translate function that parses for difficulty level
+//	this.ids = ids;//An array of tiles that each button goes to.
+//	//Actually array is an array of nxttiles containing nextid and displaytext
+//}
 
-var nxttile = function(nextid, displaytext)
+//Display text should appear on a button
+var nxttile = function(nextname, displaytext)
 {
-this.nextid = nextid;
+this.nextname = nextname;
 this.displaytext = displaytext;
 }
 
 //A tile has a scenario text and an array of nxttiles
 //It will make a button for each option
 //It also has an id
-var tile = function(scenariotext, options, time)
+var tile = function(name, scenariotext, options, time)
 {
-	this.id = ID_GLOBAL++;
+	this.name = name
+	//this.id = ID_GLOBAL++;
 	this.scenariotext = scenariotext
 	this.options = options; //This assumes things are pushed in the order of order. A key,value pair would be better
-	tiles.push(this);//Add to global array
+	//tiles.push(this);//Add to global array
 	this.time = time;
+	rooms[name] = this;//Add to global map
 }
 
-var loadTile = function(id)
+var loadTile = function(name)
 {
 	context.clearRect(0, 0, canvas.width, canvas.height);
-	console.log("Id: " + id);
-	console.log(tiles);
-	console.log(tiles[id]);
+	//console.log("Id: " + id);
+	//console.log(tiles);
+	//console.log(tiles[id]);
 	
-	var tile = tiles[id];
+	console.log(rooms)
+	var tile = rooms[name];//tiles[id];
+	console.log( tile)
 	var qid = document.getElementById('question');
 	var cid = document.getElementById("choices");
 	cid.innerHTML = "";
@@ -62,7 +69,7 @@ var loadTile = function(id)
 	for(i = 0; i < tile.options.length; i++)
 	{
 		var btn = document.createElement("BUTTON"); 
-		btn.next = tile.options[i].nextid;
+		btn.next = tile.options[i].nextname;
 		btn.onclick = function(){
 			console.log()
 			//Here be errors--when we actually click it, tile.options is meaningless
@@ -140,11 +147,11 @@ function clock(){
  var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
  
- var tmp = new nxttile(1, "go to one");
+ var tmp = new nxttile("first_room", "go to one");
  var nxts = [tmp];
-var t = new tile("this is a test", nxts, 10);
-new tile("This is number one", [5,3], 20);
-loadTile(t.id);
+var t = new tile("start_room", "this is a test", nxts, 10);
+new tile("first_room", "This is number one", [5,3], 20);
+loadTile(t.name);
 
  
  
