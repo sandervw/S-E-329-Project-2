@@ -1,5 +1,5 @@
 //Function to Start the Math Game
-function start_MathGame(){
+function start_MathGame2(){
 	//  hide_Banner_And_Nav();
 	$('#mainPage').hide();
 	$('body').css({height: "100%"});
@@ -23,7 +23,7 @@ function start_MathGame(){
 	window.addEventListener('resize', mathGame.resize, false);
 }
 
-var mathGame = {
+var mathGame2 = {
 	WIDTH: 0,
 	HEIGHT: 0,
 	offset: {top: 0, left: 0},
@@ -93,7 +93,7 @@ var mathGame = {
 	}
 }
 
-mathGame.Draw = {
+mathGame2.Draw = {
 	clear: function() {
 		mathGame.ctx.clearRect(0, 0, mathGame.WIDTH, mathGame.HEIGHT);
 	},
@@ -115,7 +115,7 @@ mathGame.Draw = {
 	}
 };
 
-mathGame.Input = {
+mathGame2.Input = {
 	x: 0,
 	y: 0,
 	tapped :false,

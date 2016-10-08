@@ -214,3 +214,8 @@ margin-left:-202px;
         margin-right: 0;
     }
 }
+
+@font-face {
+    font-family: arcadeClassic;
+    src: url('../css/ARCADECLASSIC.TTF');
+}

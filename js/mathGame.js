@@ -37,9 +37,14 @@ var mathGame = {
 	android: null,
 	ios:  null,
 	init: function(){
+		
 		mathGame.canvas = document.getElementsByTagName('canvas')[0];
-		var background = new Image();
-		background.src = 'images/mathgamebackground.jpg';
+		mathGame.menuBackground = new Image();
+		mathGame.menuBackground.src = 'images/mathgamebackground.jpg';
+		mathGame.mainMenu = new Menu(["Start Game","Main Menu"],[1, 2],375, 50, 400, 0)
+		mathGame.state = 0;
+		mathGame.shouldRender = 0;
+		mathGame.shouldUpdate = 1;
 		mathGame.WIDTH = $(window).width();
 		mathGame.HEIGHT = $(window).height();
 		mathGame.canvas.width = mathGame.WIDTH;
@@ -47,44 +52,55 @@ var mathGame = {
 		mathGame.currentHeight = mathGame.HEIGHT;
 		mathGame.currentWidth = mathGame.WIDTH;
 		mathGame.ctx = mathGame.canvas.getContext('2d');
-		//mathGame.ctx.drawImage(background,0,0);
-		background.onload = function(){
-			mathGame.ctx.drawImage(background,0,0);   
+		mathGame.menuBackground.onload = function(){
+			mathGame.ctx.drawImage(mathGame.menuBackground,0,0);  
+			mathGame.mainMenu.Render();
 		}
+		
 		mathGame.ua = navigator.userAgent.toLowerCase();
 		mathGame.android = mathGame.ua.indexOf('android') > -1 ? true : false;
 		mathGame.ios = ( mathGame.ua.indexOf('iphone') > -1 || mathGame.ua.indexOf('ipad') > -1  ) ? true : false;
-		
+
 		//Event Listeners, click and touch.
 		window.addEventListener('click', function(e) {
 			e.preventDefault();
+			mathGame.shouldUpdate = 1;
 			mathGame.Input.set(e);
 		}, false);
 		window.addEventListener('touchstart', function(e) {
 			e.preventDefault();
+			mathGame.shouldUpdate = 1;
 			mathGame.Input.set(e.touches[0]);
 		}, false);
 		window.addEventListener('touchmove', function(e) {
+			mathGame.shouldUpdate = 1;
 			e.preventDefault();
 		}, false);
 		window.addEventListener('touchend', function(e) {
+			mathGame.shouldUpdate = 1;
 			e.preventDefault();
 		}, false);
-		
+		InputManager.reset();
 		mathGame.resize();
 		mathGame.loop();
 	},
 		
 	update: function() {
+		mathGame.mainMenu.Update();
 	},
 
 	render: function() {
+		mathGame.ctx.clearRect(0, 0, mathGame.WIDTH, mathGame.HEIGHT);
+		mathGame.ctx.drawImage(mathGame.menuBackground,0,0); 
+		mathGame.mainMenu.Render();
+		
+		mathGame.shouldRender = 0;
 	},
 
 	loop: function() {
-		requestAnimFrame(mathGame.loop);
 		mathGame.update();
-		mathGame.render();
+		if(mathGame.shouldRender) mathGame.render();
+		requestAnimFrame(mathGame.loop);
 	},
 
 	resize: function(){
@@ -131,6 +147,76 @@ mathGame.Input = {
 		this.x = (data.pageX - mathGame.offset.left);
 		this.y = (data.pageY - mathGame.offset.top);
 		this.tapped = true;
-		mathGame.Draw.circle(this.x, this.y, 10, 'red');
+		mathGame.Draw.text(this.x + " " + this.y, this.x, this.y, 10, 'red');
 	}
 };
+
+Menu = function (items, operations, y, fontSize, width, selected){
+	
+	this.items = items;
+	this.operations = operations;
+	this.y = y;
+	this.fontSize = fontSize;
+	this.width = width;
+	this.selected = selected;
+	
+}
+
+Menu.prototype.constructor = Menu;
+
+Menu.prototype.Render = function()
+{
+	/*if (this.backgroundCallback)
+		this.backgroundCallback(elapsed);
+	else
+	{
+		var lingrad = ctx.createLinearGradient(0,0,0,canvas.height);
+		lingrad.addColorStop(0, '#000');
+		lingrad.addColorStop(1, '#023');
+		ctx.fillStyle = lingrad;
+		ctx.fillRect(0,0,canvas.width, canvas.height);
+	}*/
+	
+	mathGame.ctx.textAlign = "center";
+	mathGame.ctx.fillStyle = "White";
+
+	var y = this.y;
+
+	for (var i = 0; i < this.items.length; ++i)
+	{
+		var size = Math.floor(this.fontSize*0.8);
+		if (i == this.selected)
+		{
+			mathGame.ctx.fillStyle = "Green";
+			size = this.fontSize;
+		}
+		mathGame.ctx.font = "arcadeClassic";
+		y += this.fontSize;
+		mathGame.ctx.fillText(this.items[i], mathGame.WIDTH/2, y);
+		mathGame.ctx.fillStyle = "White";
+	}
+}
+
+Menu.prototype.Update = function()
+{
+	InputManager.padUpdate();
+	console.log(InputManager.lastMouseX);
+	
+	var prevSelected = this.selectedItem;
+	if (InputManager.padPressed & InputManager.PAD.UP)
+		this.selected = (this.selected + this.items.length - 1) % this.items.length;
+		mathGame.shouldRender = 1;
+	if (InputManager.padPressed & InputManager.PAD.DOWN)
+		this.selected = (this.selected + 1) % this.items.length;
+		mathGame.shouldRender = 1;
+
+	var leftx = (mathGame.canvas.width - this.width)/2;
+	if (InputManager.lastMouseX >= leftx && InputManager.lastMouseX < leftx+this.width)
+	{
+		var y = this.y + this.size*0.2; // Adjust for baseline
+		if (InputManager.lastMouseY >= y && InputManager.lastMouseY < (y + this.size*this.items.length))
+			this.selected = Math.floor((InputManager.lastMouseY - y)/this.size);
+			mathGame.shouldRender = 1;
+	}
+}
+
