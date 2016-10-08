@@ -17,9 +17,11 @@
 
   <!-- Javascript Import -->
   <script src="js\InputManager.js"></script>
+
+  <script src="http://localhost:5000/socket.io/socket.io.js"></script>
   <script src="js\mathGame.js"></script>
-  <!--<script src="js\readingGame.js"></script> -->
-  <!--<script src="js\writingGame.js"></script> -->
+  <script src="js\readingGame.js"></script>
+  <script src="js\writingGame.js"></script>
   <script src="js\pageScript.js"></script>
 
   <!-- Bootstrap Stylesheet Import -->
@@ -176,19 +178,22 @@
       <h2>Log In<br><small>Welcome Back!</small></h2>
       <div class="form-group">
       <label for="username">Username:</label>
-      <input class="form-control" id="username" name="username" placeholder="ExampleGuy1247" type="text">
+      <input class="form-control" id="loginUsername" name="username" placeholder="ExampleGuy1247" type="text">
       <label for="password">Password:</label>
-      <input class="form-control" id="password" name="password" placeholder="Eight characters or more characters with capitals, symbols and numbers" type="password">
+      <input class="form-control" id="loginPassword" name="password" placeholder="Eight characters or more characters with capitals, symbols and numbers" type="password">
       <br>
         <div class=row>
           <div class="col-xs-1"></div>
           <div class="col-xs-8">
-            <button id="SignUp" class="btn btn-primary" onclick ="logIn_hide()">Log In</button>
+            <button id="ConfirmLogin" class="btn btn-primary">Log In</button>
           </div>
           <div class="col-xs-2">
             <button id="close" class="btn btn-danger" onclick ="logIn_hide()">Cancel</button>
           </div>
         </div>
+        <br />
+        <div class="loginError text-center text-danger">
+        </div
       </div>
     </div>
   </div>

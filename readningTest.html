@@ -2,114 +2,128 @@
  <head>
   <script type="application/javascript">
 var intervalId;
+var ID_GLOBAL = 0;
+var rooms = {}; //We're just going to use a map
+
+var amount = 5; //Default value
+var lastend = Math.PI * 3/2;
+
 this.init = function init(){
   clock();
+
   intervalId = setInterval(clock, 1000);
 }
+
+//Display text should appear on a button
+var nxttile = function(nextname, displaytext)
+{
+this.nextname = nextname;
+this.displaytext = displaytext;
+}
+
+//A tile has a scenario text and an array of nxttiles
+//It will make a button for each option
+//It also has an id
+var tile = function(name, scenariotext, options, time)
+{
+	this.name = name
+	this.scenariotext = scenariotext
+	this.options = options; 
+	this.time = time;
+	rooms[name] = this;//Add to global map
+}
+
+var loadTile = function(name)
+{
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	var tile = rooms[name];//tiles[id];
+	var qid = document.getElementById('question');
+	var cid = document.getElementById("choices");
+	cid.innerHTML = "";
+	qid.innerHTML = tile.scenariotext;
+	
+	//reset
+	amount = tile.time;
+	//lastend = Math.PI * 3/2;
+	start = new Date().getTime();
+	expired = false;
+	
+	for(i = 0; i < tile.options.length; i++)
+	{
+		var btn = document.createElement("BUTTON"); 
+		btn.next = tile.options[i].nextname;
+		btn.onclick = function(){
+			loadTile(this.next);
+			};
+		
+		cid.appendChild(btn);
+	}
+}
+
+var start;
+var expired = false;
+
+//Called every second
 function clock(){
   // no notification when we get unloaded/replaced, so check here
-  var canv = document.getElementById('canvas');
-  if (!canv) {
+  var canvas = document.getElementById('canvas');
+  if (!canvas) {
     clearInterval(intervalId);
     return;
   }
-  var now = new Date();
-  var ctx = canv.getContext('2d');
-  ctx.save();
-  ctx.clearRect(0,0,150,150);
-  ctx.translate(75,75);
-  ctx.scale(0.4,0.4);
-  ctx.rotate(-Math.PI/2);
-  ctx.strokeStyle = "black";
-  ctx.fillStyle = "white";
-  ctx.lineWidth = 8;
-  ctx.lineCap = "round";
 
-  // Hour marks
-  ctx.save();
-  for (var i=0;i<12;i++){
-    ctx.beginPath();
-    ctx.rotate(Math.PI/6);
-    ctx.moveTo(100,0);
-    ctx.lineTo(120,0);
-    ctx.stroke();
-  }
-  ctx.restore();
+	var time = Math.round((new Date().getTime() - start)/1000)      
+	lastend = Math.PI * 3/2;
+	var context = canvas.getContext('2d');
+	
+	var centerX = canvas.width / 2;
+	var centerY = canvas.height / 2;
+	var radius = 70;
+	//amount = 5;
 
-  // Minute marks
-  ctx.save();
-  ctx.lineWidth = 5;
-  for (i=0;i<60;i++){
-    if (i%5!=0) {
-      ctx.beginPath();
-      ctx.moveTo(117,0);
-      ctx.lineTo(120,0);
-      ctx.stroke();
-    }
-    ctx.rotate(Math.PI/30);
-  }
-  ctx.restore();
+	context.beginPath();
+	context.arc(centerX, centerY, radius, 0 * Math.PI, 2 * Math.PI, false);
+	context.fillStyle = 'red';
+	context.lineWidth = 5;
+	context.strokeStyle = '#003300';
+	context.stroke();
+  
+	context.beginPath();
+	context.moveTo(canvas.width / 2, canvas.height / 2);
+	context.arc(canvas.width / 2, canvas.height / 2, canvas.height / 2, lastend, lastend + (Math.PI * 2 * (time / amount)), false);
+	context.lineTo(canvas.width / 2, canvas.height / 2);
 
-  var sec = now.getSeconds();
-  var min = now.getMinutes();
-  var hr  = now.getHours();
-  hr = hr>=12 ? hr-12 : hr;
+	context.fill();
 
-  ctx.fillStyle = "black";
-
-  // write Hours
-  ctx.save();
-  ctx.rotate( hr*(Math.PI/6) + (Math.PI/360)*min + (Math.PI/21600)*sec )
-  ctx.lineWidth = 14;
-  ctx.beginPath();
-  ctx.moveTo(-20,0);
-  ctx.lineTo(80,0);
-  ctx.stroke();
-  ctx.restore();
-
-  // write Minutes
-  ctx.save();
-  ctx.rotate( (Math.PI/30)*min + (Math.PI/1800)*sec )
-  ctx.lineWidth = 10;
-  ctx.beginPath();
-  ctx.moveTo(-28,0);
-  ctx.lineTo(112,0);
-  ctx.stroke();
-  ctx.restore();
-
-  // Write seconds
-  ctx.save();
-  ctx.rotate(sec * Math.PI/30);
-  ctx.strokeStyle = "#D40000";
-  ctx.fillStyle = "#D40000";
-  ctx.lineWidth = 6;
-  ctx.beginPath();
-  ctx.moveTo(-30,0);
-  ctx.lineTo(83,0);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(0,0,10,0,Math.PI*2,true);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(95,0,10,0,Math.PI*2,true);
-  ctx.stroke();
-  ctx.fillStyle = "#555";
-  ctx.arc(0,0,3,0,Math.PI*2,true);
-  ctx.fill();
-  ctx.restore();
-
-  ctx.beginPath();
-  ctx.lineWidth = 14;
-  ctx.strokeStyle = '#325FA2';
-  ctx.arc(0,0,142,0,Math.PI*2,true);
-  ctx.stroke();
-
-  ctx.restore();
+	lastend += (Math.PI * 2 * (time / amount)) % Math.PI;
+	 if (time > amount && !expired)//Only trigger expire once. You ran out of time, yo.
+	{
+		expired = true;
+	}
 }
   </script>
  </head>
  <body>
    <canvas id="canvas" width="150" height="150"></canvas>
+   <div><br><br></div>
+   <center> 
+		<div id="question">Question</div>
+		<div id="choices"></div>
+   </center>
  </body>
- <script>this.init();</script>
+ <script>  start = new Date().getTime();</script>
+ <script>this.init();
+ var canvas = document.getElementById('canvas');
+var context = canvas.getContext('2d');
+ 
+ var tmp = new nxttile("first_room", "go to one");
+ var nxts = [tmp];
+var t = new tile("start_room", "this is a test", nxts, 10);
+new tile("first_room", "This is number one", [5,3], 20);
+loadTile(t.name);
+
+ 
+ 
+ 
+ </script>
 </html>

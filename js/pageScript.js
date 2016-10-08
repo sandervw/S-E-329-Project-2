@@ -16,9 +16,13 @@ function logIn_show() {
 //Function to Hide Log In mathGameup
 function logIn_hide(){
   document.getElementById('logIn').style.display = "none";
+  $(".loginError").html("");
 }
 
+var socket = io.connect();
+
 $(document).ready(function(){
+  socket.connect(); 
   $("#signUp_Failure").hide();
   $("#signUp_Success").hide();
   $(".btn-math").click(function(){
@@ -129,11 +133,30 @@ $(document).ready(function(){
     }
   });
 
+  $("#ConfirmLogin").click(function(){
+      var user = $("#loginUsername").val();
+      var pass = $("#loginPassword").val();
+      
+      socket.emit("login",user+" "+pass);
+      socket.on("loginResponse", function(response){
+			if(response=='success'){
+				setUsername($("#popupLogin").text());
+			}
+			else{
+                $(".loginError").html(response);
+			}
+		});
+  });
+  
   //Function To Hide Banner and Nav Bar
   function hide_Banner_And_Nav(){
     $("#banner").hide();
     $("#sidebar-wrapper").hide();
     $("#page-content-wrapper").css({position: "absolute", left:0});
   }
-
+  function setUsername(){
+      console.log("Successful login!");
+      logIn_hide();
+  }
 });
+
