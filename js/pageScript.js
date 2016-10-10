@@ -19,10 +19,10 @@ function logIn_hide(){
   $(".loginError").html("");
 }
 
-var socket = io.connect();
+//var socket = io.connect();
 
 $(document).ready(function(){
-  socket.connect(); 
+  //socket.connect(); 
   $("#signUp_Failure").hide();
   $("#signUp_Success").hide();
   $(".btn-math").click(function(){
@@ -133,7 +133,7 @@ $(document).ready(function(){
     }
   });
 
-  $("#ConfirmLogin").click(function(){
+  /*$("#ConfirmLogin").click(function(){
       var user = $("#loginUsername").val();
       var pass = $("#loginPassword").val();
       
@@ -146,7 +146,7 @@ $(document).ready(function(){
                 $(".loginError").html(response);
 			}
 		});
-  });
+  });*/
   
   //Function To Hide Banner and Nav Bar
   function hide_Banner_And_Nav(){

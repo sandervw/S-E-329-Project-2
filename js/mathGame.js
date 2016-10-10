@@ -18,8 +18,6 @@ function start_MathGame(){
 		};
 	})();
 	mathGame.init();
-
-	new Audio('sounds/MathIsFun.mp3').play();
 	
 	console.log(mathGame);
 	window.addEventListener('resize', mathGame.resize, false);
@@ -37,11 +35,18 @@ var mathGame = {
 	android: null,
 	ios:  null,
 	init: function(){
-		
+		mathGame.highScore = 0;
+		mathGame.menuAudio = new Audio('sounds/MathIsFun.mp3');
+		mathGame.gameAudio = new Audio('sounds/MathGameBattleMusic.mp3');
+		mathGame.menuAudio.play();
 		mathGame.canvas = document.getElementsByTagName('canvas')[0];
+		InputManager.connect(document, mathGame.canvas);
 		mathGame.menuBackground = new Image();
 		mathGame.menuBackground.src = 'images/mathgamebackground.jpg';
-		mathGame.mainMenu = new Menu(["Start Game","Main Menu"],[1, 2],375, 50, 400, 0)
+		mathGame.mainMenu = new Menu(["Start Game","Main Menu"],375, 50, 400, 0);
+		mathGame.gameBackground = new Image();
+		mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty1Stage1.png';
+		mathGame.mainGame = new Game(0, 1, 0, 0, '+', 0);
 		mathGame.state = 0;
 		mathGame.shouldRender = 0;
 		mathGame.shouldUpdate = 1;
@@ -56,7 +61,10 @@ var mathGame = {
 			mathGame.ctx.drawImage(mathGame.menuBackground,0,0);  
 			mathGame.mainMenu.Render();
 		}
-		
+		mathGame.gameBackground.onload = function(){
+			mathGame.ctx.drawImage(mathGame.gameBackground,0,0, mathGame.gameBackground.width, mathGame.gameBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT);  
+			mathGame.mainGame.Render();
+		}
 		mathGame.ua = navigator.userAgent.toLowerCase();
 		mathGame.android = mathGame.ua.indexOf('android') > -1 ? true : false;
 		mathGame.ios = ( mathGame.ua.indexOf('iphone') > -1 || mathGame.ua.indexOf('ipad') > -1  ) ? true : false;
@@ -86,15 +94,29 @@ var mathGame = {
 	},
 		
 	update: function() {
-		mathGame.mainMenu.Update();
+		if(mathGame.state == 0 || mathGame.state == 1 || mathGame.state == 3 || mathGame.state == 4) mathGame.mainMenu.Update();
+		else if(mathGame.state == 2) mathGame.mainGame.Update();
 	},
 
 	render: function() {
-		mathGame.ctx.clearRect(0, 0, mathGame.WIDTH, mathGame.HEIGHT);
-		mathGame.ctx.drawImage(mathGame.menuBackground,0,0); 
-		mathGame.mainMenu.Render();
-		
-		mathGame.shouldRender = 0;
+		if(mathGame.state == 0 || mathGame.state == 1){
+			mathGame.ctx.clearRect(0, 0, mathGame.WIDTH, mathGame.HEIGHT);
+			mathGame.ctx.drawImage(mathGame.menuBackground,0,0, mathGame.menuBackground.width, mathGame.menuBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT); 
+			mathGame.mainMenu.Render();
+			mathGame.shouldRender = 0;
+		}
+		else if(mathGame.state == 2){
+			mathGame.ctx.clearRect(0, 0, mathGame.WIDTH, mathGame.HEIGHT);
+			mathGame.ctx.drawImage(mathGame.gameBackground,0,0, mathGame.gameBackground.width, mathGame.gameBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT); 
+			mathGame.mainGame.Render();
+			mathGame.shouldRender = 0;
+		}
+		else if(mathGame.state == 3 || mathGame.state == 4){
+			mathGame.ctx.clearRect(0, 0, mathGame.WIDTH, mathGame.HEIGHT);
+			mathGame.ctx.drawImage(mathGame.gameBackground,0,0, mathGame.gameBackground.width, mathGame.gameBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT); 
+			mathGame.mainMenu.Render();
+			mathGame.shouldRender = 0;
+		}
 	},
 
 	loop: function() {
@@ -147,14 +169,12 @@ mathGame.Input = {
 		this.x = (data.pageX - mathGame.offset.left);
 		this.y = (data.pageY - mathGame.offset.top);
 		this.tapped = true;
-		mathGame.Draw.text(this.x + " " + this.y, this.x, this.y, 10, 'red');
 	}
 };
 
-Menu = function (items, operations, y, fontSize, width, selected){
+Menu = function (items, y, fontSize, width, selected){
 	
 	this.items = items;
-	this.operations = operations;
 	this.y = y;
 	this.fontSize = fontSize;
 	this.width = width;
@@ -166,17 +186,7 @@ Menu.prototype.constructor = Menu;
 
 Menu.prototype.Render = function()
 {
-	/*if (this.backgroundCallback)
-		this.backgroundCallback(elapsed);
-	else
-	{
-		var lingrad = ctx.createLinearGradient(0,0,0,canvas.height);
-		lingrad.addColorStop(0, '#000');
-		lingrad.addColorStop(1, '#023');
-		ctx.fillStyle = lingrad;
-		ctx.fillRect(0,0,canvas.width, canvas.height);
-	}*/
-	
+
 	mathGame.ctx.textAlign = "center";
 	mathGame.ctx.fillStyle = "White";
 
@@ -190,7 +200,7 @@ Menu.prototype.Render = function()
 			mathGame.ctx.fillStyle = "Green";
 			size = this.fontSize;
 		}
-		mathGame.ctx.font = "arcadeClassic";
+		mathGame.ctx.font = size.toString() + "px arcadeClassic";
 		y += this.fontSize;
 		mathGame.ctx.fillText(this.items[i], mathGame.WIDTH/2, y);
 		mathGame.ctx.fillStyle = "White";
@@ -200,8 +210,13 @@ Menu.prototype.Render = function()
 Menu.prototype.Update = function()
 {
 	InputManager.padUpdate();
-	console.log(InputManager.lastMouseX);
-	
+	if (InputManager.padPressed & InputManager.PAD.OK)
+	{
+		setMenuState(this.selected);
+		this.selected = 0;
+		this.shouldRender = 1;
+		return;
+	}
 	var prevSelected = this.selectedItem;
 	if (InputManager.padPressed & InputManager.PAD.UP)
 		this.selected = (this.selected + this.items.length - 1) % this.items.length;
@@ -220,3 +235,325 @@ Menu.prototype.Update = function()
 	}
 }
 
+function setMenuState(newState){
+	if (mathGame.state == 0){
+		if(newState == 0){
+			mathGame.mainMenu.items = ['Easy', 'Medium', 'Hard', 'Back'];
+			mathGame.state = 1;
+		}
+		else if(newState == 1){
+			window.location.reload();
+		}
+	}
+	else if (mathGame.state == 1){
+		if(newState == 0){
+			mathGame.menuAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.gameAudio.play();
+			mathGame.state = 2;
+			mathGame.shouldRender = 1;
+		}
+		else if(newState == 1){
+			mathGame.menuAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.gameAudio.play();
+			mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty2Stage1.png';
+			mathGame.mainGame = new Game(0, 2, 0, 0, '+', 0);
+			mathGame.state = 2;
+			mathGame.shouldRender = 1;
+		}
+		else if(newState == 2){
+			mathGame.menuAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.gameAudio.play();
+			mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty3Stage1.png';
+			mathGame.mainGame = new Game(0, 3, 0, 0, '+', 0);
+			mathGame.state = 2;
+			mathGame.shouldRender = 1;
+		}
+		else if(newState == 3){
+			mathGame.mainMenu.items = ['Start Game', 'Main Menu'];
+			mathGame.state = 0;
+		}
+	}
+	else if (mathGame.state == 3){
+		if(newState == 0){
+			mathGame.gameAudio.pause();
+			mathGame.gameAudio.currentTime = 0;
+			mathGame.gameAudio.play();
+			if(mathGame.mainGame.difficulty == 1){
+				mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty1Stage1.png';
+				mathGame.mainGame.message = 'Oh  no,  a  goblin  has  appeared!  Solve  the  problems  to  strike  it!';
+			}
+			else if(mathGame.mainGame.difficulty == 2){
+				mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty2Stage1.png';
+				mathGame.mainGame.message = 'Oh  no,  a  frost  giant  has  appeared!  Solve  the  problems  to  strike  it!';
+			} 
+			else if(mathGame.mainGame.difficulty == 3){
+				mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty3Stage1.png';
+				mathGame.mainGame.message = 'Oh  no,  a  dragon  has  appeared!  Solve  the  problems  to  strike  it!';
+			}
+			mathGame.mainGame.gameState = 0;
+			mathGame.mainGame.monsterHP = 3;
+			mathGame.mainGame.playerHP = 3;
+			mathGame.state = 2;
+			mathGame.shouldRender = 1;
+		}
+		else if(newState == 1){
+			//submit high score;
+		}
+		else if(newState == 2){
+			mathGame.gameAudio.pause();
+			mathGame.gameAudio.currentTime = 0;
+			mathGame.init();
+		}
+		else if(newState == 3){
+			window.location.reload();
+		}
+	}
+	else if (mathGame.state == 4){
+		if(newState == 0){
+			//submit high score;
+		}
+		else if(newState == 1){
+			mathGame.gameAudio.pause();
+			mathGame.gameAudio.currentTime = 0;
+			mathGame.init();
+		}
+		else if(newState == 2){
+			window.location.reload();
+		}
+	}
+}
+
+Game = function (gameState, difficulty, x, y, operation, answer){
+
+	this.highScore = 0;
+	this.gameState = gameState;
+	this.playerHP = 3;
+	this.monsterHP = 3;
+	this.difficulty = difficulty;
+	this.x = x;
+	this.y = y;
+	this.operation = operation;
+	this.answer = answer;
+	this.input = 'Hit  Space  to  Continue...';
+	
+	if(difficulty == 1){
+		this.message = 'Oh  no,  a  goblin  has  appeared!  Solve  the  problems  to  strike  it!';
+	}
+	else if(difficulty == 2){
+		this.message = 'Oh  no,  a  frost  giant  has  appeared!  Solve  the  problems  to  strike  it!';
+	}
+	else if(difficulty == 3){
+		this.message = 'Oh  no,  a  dragon  has  appeared!  Solve  the  problems  to  strike  it!';
+	}
+	
+}
+
+Game.prototype.constructor = Game;
+
+Game.prototype.Render = function(){
+	
+	mathGame.ctx.textAlign = "center";
+	mathGame.ctx.fillStyle = "Black";
+	
+	mathGame.ctx.font = "40px arcadeClassic";
+	
+	if(this.gameState == 0){
+		mathGame.ctx.fillText(this.message, mathGame.WIDTH/2, mathGame.HEIGHT-140);
+		mathGame.ctx.fillStyle = "Green";
+		mathGame.ctx.fillText(this.input, mathGame.WIDTH/2, mathGame.HEIGHT-70);
+		mathGame.ctx.fillText('Player  HP:  ' + this.playerHP + '/3', 170, mathGame.HEIGHT-190);
+		mathGame.ctx.fillText('Monster  HP:  ' + this.monsterHP + '/3', mathGame.WIDTH-170, mathGame.HEIGHT-190);
+	}
+	else{
+		mathGame.ctx.fillText(this.message, mathGame.WIDTH/2, mathGame.HEIGHT-140);
+		mathGame.ctx.fillStyle = "Green";
+		mathGame.ctx.fillText(this.input, mathGame.WIDTH/2, mathGame.HEIGHT-70);
+		mathGame.ctx.fillText('Player  HP:  ' + this.playerHP + '/3', 170, mathGame.HEIGHT-190);
+		mathGame.ctx.fillText('Monster  HP:  ' + this.monsterHP + '/3', mathGame.WIDTH-170, mathGame.HEIGHT-190);
+	}
+	
+}
+
+Game.prototype.Update = function(){
+	
+	InputManager.padUpdate();
+	if(this.gameState == 0 || this.gameState == 2){
+		if (InputManager.padPressed & InputManager.PAD.OK){
+			this.setNewEquation();
+			this.gameState = 1;
+			mathGame.shouldRender = 1;
+		}
+	}
+	else if(this.gameState == 1){
+		if(InputManager.padPressed & InputManager.PAD.NUMBER){
+			this.input+= InputManager.number;
+			mathGame.shouldRender = 1;
+		}
+		else if(InputManager.padPressed & InputManager.PAD.BACKSPACE){
+			this.input = this.input.substring(0, this.input.length - 1);
+			mathGame.shouldRender = 1;
+		}
+		else if(InputManager.padPressed & InputManager.PAD.OK){
+			var temp = parseInt(this.input);
+			if(temp == this.answer){
+				this.monsterHP-=1;
+				if(this.monsterHP == 2 && this.difficulty == 1){
+					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty1Stage2.png';
+					this.message = 'The  monster  has  been  hurt.';
+					this.input = 'Hit  Space  to  Continue...';
+					this.gameState = 2;
+				}
+				if(this.monsterHP == 1 && this.difficulty == 1){
+					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty1Stage3.png';
+					this.message = 'The  monster  has  been  severely  hurt.';
+					this.input = 'Hit  Space  to  Continue...';
+					this.gameState = 2;
+				}
+				if(this.monsterHP == 0 && this.difficulty == 1){
+					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty1Stage4.png';
+					this.message = 'The  monster  has  been  slain.';
+					this.input = 'Hit  Space  to  Continue...';
+					this.gameState = 3;
+					this.highScore += 10;
+				}
+				if(this.monsterHP == 2 && this.difficulty == 2){
+					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty2Stage2.png';
+					this.message = 'The  monster  has  been  hurt.';
+					this.input = 'Hit  Space  to  Continue...';
+					this.gameState = 2;
+				}
+				if(this.monsterHP == 1 && this.difficulty == 2){
+					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty2Stage3.png';
+					this.message = 'The  monster  has  been  severely  hurt.';
+					this.input = 'Hit  Space  to  Continue...';
+					this.gameState = 2;
+				}
+				if(this.monsterHP == 0 && this.difficulty == 2){
+					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty2Stage4.png';
+					this.message = 'The  monster  has  been  slain.';
+					this.input = 'Hit  Space  to  Continue...';
+					this.gameState = 3;
+					this.highScore += 30;
+				}
+				if(this.monsterHP == 2 && this.difficulty == 3){
+					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty3Stage2.png';
+					this.message = 'The  monster  has  been  hurt.';
+					this.input = 'Hit  Space  to  Continue...';
+					this.gameState = 2;
+				}
+				if(this.monsterHP == 1 && this.difficulty == 3){
+					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty3Stage3.png';
+					this.message = 'The  monster  has  been  severely  hurt.';
+					this.input = 'Hit  Space  to  Continue...';
+					this.gameState = 2;
+				}
+				if(this.monsterHP == 0 && this.difficulty == 3){
+					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty3Stage4.png';
+					this.message = 'The  monster  has  been  slain.';
+					this.input = 'Hit  Space  to  Continue...';
+					this.gameState = 3;
+					this.highScore += 50;
+				}
+			}
+			else{
+				this.playerHP-=1;
+				if(this.playerHP>0){
+					this.message = 'The monster has struck you. Do not surrender!';
+					this.input = 'Hit  Space  to  Continue...';
+					this.gameState = 2;
+				}
+				else{
+					this.message = 'You have been slain.';
+					this.input = 'Hit  Space  to  Continue...';
+					this.gameState = 3;
+				}
+			}
+			mathGame.shouldRender = 1;
+		}
+	}
+	else if(this.gameState == 3){
+		if (InputManager.padPressed & InputManager.PAD.OK){
+			if(this.playerHP > 0){
+				mathGame.state = 3;
+				mathGame.mainMenu.items = ['Continue Fighting', 'Submit High Score', 'Return to Main Menu', 'Exit Game'];
+			}
+			else{
+				mathGame.state = 4;
+				mathGame.mainMenu.items = ['Submit High Score', 'Return to Main Menu', 'Exit Game'];
+			}
+		}
+	}
+}
+
+Game.prototype.setNewEquation = function(){
+	
+	if(this.difficulty == 1){
+		this.x = Math.floor(Math.random() * 10);
+		this.y = Math.floor(Math.random() * 10);
+		var temp = Math.floor(Math.random() * 1);
+		if(temp == 0){
+			this.operation = '+';
+			this.answer = this.x + this.y;
+		}
+		if(temp == 1){
+			this.operation = '-';
+			this.answer = this.x - this.y;
+		}
+		this.message = 'The  result  of  ' + this.x + '  ' + this.operation + '  ' + this.y + '  is:';
+		this.input = '';
+	}
+	
+	if(this.difficulty == 2){
+		this.x = Math.floor(Math.random() * 10) + 5;
+		this.y = Math.floor(Math.random() * 10) + 5;
+		var temp = Math.floor(Math.random() * 3);
+		if(temp == 0){
+			this.operation = '+';
+			this.answer = this.x + this.y;
+		}
+		if(temp == 1){
+			this.operation = '-';
+			this.answer = this.x - this.y;
+		}
+		if(temp == 2){
+			this.operation = '*';
+			this.answer = this.x * this.y;
+		}
+		if(temp == 3){
+			this.operation = '/';
+			this.answer = this.x;
+			this.x = this.x * this.y;
+		}
+		this.message = 'The  result  of  ' + this.x + '  ' + this.operation + '  ' + this.y + '  is:';
+		this.input = '';
+	}
+	
+	if(this.difficulty == 3){
+		this.x = Math.floor(Math.random() * 10) + 10;
+		this.y = Math.floor(Math.random() * 10) + 10;
+		var temp = Math.floor(Math.random() * 3);
+		if(temp == 0){
+			this.operation = '+';
+			this.answer = this.x + this.y;
+		}
+		if(temp == 1){
+			this.operation = '-';
+			this.answer = this.x - this.y;
+		}
+		if(temp == 2){
+			this.operation = '*';
+			this.answer = this.x * this.y;
+		}
+		if(temp == 3){
+			this.operation = '/';
+			this.answer = this.x;
+			this.x = this.x * this.y;
+		}
+		this.message = 'The  result  of  ' + this.x + '  ' + this.operation + '  ' + this.y + '  is:';
+		this.input = '';
+	}
+	
+}
