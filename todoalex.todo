@@ -1,9 +1,14 @@
 \#Add tiles
 Make lose condition (if expired...)
+	And end conditions
+Make it prettier
 \#	don't forget to reset expired on new tile.
+Add text difficulty slider / main menu->start page.
+add a score mechanism
+	tiles + max_time-time_used or something.
 consider giving a tile a background image and loading that.
 \#Change global array to a global map for easier insertion
-Change buttons to have text
+\#Change buttons to have text
 
 --add false hints like go grab fire extinguisher--
 
