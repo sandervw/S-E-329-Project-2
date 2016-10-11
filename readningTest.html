@@ -9,6 +9,9 @@ var amount = 5; //Default value
 var lastend = Math.PI * 3/2;
 
 this.init = function init(){
+	var star = document.getElementById("beginbtn");
+	star.style.visibility = "hidden";
+
 	var nxts = [];
 	
 	//Start room
@@ -183,7 +186,7 @@ function clock(){
 		<div id="picture"></div>
 		<div id="question"></div>
 		<div id="choices"></div>
-		<button onclick="init()">Start Game</button>
+		<button id="beginbtn" onclick="init()">Start Game</button>
    </center>
  </body>
  <script>  start = new Date().getTime();</script>
