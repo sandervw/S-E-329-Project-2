@@ -8,11 +8,12 @@ add a score mechanism
 	tiles + max_time-time_used or something.
 consider giving a tile a background image and loading that.
 \#Change global array to a global map for easier insertion
-\#Change buttons to have text
+\#Change buttons to have text`
 
 --add false hints like go grab fire extinguisher--
 
 Consider adding some type of inventory
+make story bigger
 See if we can make an XML type loader for tiles
 	If we do this we could make a GUi where you can drag and drop tiles (and images onto those tiles) to make	
 		a story (draw a line to this tile, label that line with button text, boom it exports to a thingy.)

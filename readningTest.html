@@ -18,7 +18,8 @@ this.init = function init(){
 	nxts.push(tmp);
 	tmp = new nxttile("three_men_robbing", "Investigate the noise");
 	nxts.push(tmp);
-	var t = new tile("start_room", "You're a security guard at a large museum. It's just after midnight, halfway through your shift. You hear a noise like glass breaking in the distance", nxts, 20);
+	var path = "images/reading/desk.jpg"
+	var t = new tile("start_room", "You're a security guard at a large museum. It's just after midnight, halfway through your shift. You hear a noise like glass breaking in the distance", nxts, 20, path);
 	nxts = [];
 	
 	//Wait for police
@@ -57,6 +58,23 @@ this.init = function init(){
 	intervalId = setInterval(clock, 1000);
 }
 
+function show_image(src, width, height, alt) {
+    
+	var img = document.createElement("img");
+    img.src = src;
+    img.width = width;
+    img.height = height;
+    img.alt = alt;
+
+	var pic = document.getElementById('picture');
+	pic.innerHTML = "";
+	if(src)
+	{   
+		pic.appendChild(img);
+	}
+
+}
+
 //Display text should appear on a button
 var nxttile = function(nextname, displaytext)
 {
@@ -67,12 +85,13 @@ this.displaytext = displaytext;
 //A tile has a scenario text and an array of nxttiles
 //It will make a button for each option
 //It also has an id
-var tile = function(name, scenariotext, options, time)
+var tile = function(name, scenariotext, options, time, imgpath)
 {
-	this.name = name
-	this.scenariotext = scenariotext
+	this.name = name;
+	this.scenariotext = scenariotext;
 	this.options = options; 
 	this.time = time;
+	this.img = imgpath;
 	rooms[name] = this;//Add to global map
 }
 
@@ -84,6 +103,8 @@ var loadTile = function(name)
 	var cid = document.getElementById("choices");
 	cid.innerHTML = "";
 	qid.innerHTML = tile.scenariotext;
+	show_image(tile.img, 500,300, "");
+	
 	
 	//reset
 	amount = tile.time;
@@ -153,6 +174,7 @@ function clock(){
    <canvas id="canvas" width="150" height="150"></canvas>
    <div><br><br></div>
    <center> 
+		<div id="picture">Picture</div>
 		<div id="question">Question</div>
 		<div id="choices"></div>
    </center>
