@@ -22,14 +22,16 @@ this.init = function init(){
 	var t = new tile("start_room", "You're a security guard at a large museum. It's just after midnight, halfway through your shift. You hear a noise like glass breaking in the distance", nxts, 20, path);
 	nxts = [];
 	
-	//Wait for police
+	//Call police
 	tmp = new nxttile("hang_up_and_investigate", "Hang up and investigate");
 	nxts.push(tmp);
-	new tile("wait_for_police", "The dispatcher asks you your name, location, and nature of your emergency. She asks you to stay on the line until an officer can arrive.", nxts, 5 * 60);
+	path = "images/reading/phone.jpg"
+	new tile("wait_for_police", "The dispatcher asks you your name, location, and nature of your emergency. She asks you to stay on the line until an officer can arrive.", nxts, 5 * 60, path);
 	nxts = [];
 	
 	//hang up and investigate
-	new tile("hang_up_and_investigate", "The criminals were fast. The time you wasted on the phone was enough for them to get away, leaving no trace except for a black van speeding off into the night. The police question you, but their investigation turns up nothing. You're fired within the month.", nxts, 0);
+	path = "images/reading/van.jpg"
+	new tile("hang_up_and_investigate", "The criminals were fast. The time you wasted on the phone was enough for them to get away, leaving no trace except for a black van speeding off into the night. The police question you, but their investigation turns up nothing. You're fired within the month.", nxts, 0, path);
 	nxts = [];
 	
 	//Ignore the noise
@@ -41,7 +43,8 @@ this.init = function init(){
 	nxts.push(tmp);
 	tmp = new nxttile("confront_robbers", "Announce your presence and arrest them");
 	nxts.push(tmp);
-	new tile("three_men_robbing", "You see three men in the Egyptian Jewels exhibit. They are wearing ski masks and are filling burlap sacks with ancient jewels. You do not believe they see you.", nxts, 5);
+	path = "images/reading/masks.jpg"
+	new tile("three_men_robbing", "You see three men in the Egyptian Jewels exhibit. They are wearing ski masks and are filling burlap sacks with ancient jewels. You do not believe they see you.", nxts, 5, path);
 	nxts = [];
 	
 	//sneak away
@@ -49,7 +52,8 @@ this.init = function init(){
 	nxts = [];
 	
 	//Confront the robbers
-	new tile("confront_robbers", "The robbers are startled by you. They immediately surrender. The police come, arresting the man. You're interviewed on the news, and receive a promotion the next day.", nxts, 0);
+	path = "images/reading/cuffs.jpg"
+	new tile("confront_robbers", "The robbers are startled by you. They immediately surrender. The police come, arresting the man. You're interviewed on the news, and receive a promotion the next day.", nxts, 0, path);
 	nxts = [];
 	
 	loadTile(t.name); 
