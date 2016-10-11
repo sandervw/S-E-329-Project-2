@@ -111,7 +111,9 @@ var loadTile = function(name)
 {
 	score += 10;
 	score+= amount - time;
-	console.log(score);
+	var myscore = document.getElementById('myscore');
+	//myscore.innerHTML = `<b>Score: ${score}</b>`;
+	myscore.innerHTML = "<b>Score: " + score + "</b>";
 	
 	context.clearRect(0, 0, canvas.width, canvas.height);
 	var tile = rooms[name];//tiles[id];
@@ -188,6 +190,7 @@ function clock(){
  </head>
  <body>
    <canvas id="canvas" width="150" height="150"></canvas>
+   <div id="myscore"></div>
    <div><br><br></div>
    <center> 
 		<div id="picture"></div>
