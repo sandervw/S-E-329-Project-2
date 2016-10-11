@@ -493,7 +493,7 @@ Game.prototype.setNewEquation = function(){
 	if(this.difficulty == 1){
 		this.x = Math.floor(Math.random() * 10);
 		this.y = Math.floor(Math.random() * 10);
-		var temp = Math.floor(Math.random() * 1);
+		var temp = Math.floor(Math.random() * 2);
 		if(temp == 0){
 			this.operation = '+';
 			this.answer = this.x + this.y;
@@ -509,7 +509,7 @@ Game.prototype.setNewEquation = function(){
 	if(this.difficulty == 2){
 		this.x = Math.floor(Math.random() * 10) + 5;
 		this.y = Math.floor(Math.random() * 10) + 5;
-		var temp = Math.floor(Math.random() * 3);
+		var temp = Math.floor(Math.random() * 4);
 		if(temp == 0){
 			this.operation = '+';
 			this.answer = this.x + this.y;
@@ -534,7 +534,7 @@ Game.prototype.setNewEquation = function(){
 	if(this.difficulty == 3){
 		this.x = Math.floor(Math.random() * 10) + 10;
 		this.y = Math.floor(Math.random() * 10) + 10;
-		var temp = Math.floor(Math.random() * 3);
+		var temp = Math.floor(Math.random() * 4);
 		if(temp == 0){
 			this.operation = '+';
 			this.answer = this.x + this.y;
