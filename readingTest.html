@@ -1,5 +1,31 @@
 <html>
  <head>
+   <!--Stylesheet Import -->
+  <link rel="stylesheet" href="css\style.css"/>
+  <!-- JQuery Javascript -->
+  <script src="js\jquery-3.1.1.min.js"></script>
+
+  <!-- JQuery UI Javascript -->
+  <script src="js\jquery-ui-1.12.1\jquery-ui.js"></script>
+  <!-- JQuery UI Stylesheet Import -->
+  <link rel="stylesheet" href="js\jquery-ui-1.12.1\jquery-ui.css"/>
+
+  <!-- Javascript Import -->
+  <script src="js\InputManager.js"></script>
+
+  <script src="http://localhost:5000/socket.io/socket.io.js"></script>
+  <script src="js\mathGame.js"></script>
+  <script src="js\readingGame.js"></script>
+  <script src="js\writingGame.js"></script>
+  <script src="js\pageScript.js"></script>
+
+  <!-- Bootstrap Stylesheet Import -->
+  <link rel="stylesheet" href="js\bootstrap-3.3.7-dist\css\bootstrap.css"/>
+  <!-- Bootstrap Javascript Import -->
+  <script src="js\bootstrap-3.3.7-dist\js\bootstrap.js" ></script>
+ 
+ 
+ 
   <script type="application/javascript">
 var intervalId;
 var ID_GLOBAL = 0;
@@ -51,7 +77,7 @@ this.init = function init(){
 	tmp = new nxttile("confront_robbers", "Announce your presence and arrest them");
 	nxts.push(tmp);
 	path = "images/reading/masks.png"
-	new tile("three_men_robbing", "You see three men in the Egyptian Jewels exhibit. They are wearing ski masks and are filling burlap sacks with ancient jewels. You do not believe they see you.", nxts, 5, path);
+	new tile("three_men_robbing", "You see three men in the Egyptian Jewels exhibit. They are wearing ski masks and are filling burlap sacks with ancient jewels. You do not believe they see you.", nxts, 10, path);
 	nxts = [];
 	
 	//sneak away
@@ -189,8 +215,14 @@ function clock(){
   </script>
  </head>
  <body>
-   <canvas id="canvas" width="150" height="150"></canvas>
-   <div id="myscore"></div>
+ <div class="row">
+	<div class="col-md-6">
+		<canvas id="canvas" width="150" height="150"></canvas>
+	</div>
+	<div class="col-md-4"></div>
+	<div class="col-md-2" id="myscore"></div>
+ </div>
+	
    <div><br><br></div>
    <center> 
 		<div id="picture"></div>
