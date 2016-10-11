@@ -5,32 +5,25 @@
   <!-- JQuery Javascript -->
   <script src="js\jquery-3.1.1.min.js"></script>
 
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  
   <!-- JQuery UI Javascript -->
   <script src="js\jquery-ui-1.12.1\jquery-ui.js"></script>
   <!-- JQuery UI Stylesheet Import -->
   <link rel="stylesheet" href="js\jquery-ui-1.12.1\jquery-ui.css"/>
-
-  <!-- Javascript Import -->
-  <script src="js\InputManager.js"></script>
-
-  <script src="http://localhost:5000/socket.io/socket.io.js"></script>
-  <script src="js\mathGame.js"></script>
-  <script src="js\readingGame.js"></script>
-  <script src="js\writingGame.js"></script>
-  <script src="js\pageScript.js"></script>
 
   <!-- Bootstrap Stylesheet Import -->
   <link rel="stylesheet" href="js\bootstrap-3.3.7-dist\css\bootstrap.css"/>
   <!-- Bootstrap Javascript Import -->
   <script src="js\bootstrap-3.3.7-dist\js\bootstrap.js" ></script>
  
- 
- 
   <script type="application/javascript">
 var intervalId;
 var ID_GLOBAL = 0;
 var rooms = {}; //Treat this as a map
 
+var diff = 1;
 var amount = 5; //Default value
 var lastend = Math.PI * 3/2;
 var score = -15;//You get 15 for the first slide
@@ -40,7 +33,9 @@ var time = Math.round((new Date().getTime() - start)/1000)
 this.init = function init(){
 	var star = document.getElementById("beginbtn");
 	star.style.visibility = "hidden";
-
+	var slide = document.getElementById("difficulty");
+	slide.innerHTML = "";
+	
 	var nxts = [];
 	
 	//Start room
@@ -225,13 +220,30 @@ function clock(){
 	
    <div><br><br></div>
    <center> 
-		<div id="picture"></div>
+		<div id="picture">Difficulty: 1</div>
 		<div id="question"></div>
 		<div id="choices"></div>
 		<button id="beginbtn" onclick="init()">Start Game</button>
+	<div class="row">
+		<div class="col-xs-4"></div>
+		<div  class="col-xs-4" id="difficulty"></div>
+		<div class="col-xs-4" id="amount"></div>
+	</div>	
    </center>
  </body>
- <script>  start = new Date().getTime();</script>
+ <script>  start = new Date().getTime();
+		   $( "#difficulty" ).slider({
+      value:1,
+      min: 1,
+      max: 3,
+      step: 1,
+      slide: function( event, ui ) {
+		var pc = document.getElementById('picture');
+		pc.innerHTML = "Difficulty: " + ui.value;
+		diff = ui.value;
+      }
+    });
+ </script>
  <script>
 	var canvas = document.getElementById('canvas');
 	var context = canvas.getContext('2d');
