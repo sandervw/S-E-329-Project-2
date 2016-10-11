@@ -112,7 +112,8 @@ var loadTile = function(name)
 	score += 10;
 	score+= amount - time;
 	var myscore = document.getElementById('myscore');
-	myscore.innerHTML = `<b>Score: ${score}</b>`;
+	//myscore.innerHTML = `<b>Score: ${score}</b>`;
+	myscore.innerHTML = "<b>Score: " + score + "</b>";
 	
 	context.clearRect(0, 0, canvas.width, canvas.height);
 	var tile = rooms[name];//tiles[id];
