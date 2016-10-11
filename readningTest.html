@@ -35,7 +35,8 @@ this.init = function init(){
 	nxts = [];
 	
 	//Ignore the noise
-	new tile("ingore_break_glass", "Aside from a few creaks, bumps, and squeaky hinges (normal museum noises, you're sure), you have a quiet night. The next day the curator arrives and discovers almost $300,000 worth of theft. You are fired for your negligence, and struggle to find another job.", nxts, 0);
+	path = "images/reading/theft.jpg"
+	new tile("ingore_break_glass", "Aside from a few creaks, bumps, and squeaky hinges (normal museum noises, you're sure), you have a quiet night. The next day the curator arrives and discovers almost $300,000 worth of theft. You are fired for your negligence, and struggle to find another job.", nxts, 0, path);
 	nxts = [];
 	
 	//Investigate the noise
@@ -48,7 +49,8 @@ this.init = function init(){
 	nxts = [];
 	
 	//sneak away
-	new tile("sneak_away", "One of the robbers must have noticed a security guard sneaking away, because the next day the entire museum is cleared out. Several million dollars worthof jewels, paintings, and relic are stolen and appear on the black market over the next few months. You are fired and jailed for your negligence and compliance in the robbery.", nxts, 0);
+	path = "images/reading/hiding.jpg"
+	new tile("sneak_away", "One of the robbers must have noticed a security guard sneaking away, because the next day the entire museum is cleared out. Several million dollars worthof jewels, paintings, and relic are stolen and appear on the black market over the next few months. You are fired and jailed for your negligence and compliance in the robbery.", nxts, 0, path);
 	nxts = [];
 	
 	//Confront the robbers

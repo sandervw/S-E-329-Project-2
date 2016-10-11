@@ -6,9 +6,10 @@ Make it prettier
 Add text difficulty slider / main menu->start page.
 add a score mechanism
 	tiles + max_time-time_used or something.
-consider giving a tile a background image and loading that.
+\#consider giving a tile a background image and loading that.
 \#Change global array to a global map for easier insertion
 \#Change buttons to have text`
+Make work with server
 
 --add false hints like go grab fire extinguisher--
 
