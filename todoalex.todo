@@ -1,8 +1,11 @@
 \#Add tiles
 Make lose condition (if expired...)
 	And end conditions
-Make it prettier
+	Add a timeout tile (so a normal tile but it triggers on timeout.)
+Make it prettier (add bootstrap)
+\#stylize images
 \#	don't forget to reset expired on new tile.
+Have tiles give different scores (the highest score is police)
 Add text difficulty slider 
 	and implement the array difficulty thing
 \#add main menu->start page.
