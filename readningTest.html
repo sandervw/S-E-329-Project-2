@@ -3,15 +3,58 @@
   <script type="application/javascript">
 var intervalId;
 var ID_GLOBAL = 0;
-var rooms = {}; //We're just going to use a map
+var rooms = {}; //Treat this as a map
 
 var amount = 5; //Default value
 var lastend = Math.PI * 3/2;
 
 this.init = function init(){
-  clock();
+	var nxts = [];
+	
+	//Start room
+	var tmp = new nxttile("wait_for_police", "Call the police");
+	nxts.push(tmp);
+	tmp = new nxttile("ingore_break_glass", "Ignore the sound");
+	nxts.push(tmp);
+	tmp = new nxttile("three_men_robbing", "Investigate the noise");
+	nxts.push(tmp);
+	var t = new tile("start_room", "You're a security guard at a large museum. It's just after midnight, halfway through your shift. You hear a noise like glass breaking in the distance", nxts, 20);
+	nxts = [];
+	
+	//Wait for police
+	tmp = new nxttile("hang_up_and_investigate", "Hang up and investigate");
+	nxts.push(tmp);
+	new tile("wait_for_police", "The dispatcher asks you your name, location, and nature of your emergency. She asks you to stay on the line until an officer can arrive.", nxts, 5 * 60);
+	nxts = [];
+	
+	//hang up and investigate
+	new tile("hang_up_and_investigate", "The criminals were fast. The time you wasted on the phone was enough for them to get away, leaving no trace except for a black van speeding off into the night. The police question you, but their investigation turns up nothing. You're fired within the month.", nxts, 0);
+	nxts = [];
+	
+	//Ignore the noise
+	new tile("ingore_break_glass", "Aside from a few creaks, bumps, and squeaky hinges (normal museum noises, you're sure), you have a quiet night. The next day the curator arrives and discovers almost $300,000 worth of theft. You are fired for your negligence, and struggle to find another job.", nxts, 0);
+	nxts = [];
+	
+	//Investigate the noise
+	tmp = new nxttile("sneak_away", "Sneak away back to your desk");
+	nxts.push(tmp);
+	tmp = new nxttile("confront_robbers", "Announce your presence and arrest them");
+	nxts.push(tmp);
+	new tile("three_men_robbing", "You see three men in the Egyptian Jewels exhibit. They are wearing ski masks and are filling burlap sacks with ancient jewels. You do not believe they see you.", nxts, 5);
+	nxts = [];
+	
+	//sneak away
+	new tile("sneak_away", "One of the robbers must have noticed a security guard sneaking away, because the next day the entire museum is cleared out. Several million dollars worthof jewels, paintings, and relic are stolen and appear on the black market over the next few months. You are fired and jailed for your negligence and compliance in the robbery.", nxts, 0);
+	nxts = [];
+	
+	//Confront the robbers
+	new tile("confront_robbers", "The robbers are startled by you. They immediately surrender. The police come, arresting the man. You're interviewed on the news, and receive a promotion the next day.", nxts, 0);
+	nxts = [];
+	
+	loadTile(t.name); 
+	clock(); 
 
-  intervalId = setInterval(clock, 1000);
+	intervalId = setInterval(clock, 1000);
 }
 
 //Display text should appear on a button
@@ -56,6 +99,9 @@ var loadTile = function(name)
 			loadTile(this.next);
 			};
 		
+		var t = document.createTextNode(tile.options[i].displaytext);
+		btn.appendChild(t);
+
 		cid.appendChild(btn);
 	}
 }
@@ -66,7 +112,7 @@ var expired = false;
 //Called every second
 function clock(){
   // no notification when we get unloaded/replaced, so check here
-  var canvas = document.getElementById('canvas');
+  canvas = document.getElementById('canvas');
   if (!canvas) {
     clearInterval(intervalId);
     return;
@@ -112,18 +158,9 @@ function clock(){
    </center>
  </body>
  <script>  start = new Date().getTime();</script>
- <script>this.init();
- var canvas = document.getElementById('canvas');
-var context = canvas.getContext('2d');
- 
- var tmp = new nxttile("first_room", "go to one");
- var nxts = [tmp];
-var t = new tile("start_room", "this is a test", nxts, 10);
-new tile("first_room", "This is number one", [5,3], 20);
-loadTile(t.name);
-
- 
- 
- 
+ <script>
+	var canvas = document.getElementById('canvas');
+	var context = canvas.getContext('2d');
+	this.init();
  </script>
 </html>
