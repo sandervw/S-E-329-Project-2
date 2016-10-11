@@ -7,6 +7,9 @@ var rooms = {}; //Treat this as a map
 
 var amount = 5; //Default value
 var lastend = Math.PI * 3/2;
+var score = -15;//You get 15 for the first slide
+start = new Date().getTime();
+var time = Math.round((new Date().getTime() - start)/1000)  
 
 this.init = function init(){
 	var star = document.getElementById("beginbtn");
@@ -106,6 +109,10 @@ var tile = function(name, scenariotext, options, time, imgpath)
 
 var loadTile = function(name)
 {
+	score += 10;
+	score+= amount - time;
+	console.log(score);
+	
 	context.clearRect(0, 0, canvas.width, canvas.height);
 	var tile = rooms[name];//tiles[id];
 	var qid = document.getElementById('question');
@@ -148,7 +155,7 @@ function clock(){
     return;
   }
 
-	var time = Math.round((new Date().getTime() - start)/1000)      
+	time = Math.round((new Date().getTime() - start)/1000)      
 	lastend = Math.PI * 3/2;
 	var context = canvas.getContext('2d');
 	
