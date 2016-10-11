@@ -5,6 +5,7 @@ Make lose condition (if expired...)
 Make it prettier (add bootstrap)
 stylize images
 \#	don't forget to reset expired on new tile.
+Have tiles give different scores (the highest score is police)
 Add text difficulty slider 
 	and implement the array difficulty thing
 \#add main menu->start page.
