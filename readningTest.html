@@ -1,0 +1,207 @@
+<html>
+ <head>
+  <script type="application/javascript">
+var intervalId;
+var ID_GLOBAL = 0;
+var rooms = {}; //Treat this as a map
+
+var amount = 5; //Default value
+var lastend = Math.PI * 3/2;
+var score = -15;//You get 15 for the first slide
+start = new Date().getTime();
+var time = Math.round((new Date().getTime() - start)/1000)  
+
+this.init = function init(){
+	var star = document.getElementById("beginbtn");
+	star.style.visibility = "hidden";
+
+	var nxts = [];
+	
+	//Start room
+	var tmp = new nxttile("wait_for_police", "Call the police");
+	nxts.push(tmp);
+	tmp = new nxttile("ingore_break_glass", "Ignore the sound");
+	nxts.push(tmp);
+	tmp = new nxttile("three_men_robbing", "Investigate the noise");
+	nxts.push(tmp);
+	var path = "images/reading/desk.jpg"
+	var t = new tile("start_room", "You're a security guard at a large museum. It's just after midnight, halfway through your shift. You hear a noise like glass breaking in the distance", nxts, 20, path);
+	nxts = [];
+	
+	//Call police
+	tmp = new nxttile("hang_up_and_investigate", "Hang up and investigate");
+	nxts.push(tmp);
+	path = "images/reading/phone.jpg"
+	new tile("wait_for_police", "The dispatcher asks you your name, location, and nature of your emergency. She asks you to stay on the line until an officer can arrive.", nxts, 5 * 60, path);
+	nxts = [];
+	
+	//hang up and investigate
+	path = "images/reading/van.jpg"
+	new tile("hang_up_and_investigate", "The criminals were fast. The time you wasted on the phone was enough for them to get away, leaving no trace except for a black van speeding off into the night. The police question you, but their investigation turns up nothing. You're fired within the month.", nxts, 0, path);
+	nxts = [];
+	
+	//Ignore the noise
+	path = "images/reading/theft.jpg"
+	new tile("ingore_break_glass", "Aside from a few creaks, bumps, and squeaky hinges (normal museum noises, you're sure), you have a quiet night. The next day the curator arrives and discovers almost $300,000 worth of theft. You are fired for your negligence, and struggle to find another job.", nxts, 0, path);
+	nxts = [];
+	
+	//Investigate the noise
+	tmp = new nxttile("sneak_away", "Sneak away back to your desk");
+	nxts.push(tmp);
+	tmp = new nxttile("confront_robbers", "Announce your presence and arrest them");
+	nxts.push(tmp);
+	path = "images/reading/masks.jpg"
+	new tile("three_men_robbing", "You see three men in the Egyptian Jewels exhibit. They are wearing ski masks and are filling burlap sacks with ancient jewels. You do not believe they see you.", nxts, 5, path);
+	nxts = [];
+	
+	//sneak away
+	path = "images/reading/hiding.jpg"
+	new tile("sneak_away", "One of the robbers must have noticed a security guard sneaking away, because the next day the entire museum is cleared out. Several million dollars worthof jewels, paintings, and relic are stolen and appear on the black market over the next few months. You are fired and jailed for your negligence and compliance in the robbery.", nxts, 0, path);
+	nxts = [];
+	
+	//Confront the robbers
+	path = "images/reading/cuffs.jpg"
+	new tile("confront_robbers", "The robbers are startled by you. They immediately surrender. The police come, arresting the man. You're interviewed on the news, and receive a promotion the next day.", nxts, 0, path);
+	nxts = [];
+	
+	loadTile(t.name); 
+	clock(); 
+
+	intervalId = setInterval(clock, 1000);
+}
+
+function show_image(src, width, height, alt) {
+    
+	var img = document.createElement("img");
+    img.src = src;
+    img.width = width;
+    img.height = height;
+    img.alt = alt;
+
+	var pic = document.getElementById('picture');
+	pic.innerHTML = "";
+	if(src)
+	{   
+		pic.appendChild(img);
+	}
+
+}
+
+//Display text should appear on a button
+var nxttile = function(nextname, displaytext)
+{
+this.nextname = nextname;
+this.displaytext = displaytext;
+}
+
+//A tile has a scenario text and an array of nxttiles
+//It will make a button for each option
+//It also has an id
+var tile = function(name, scenariotext, options, time, imgpath)
+{
+	this.name = name;
+	this.scenariotext = scenariotext;
+	this.options = options; 
+	this.time = time;
+	this.img = imgpath;
+	rooms[name] = this;//Add to global map
+}
+
+var loadTile = function(name)
+{
+	score += 10;
+	score+= amount - time;
+	var myscore = document.getElementById('myscore');
+	myscore.innerHTML = `<b>Score: ${score}</b>`;
+	
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	var tile = rooms[name];//tiles[id];
+	var qid = document.getElementById('question');
+	var cid = document.getElementById("choices");
+	cid.innerHTML = "";
+	qid.innerHTML = tile.scenariotext;
+	show_image(tile.img, 500,300, "");
+	
+	
+	//reset
+	amount = tile.time;
+	//lastend = Math.PI * 3/2;
+	start = new Date().getTime();
+	expired = false;
+	
+	for(i = 0; i < tile.options.length; i++)
+	{
+		var btn = document.createElement("BUTTON"); 
+		btn.next = tile.options[i].nextname;
+		btn.onclick = function(){
+			loadTile(this.next);
+			};
+		
+		var t = document.createTextNode(tile.options[i].displaytext);
+		btn.appendChild(t);
+
+		cid.appendChild(btn);
+	}
+}
+
+var start;
+var expired = false;
+
+//Called every second
+function clock(){
+  // no notification when we get unloaded/replaced, so check here
+  canvas = document.getElementById('canvas');
+  if (!canvas) {
+    clearInterval(intervalId);
+    return;
+  }
+
+	time = Math.round((new Date().getTime() - start)/1000)      
+	lastend = Math.PI * 3/2;
+	var context = canvas.getContext('2d');
+	
+	var centerX = canvas.width / 2;
+	var centerY = canvas.height / 2;
+	var radius = 70;
+	//amount = 5;
+
+	context.beginPath();
+	context.arc(centerX, centerY, radius, 0 * Math.PI, 2 * Math.PI, false);
+	context.fillStyle = 'red';
+	context.lineWidth = 5;
+	context.strokeStyle = '#003300';
+	context.stroke();
+  
+	context.beginPath();
+	context.moveTo(canvas.width / 2, canvas.height / 2);
+	context.arc(canvas.width / 2, canvas.height / 2, canvas.height / 2, lastend, lastend + (Math.PI * 2 * (time / amount)), false);
+	context.lineTo(canvas.width / 2, canvas.height / 2);
+
+	context.fill();
+
+	lastend += (Math.PI * 2 * (time / amount)) % Math.PI;
+	 if (time > amount && !expired)//Only trigger expire once. You ran out of time, yo.
+	{
+		expired = true;
+	}
+}
+  </script>
+ </head>
+ <body>
+   <canvas id="canvas" width="150" height="150"></canvas>
+   <div id="myscore"></div>
+   <div><br><br></div>
+   <center> 
+		<div id="picture"></div>
+		<div id="question"></div>
+		<div id="choices"></div>
+		<button id="beginbtn" onclick="init()">Start Game</button>
+   </center>
+ </body>
+ <script>  start = new Date().getTime();</script>
+ <script>
+	var canvas = document.getElementById('canvas');
+	var context = canvas.getContext('2d');
+	//this.init();
+ </script>
+</html>
