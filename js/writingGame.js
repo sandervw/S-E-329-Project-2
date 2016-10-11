@@ -1,4 +1,4 @@
-//Function to Start the Math Game
+//Function to Start the writing Game
 function start_WritingGame(){
 	//  hide_Banner_And_Nav();
 	$('#mainPage').hide();
@@ -17,15 +17,15 @@ function start_WritingGame(){
 			window.setTimeout(callback, 1000 / 60);
 		};
 	})();
-	mathGame.init();
+	writingGame.init();
 
-	new Audio('sounds/MathIsFun.mp3').play()
+	new Audio('sounds/writingIsFun.mp3').play()
 	
-	console.log(mathGame);
-	window.addEventListener('resize', mathGame.resize, false);
+	console.log(writingGame);
+	window.addEventListener('resize', writingGame.resize, false);
 }
 
-var mathGame = {
+var writingGame = {
 	WIDTH: 0,
 	HEIGHT: 0,
 	offset: {top: 0, left: 0},
@@ -37,32 +37,32 @@ var mathGame = {
 	android: null,
 	ios:  null,
 	init: function(){
-		mathGame.canvas = document.getElementsByTagName('canvas')[0];
+		writingGame.canvas = document.getElementsByTagName('canvas')[0];
 		var background = new Image();
-		background.src = 'images/mathgamebackground.jpg';
-		mathGame.WIDTH = $(window).width();
-		mathGame.HEIGHT = $(window).height();
-		mathGame.canvas.width = mathGame.WIDTH;
-		mathGame.canvas.height = mathGame.HEIGHT;
-		mathGame.currentHeight = mathGame.HEIGHT;
-		mathGame.currentWidth = mathGame.WIDTH;
-		mathGame.ctx = mathGame.canvas.getContext('2d');
-		//mathGame.ctx.drawImage(background,0,0);
+		background.src = 'images/writinggamebackground.jpg';
+		writingGame.WIDTH = $(window).width();
+		writingGame.HEIGHT = $(window).height();
+		writingGame.canvas.width = writingGame.WIDTH;
+		writingGame.canvas.height = writingGame.HEIGHT;
+		writingGame.currentHeight = writingGame.HEIGHT;
+		writingGame.currentWidth = writingGame.WIDTH;
+		writingGame.ctx = writingGame.canvas.getContext('2d');
+		//writingGame.ctx.drawImage(background,0,0);
 		background.onload = function(){
-			mathGame.ctx.drawImage(background,0,0);   
+			writingGame.ctx.drawImage(background,0,0);   
 		}
-		mathGame.ua = navigator.userAgent.toLowerCase();
-		mathGame.android = mathGame.ua.indexOf('android') > -1 ? true : false;
-		mathGame.ios = ( mathGame.ua.indexOf('iphone') > -1 || mathGame.ua.indexOf('ipad') > -1  ) ? true : false;
+		writingGame.ua = navigator.userAgent.toLowerCase();
+		writingGame.android = writingGame.ua.indexOf('android') > -1 ? true : false;
+		writingGame.ios = ( writingGame.ua.indexOf('iphone') > -1 || writingGame.ua.indexOf('ipad') > -1  ) ? true : false;
 		
 		//Event Listeners, click and touch.
 		window.addEventListener('click', function(e) {
 			e.preventDefault();
-			mathGame.Input.set(e);
+			writingGame.Input.set(e);
 		}, false);
 		window.addEventListener('touchstart', function(e) {
 			e.preventDefault();
-			mathGame.Input.set(e.touches[0]);
+			writingGame.Input.set(e.touches[0]);
 		}, false);
 		window.addEventListener('touchmove', function(e) {
 			e.preventDefault();
@@ -71,8 +71,8 @@ var mathGame = {
 			e.preventDefault();
 		}, false);
 		
-		mathGame.resize();
-		mathGame.loop();
+		writingGame.resize();
+		writingGame.loop();
 	},
 		
 	update: function() {
@@ -82,55 +82,55 @@ var mathGame = {
 	},
 
 	loop: function() {
-		requestAnimFrame(mathGame.loop);
-		mathGame.update();
-		mathGame.render();
+		requestAnimFrame(writingGame.loop);
+		writingGame.update();
+		writingGame.render();
 	},
 
 	resize: function(){
-		if (mathGame.android || mathGame.ios) {
+		if (writingGame.android || writingGame.ios) {
 		document.body.style.height = (window.innerHeight + 50) + 'px';
 		}
-		mathGame.canvas.style.width = mathGame.currentWidth + 'px';
-		mathGame.canvas.style.height = mathGame.currentHeight + 'px';
-		mathGame.offset.top = mathGame.canvas.offsetTop;
-		mathGame.offset.left = mathGame.canvas.offsetLeft;
+		writingGame.canvas.style.width = writingGame.currentWidth + 'px';
+		writingGame.canvas.style.height = writingGame.currentHeight + 'px';
+		writingGame.offset.top = writingGame.canvas.offsetTop;
+		writingGame.offset.left = writingGame.canvas.offsetLeft;
 		window.setTimeout(function() {
 			window.scrollTo(0,1);
 		}, 1);
 	}
 }
 
-mathGame.Draw = {
+writingGame.Draw = {
 	clear: function() {
-		mathGame.ctx.clearRect(0, 0, mathGame.WIDTH, mathGame.HEIGHT);
+		writingGame.ctx.clearRect(0, 0, writingGame.WIDTH, writingGame.HEIGHT);
 	},
 	rect: function(x, y, w, h, col) {
-		mathGame.ctx.fillStyle = col;
-		mathGame.ctx.fillRect(x, y, w, h);
+		writingGame.ctx.fillStyle = col;
+		writingGame.ctx.fillRect(x, y, w, h);
 	},
 	circle: function(x, y, r, col) {
-		mathGame.ctx.fillStyle = col;
-		mathGame.ctx.beginPath();
-		mathGame.ctx.arc(x + 5, y + 5, r, 0,  Math.PI * 2, true);
-		mathGame.ctx.closePath();
-		mathGame.ctx.fill();
+		writingGame.ctx.fillStyle = col;
+		writingGame.ctx.beginPath();
+		writingGame.ctx.arc(x + 5, y + 5, r, 0,  writing.PI * 2, true);
+		writingGame.ctx.closePath();
+		writingGame.ctx.fill();
 	},
 	text: function(string, x, y, size, col) {
-		mathGame.ctx.font = 'bold '+size+'px Monospace';
-		mathGame.ctx.fillStyle = col;
-		mathGame.ctx.fillText(string, x, y);
+		writingGame.ctx.font = 'bold '+size+'px Monospace';
+		writingGame.ctx.fillStyle = col;
+		writingGame.ctx.fillText(string, x, y);
 	}
 };
 
-mathGame.Input = {
+writingGame.Input = {
 	x: 0,
 	y: 0,
 	tapped :false,
 	set: function(data) {
-		this.x = (data.pageX - mathGame.offset.left);
-		this.y = (data.pageY - mathGame.offset.top);
+		this.x = (data.pageX - writingGame.offset.left);
+		this.y = (data.pageY - writingGame.offset.top);
 		this.tapped = true;
-		mathGame.Draw.circle(this.x, this.y, 10, 'red');
+		writingGame.Draw.circle(this.x, this.y, 10, 'red');
 	}
 };
