@@ -3,7 +3,9 @@ Make lose condition (if expired...)
 	And end conditions
 Make it prettier
 \#	don't forget to reset expired on new tile.
-Add text difficulty slider / main menu->start page.
+Add text difficulty slider 
+	and implement the array difficulty thing
+\#add main menu->start page.
 add a score mechanism
 	tiles + max_time-time_used or something.
 \#consider giving a tile a background image and loading that.
@@ -16,7 +18,7 @@ Make work with server
 Consider adding some type of inventory
 make story bigger
 See if we can make an XML type loader for tiles
-	If we do this we could make a GUi where you can drag and drop tiles (and images onto those tiles) to make	
+	If we do this we could make a GUI where you can drag and drop tiles (and images onto those tiles) to make	
 		a story (draw a line to this tile, label that line with button text, boom it exports to a thingy.)
 			an xml file which can be loaded.
 Consider adding some kind of save/load (rudimentary solution: give tiles a "is player here" or even better, have a variable
