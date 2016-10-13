@@ -37,8 +37,6 @@ this.init = function init(){
 	star.style.visibility = "hidden";
 	//star.innerHTML = "";
 	var slide = document.getElementById("difficulty");
-	slide.innerHTML = "";
-	
 	var nxts = [];
 	
 	//Start room
@@ -144,6 +142,8 @@ var tile = function(name, scenariotext, options, time, imgpath, onExpireName, po
 
 var loadTile = function(name, isFinal)
 {
+	var slide = document.getElementById('difficulty');
+	slide.style.visibility = "hidden";
 	context.clearRect(0, 0, canvas.width, canvas.height);
 	var tile = rooms[name];//tiles[id];
 	var qid = document.getElementById('question');
@@ -183,16 +183,14 @@ var loadTile = function(name, isFinal)
 	console.log(isFinal)
 	if(isFinal)   //tile.isFinal)
 	{
-		var bspace = document.getElementById('beginbtn');
-		bspace.innerHTML = "";
+		var bspace = document.getElementById('choices');
 		var btn = document.createElement("BUTTON"); 
 		btn.onclick = function(){
-			//todo
+			//todo high score stuff
 		};
 		var t = document.createTextNode("Submit High Score");
 		btn.appendChild(t)
 		bspace.appendChild(btn);
-		bspace.style.visibility = "visible";
 	}
 	
 }
