@@ -35,6 +35,7 @@ var time = Math.round((new Date().getTime() - start)/1000)
 this.init = function init(){
 	var star = document.getElementById("beginbtn");
 	star.style.visibility = "hidden";
+	//star.innerHTML = "";
 	var slide = document.getElementById("difficulty");
 	slide.innerHTML = "";
 	
@@ -48,7 +49,7 @@ this.init = function init(){
 	tmp = new nxttile("three_men_robbing", "Investigate the noise");
 	nxts.push(tmp);
 	var path = "images/reading/desk.png"
-	var t = new tile("start_room", "You're a security guard at a large museum. It's just after midnight, halfway through your shift. You hear a noise like glass breaking in the distance", nxts, 5, path,"", 0, 0);
+	var t = new tile("start_room", "You're a security guard at a large museum. It's just after midnight, halfway through your shift. You hear a noise like glass breaking in the distance", nxts, 5, path,"ignore_break_glass", 0, 0);
 	nxts = [];
 	
 	//Call police
@@ -141,21 +142,15 @@ var tile = function(name, scenariotext, options, time, imgpath, onExpireName, po
 	rooms[name] = this;//Add to global map
 }
 
-var loadTile = function(name)
+var loadTile = function(name, isFinal)
 {
-	console.log( "c")
-	console.log( name)
-	console.log(rooms);
 	context.clearRect(0, 0, canvas.width, canvas.height);
 	var tile = rooms[name];//tiles[id];
-	console.log(tile)
 	var qid = document.getElementById('question');
 	var cid = document.getElementById("choices");
 	cid.innerHTML = "";
 	qid.innerHTML = tile.scenariotext;
 	show_image(tile.img, 500,300, "");
-	
-	console.log( "e")
 	
 	//reset
 	amount = tile.time;
@@ -169,8 +164,6 @@ var loadTile = function(name)
 	//myscore.innerHTML = `<b>Score: ${score}</b>`;
 	myscore.innerHTML = "<b>Score: " + score + "</b>";
 	onExpireLoad = tile.onExpireName;
-	
-	console.log( "d")
 	
 	//Load options
 	for(i = 0; i < tile.options.length; i++)
@@ -187,17 +180,19 @@ var loadTile = function(name)
 		cid.appendChild(btn);
 	}
 	
-	if(tile.isFinal)
+	console.log(isFinal)
+	if(isFinal)   //tile.isFinal)
 	{
 		var bspace = document.getElementById('beginbtn');
+		bspace.innerHTML = "";
 		var btn = document.createElement("BUTTON"); 
 		btn.onclick = function(){
 			//todo
 		};
 		var t = document.createTextNode("Submit High Score");
 		btn.appendChild(t)
-		
 		bspace.appendChild(btn);
+		bspace.style.visibility = "visible";
 	}
 	
 }
@@ -207,7 +202,6 @@ var expired = false;
 
 //Called every second
 function clock(){
-	console.log("hit")
 	expired = false;
   // no notification when we get unloaded/replaced, so check here
   canvas = document.getElementById('canvas');
@@ -224,14 +218,12 @@ function clock(){
 	var centerY = canvas.height / 2;
 	var radius = 70;
 	//amount = 5;
-	console.log( "a")
 	context.beginPath();
 	context.arc(centerX, centerY, radius, 0 * Math.PI, 2 * Math.PI, false);
 	context.fillStyle = 'red';
 	context.lineWidth = 5;
 	context.strokeStyle = '#003300';
 	context.stroke();
-  console.log( "b")
 	context.beginPath();
 	context.moveTo(canvas.width / 2, canvas.height / 2);
 	context.arc(canvas.width / 2, canvas.height / 2, canvas.height / 2, lastend, lastend + (Math.PI * 2 * (time / amount)), false);
@@ -242,10 +234,11 @@ function clock(){
 	lastend += (Math.PI * 2 * (time / amount)) % Math.PI;
 	 if (time > amount && !expired)//Only trigger expire once. You ran out of time, yo.
 	{
-		expired = true;
-		loadTile(onExpireLoad);
+		if(onExpireLoad)
+		{
+			loadTile(onExpireLoad, true);
+		}
 	}
-	console.log("go")
 }
   </script>
  </head>
