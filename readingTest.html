@@ -1,10 +1,29 @@
 <html>
  <head>
+   <!--Stylesheet Import -->
+  <link rel="stylesheet" href="css\style.css"/>
+  <!-- JQuery Javascript -->
+  <script src="js\jquery-3.1.1.min.js"></script>
+
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  
+  <!-- JQuery UI Javascript -->
+  <script src="js\jquery-ui-1.12.1\jquery-ui.js"></script>
+  <!-- JQuery UI Stylesheet Import -->
+  <link rel="stylesheet" href="js\jquery-ui-1.12.1\jquery-ui.css"/>
+
+  <!-- Bootstrap Stylesheet Import -->
+  <link rel="stylesheet" href="js\bootstrap-3.3.7-dist\css\bootstrap.css"/>
+  <!-- Bootstrap Javascript Import -->
+  <script src="js\bootstrap-3.3.7-dist\js\bootstrap.js" ></script>
+ 
   <script type="application/javascript">
 var intervalId;
 var ID_GLOBAL = 0;
 var rooms = {}; //Treat this as a map
 
+var diff = 1;
 var amount = 5; //Default value
 var lastend = Math.PI * 3/2;
 var score = -15;//You get 15 for the first slide
@@ -14,7 +33,9 @@ var time = Math.round((new Date().getTime() - start)/1000)
 this.init = function init(){
 	var star = document.getElementById("beginbtn");
 	star.style.visibility = "hidden";
-
+	var slide = document.getElementById("difficulty");
+	slide.innerHTML = "";
+	
 	var nxts = [];
 	
 	//Start room
@@ -51,7 +72,7 @@ this.init = function init(){
 	tmp = new nxttile("confront_robbers", "Announce your presence and arrest them");
 	nxts.push(tmp);
 	path = "images/reading/masks.png"
-	new tile("three_men_robbing", "You see three men in the Egyptian Jewels exhibit. They are wearing ski masks and are filling burlap sacks with ancient jewels. You do not believe they see you.", nxts, 5, path);
+	new tile("three_men_robbing", "You see three men in the Egyptian Jewels exhibit. They are wearing ski masks and are filling burlap sacks with ancient jewels. You do not believe they see you.", nxts, 10, path);
 	nxts = [];
 	
 	//sneak away
@@ -123,7 +144,6 @@ var loadTile = function(name)
 	qid.innerHTML = tile.scenariotext;
 	show_image(tile.img, 500,300, "");
 	
-	
 	//reset
 	amount = tile.time;
 	//lastend = Math.PI * 3/2;
@@ -189,17 +209,41 @@ function clock(){
   </script>
  </head>
  <body>
-   <canvas id="canvas" width="150" height="150"></canvas>
-   <div id="myscore"></div>
+ <div class="row">
+	<div class="col-md-6">
+		<canvas id="canvas" width="150" height="150"></canvas>
+	</div>
+	<div class="col-md-4"></div>
+	<div class="col-md-2" id="myscore"></div>
+ </div>
+	
    <div><br><br></div>
    <center> 
-		<div id="picture"></div>
+		<div id="picture">Difficulty: 1</div>
 		<div id="question"></div>
 		<div id="choices"></div>
 		<button id="beginbtn" onclick="init()">Start Game</button>
+	<div class="row">
+		<div class="col-xs-4"></div>
+		<div  class="col-xs-4" id="difficulty"></div>
+		<div class="col-xs-4" id="amount"></div>
+	</div>	
    </center>
  </body>
- <script>  start = new Date().getTime();</script>
+ <script>
+		start = new Date().getTime();
+	  $( "#difficulty" ).slider({
+      value:1,
+      min: 1,
+      max: 3,
+      step: 1,
+      slide: function( event, ui ) {
+		var pc = document.getElementById('picture');
+		pc.innerHTML = "Difficulty: " + ui.value;
+		diff = ui.value;
+      }
+    });
+ </script>
  <script>
 	var canvas = document.getElementById('canvas');
 	var context = canvas.getContext('2d');
