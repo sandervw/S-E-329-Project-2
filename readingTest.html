@@ -47,24 +47,24 @@ this.init = function init(){
 	tmp = new nxttile("three_men_robbing", "Investigate the noise");
 	nxts.push(tmp);
 	var path = "images/reading/desk.png"
-	var t = new tile("start_room", "You're a security guard at a large museum. It's just after midnight, halfway through your shift. You hear a noise like glass breaking in the distance", nxts, 5, path,"ignore_break_glass", 0, 0);
+	var t = new tile("start_room", "You're a security guard at a large museum. It's just after midnight, halfway through your shift. You hear a noise like glass breaking in the distance", nxts, 20, path,"ignore_break_glass", 0, 0);
 	nxts = [];
 	
 	//Call police
 	tmp = new nxttile("hang_up_and_investigate", "Hang up and investigate");
 	nxts.push(tmp);
 	path = "images/reading/phone.png"
-	new tile("wait_for_police", "The dispatcher asks you your name, location, and nature of your emergency. She asks you to stay on the line until an officer can arrive.", nxts, 5 * 60, path);
+	new tile("wait_for_police", "The dispatcher asks you your name, location, and nature of your emergency. She asks you to stay on the line until an officer can arrive.", nxts, 5 * 60, path, "", 10, 0);
 	nxts = [];
 	
 	//hang up and investigate
 	path = "images/reading/van.png"
-	new tile("hang_up_and_investigate", "The criminals were fast. The time you wasted on the phone was enough for them to get away, leaving no trace except for a black van speeding off into the night. The police question you, but their investigation turns up nothing. You're fired within the month.", nxts, 0, path);
+	new tile("hang_up_and_investigate", "The criminals were fast. The time you wasted on the phone was enough for them to get away, leaving no trace except for a black van speeding off into the night. The police question you, but their investigation turns up nothing. You're fired within the month.", nxts, 0, path, "", 10, 1);
 	nxts = [];
 	
 	//Ignore the noise
 	path = "images/reading/theft.png"
-	new tile("ignore_break_glass", "Aside from a few creaks, bumps, and squeaky hinges (normal museum noises, you're sure), you have a quiet night. The next day the curator arrives and discovers almost $300,000 worth of theft. You are fired for your negligence, and struggle to find another job.", nxts, 0, path);
+	new tile("ignore_break_glass", "Aside from a few creaks, bumps, and squeaky hinges (normal museum noises, you're sure), you have a quiet night. The next day the curator arrives and discovers almost $300,000 worth of theft. You are fired for your negligence, and struggle to find another job.", nxts, 0, path, "", 1, 1);
 	nxts = [];
 	
 	//Investigate the noise
@@ -73,17 +73,17 @@ this.init = function init(){
 	tmp = new nxttile("confront_robbers", "Announce your presence and arrest them");
 	nxts.push(tmp);
 	path = "images/reading/masks.png"
-	new tile("three_men_robbing", "You see three men in the Egyptian Jewels exhibit. They are wearing ski masks and are filling burlap sacks with ancient jewels. You do not believe they see you.", nxts, 10, path);
+	new tile("three_men_robbing", "You see three men in the Egyptian Jewels exhibit. They are wearing ski masks and are filling burlap sacks with ancient jewels. You do not believe they see you.", nxts, 20, path, "", 10, 0);
 	nxts = [];
 	
 	//sneak away
 	path = "images/reading/hiding.png"
-	new tile("sneak_away", "One of the robbers must have noticed a security guard sneaking away, because the next day the entire museum is cleared out. Several million dollars worthof jewels, paintings, and relic are stolen and appear on the black market over the next few months. You are fired and jailed for your negligence and compliance in the robbery.", nxts, 0, path);
+	new tile("sneak_away", "One of the robbers must have noticed a security guard sneaking away, because the next day the entire museum is cleared out. Several million dollars worthof jewels, paintings, and relic are stolen and appear on the black market over the next few months. You are fired and jailed for your negligence and compliance in the robbery.", nxts, 0, path, "", 5, 1);
 	nxts = [];
 	
 	//Confront the robbers
 	path = "images/reading/cuffs.png"
-	new tile("confront_robbers", "The robbers are startled by you. They immediately surrender. The police come, arresting the man. You're interviewed on the news, and receive a promotion the next day.", nxts, 0, path);
+	new tile("confront_robbers", "The robbers are startled by you. They immediately surrender. The police come, arresting the man. You're interviewed on the news, and receive a promotion the next day.", nxts, 0, path, "", 50, 1);
 	nxts = [];
 	
 	loadTile(t.name); 
