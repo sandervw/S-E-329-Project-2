@@ -8,3 +8,5 @@ To run this project:
     2. Open a browser, and go to localhost:4000 or localhost:4000/index.html
     
     Troublshooting: Delete System 32
+	
+The first room for the reading game must be named start_room

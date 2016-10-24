@@ -10,6 +10,7 @@
   
   <!-- JQuery UI Javascript -->
   <script src="js\jquery-ui-1.12.1\jquery-ui.js"></script>
+  <script src="js\json2.js"></script>
   <!-- JQuery UI Stylesheet Import -->
   <link rel="stylesheet" href="js\jquery-ui-1.12.1\jquery-ui.css"/>
 
@@ -32,13 +33,51 @@ var score = 0;// -15;//You get 15 for the first slide
 start = new Date().getTime();
 var time = Math.round((new Date().getTime() - start)/1000)  
 
-this.init = function init(){
-	var star = document.getElementById("beginbtn");
-	star.style.visibility = "hidden";
-	//star.innerHTML = "";
-	var slide = document.getElementById("difficulty");
-	var nxts = [];
+var data = JSON.stringify( rooms );
+var fileName = "my-download.json";
+
+function loadFile() {
+    var input, file, fr;
+
+    if (typeof window.FileReader !== 'function') {
+      alert("The file API isn't supported on this browser yet.");
+      return;
+    }
+
+    input = document.getElementById('fileinput');
+    if (!input) {
+      alert("Um, couldn't find the fileinput element.");
+    }
+    else if (!input.files) {
+      alert("This browser doesn't seem to support the `files` property of file inputs.");
+    }
+    else if (!input.files[0]) {
+      alert("Please select a file before clicking 'Load'");
+    }
+    else {
+      file = input.files[0];
+      fr = new FileReader();
+      fr.onload = receivedText;
+      fr.readAsText(file);
+    }
+
+    function receivedText(e) {
+      lines = e.target.result;
+      var newArr = JSON.parse(lines);
+	  console.log( newArr)
+	  rooms = newArr;
+    }
+  }
+
+
+
+
+
+
+function newTiles(){
 	
+	fileName = "my-download.json";
+	var nxts = [];
 	//Start room
 	var tmp = new nxttile("wait_for_police", "Call the police");
 	nxts.push(tmp);
@@ -85,8 +124,24 @@ this.init = function init(){
 	path = "images/reading/cuffs.png"
 	new tile("confront_robbers", "The robbers are startled by you. They immediately surrender. The police come, arresting the man. You're interviewed on the news, and receive a promotion the next day.", nxts, 0, path, "", 50, 1);
 	nxts = [];
+data = JSON.stringify( rooms );
+}
+
+
+
+this.init = function init(){
+	var star = document.getElementById("beginbtn");
+	star.style.visibility = "hidden";
+	//star.innerHTML = "";
+	var slide = document.getElementById("difficulty");
+
 	
-	loadTile(t.name); 
+	//newTiles();
+	//loadTile(t.name); 
+	console.log( rooms)
+	loadTile("start_room");
+	
+	
 	clock(); 
 
 	intervalId = setInterval(clock, 1000);
@@ -260,9 +315,42 @@ function clock(){
 		<div  class="col-xs-4" id="difficulty"></div>
 		<div class="col-xs-4" id="amount"></div>
 	</div>	
+	<div class="row">
+		<div>
+		<form id="jsonFile" name="jsonFile" enctype="multipart/form-data" method="post">
+		  <fieldset>
+			 <input type='file' id='fileinput'>
+			 <input type='button' id='btnLoad' value='Load' onclick='loadFile();'>
+		  </fieldset>
+		</form>
+		</div>
+	</div>
    </center>
  </body>
  <script>
+var saveData = function () {
+	newTiles();
+	var data = JSON.stringify( rooms );
+	var fileName = "my-download.json";
+
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+  //  return function (data, fileName) {
+	console.log( data);
+	console.log( fileName)      
+	  var json = JSON.stringify(data),
+            blob = new Blob([json], {type: "octet/stream"}),
+            url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    //};
+}; 
+ 
+ 
+ 
 		start = new Date().getTime();
 	  $( "#difficulty" ).slider({
       value:1,
