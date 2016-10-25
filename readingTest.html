@@ -63,7 +63,7 @@ function loadFile() {
 
     function receivedText(e) {
       lines = e.target.result;
-      var newArr = JSON.parse(lines);
+      var newArr = JSON.parse(JSON.parse(lines));
 	  console.log( newArr)
 	  rooms = newArr;
     }
@@ -197,6 +197,9 @@ var tile = function(name, scenariotext, options, time, imgpath, onExpireName, po
 
 var loadTile = function(name, isFinal)
 {
+	console.log(name)
+	console.log( rooms)
+	console.log(rooms[name])
 	var slide = document.getElementById('difficulty');
 	slide.style.visibility = "hidden";
 	context.clearRect(0, 0, canvas.width, canvas.height);
