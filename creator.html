@@ -18,23 +18,72 @@
   <link rel="stylesheet" href="js\bootstrap-3.3.7-dist\css\bootstrap.css"/>
   <!-- Bootstrap Javascript Import -->
   <script src="js\bootstrap-3.3.7-dist\js\bootstrap.js" ></script>
- 
+  <script src="js\floating-1.12.js" ></script>
 
+  
+  
+  <style>
+  #floatingbar
+  {
+  position:absolute;  
+  width:80px;height:1000px;top:10px;right:10px;  
+  background:#FFFFFF;  
+  border:2px solid #2266AA;  
+  z-index:100;
+  }
+  
+  img
+  {
+	display:block;
+	margin-left: auto;
+	margin-right:auto;
+	border:solid 1px black; margin:10px;}
+	.selected{
+		box-shadow:0px 12px 22px 1px #333;
+  }
+  </style>
 
  </head>
  <body>
- 	<div class="row">
-		<div class="col-xs-11">
-			<canvas id="canvas" width="200" height="100" style="border:1px solid #000000;"></canvas>
-		</div>
-		<div  class="col-xs-1">
-		
-		</div>
+	<div id="floatingbar">
+		<img src="images\builder\addicon.png" height="64" width="64" vspace="10"></img>
+		<img src="images\builder\saveicon.png" height="64" width="64" vspace="10"></img>
+		<img src="images\builder\linesicon.png" height="64" width="64" vspace="10"></img>
+	
 	</div>
 
- <script> var canv = document.getElementById("canvas");
-		  canv.height = window.innerHeight;
-		  canv.width = window.innerWidth;
-</script>
+	
+ 
+	 <script type="text/javascript">  
+    floatingMenu.add('floatingbar',  
+        {  
+            // Represents distance from left or right browser window  
+            // border depending upon property used. Only one should be  
+            // specified.  
+            // targetLeft: 0,  
+            targetRight: 10,  
+  
+            // Represents distance from top or bottom browser window  
+            // border depending upon property used. Only one should be  
+            // specified.  
+            targetTop: 10,  
+            // targetBottom: 0,  
+  
+            // Uncomment one of those if you need centering on  
+            // X- or Y- axis.  
+            // centerX: true,  
+            // centerY: true,  
+  
+            // Remove this one if you don't want snap effect  
+            snap: true  
+        });  
+		
+	//Select image
+   $('img').click(function(){
+	$('.selected').removeClass('selected'); // removes the previous selected class
+   $(this).addClass('selected'); // adds the class to the clicked image
+});
+		
+</script>  
  </body>
 </html>
