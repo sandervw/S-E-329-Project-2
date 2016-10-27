@@ -1,89 +1,319 @@
 <html>
- <head>
-   <!--Stylesheet Import -->
-  <link rel="stylesheet" href="css\style.css"/>
-  <!-- JQuery Javascript -->
-  <script src="js\jquery-3.1.1.min.js"></script>
+<head>
+<!--Stylesheet Import -->
+<link rel="stylesheet" href="css\style.css"/>
+<!-- JQuery Javascript -->
+<script src="js\jquery-3.1.1.min.js"></script>
 
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  
-  <!-- JQuery UI Javascript -->
-  <script src="js\jquery-ui-1.12.1\jquery-ui.js"></script>
-  <script src="js\json2.js"></script>
-  <!-- JQuery UI Stylesheet Import -->
-  <link rel="stylesheet" href="js\jquery-ui-1.12.1\jquery-ui.css"/>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-  <!-- Bootstrap Stylesheet Import -->
-  <link rel="stylesheet" href="js\bootstrap-3.3.7-dist\css\bootstrap.css"/>
-  <!-- Bootstrap Javascript Import -->
-  <script src="js\bootstrap-3.3.7-dist\js\bootstrap.js" ></script>
-  <script src="js\floating-1.12.js" ></script>
+<!-- JQuery UI Javascript -->
+<script src="js\jquery-ui-1.12.1\jquery-ui.js"></script>
+<script src="js\json2.js"></script>
+<!-- JQuery UI Stylesheet Import -->
+<link rel="stylesheet" href="js\jquery-ui-1.12.1\jquery-ui.css"/>
 
-  
-  
-  <style>
-  #floatingbar
-  {
-  position:absolute;  
-  width:80px;height:1000px;top:10px;right:10px;  
-  background:#FFFFFF;  
-  border:2px solid #2266AA;  
-  z-index:100;
-  }
-  
-  img
-  {
+<!-- Bootstrap Stylesheet Import -->
+<link rel="stylesheet" href="js\bootstrap-3.3.7-dist\css\bootstrap.css"/>
+<!-- Bootstrap Javascript Import -->
+<script src="js\bootstrap-3.3.7-dist\js\bootstrap.js" ></script>
+<script src="js\floating-1.12.js" ></script>
+
+
+
+<style>
+#floatingbar
+{
+position:absolute;  
+width:80px;height:1000px;top:10px;right:10px;  
+background:#FFFFFF;  
+border:2px solid #2266AA;  
+z-index:100;
+}
+
+img
+{
 	display:block;
 	margin-left: auto;
 	margin-right:auto;
 	border:solid 1px black; margin:10px;}
 	.selected{
 		box-shadow:0px 12px 22px 1px #333;
-  }
-  </style>
+}
+</style>
 
- </head>
- <body>
+</head>
+<body>
+		<div class="row">
+			<div class="col-xs-12">
+				<canvas id="canvas" width="200" height="100" style="border:1px solid #000000;"></canvas>
+			</div>
+		</div>
+
 	<div id="floatingbar">
-		<img src="images\builder\addicon.png" height="64" width="64" vspace="10"></img>
-		<img src="images\builder\saveicon.png" height="64" width="64" vspace="10"></img>
-		<img src="images\builder\linesicon.png" height="64" width="64" vspace="10"></img>
-	
+		<img id="Mouse" src="images\builder\mouseicon.png" height="64" width="64" vspace="10"></img>
+		<img id="Add" src="images\builder\addicon.png" height="64" width="64" vspace="10"></img>
+		<img id="Lines" src="images\builder\linesicon.png" height="64" width="64" vspace="10"></img>
+		<img id="Save" src="images\builder\saveicon.png" height="64" width="64" vspace="10"></img>
 	</div>
 
+	<script type="text/javascript">  
+	var mode;
+	var boxes = [];
+	var isDrag = false;
+	var canvas = document.getElementById("canvas");
+	var context = canvas.getContext("2d");
+	var ghostcanvas;// we use a fake canvas to draw individual shapes for selection testing
+	var gctx; // fake canvas context
 	
- 
-	 <script type="text/javascript">  
-    floatingMenu.add('floatingbar',  
-        {  
-            // Represents distance from left or right browser window  
-            // border depending upon property used. Only one should be  
-            // specified.  
-            // targetLeft: 0,  
-            targetRight: 10,  
-  
-            // Represents distance from top or bottom browser window  
-            // border depending upon property used. Only one should be  
-            // specified.  
-            targetTop: 10,  
-            // targetBottom: 0,  
-  
-            // Uncomment one of those if you need centering on  
-            // X- or Y- axis.  
-            // centerX: true,  
-            // centerY: true,  
-  
-            // Remove this one if you don't want snap effect  
-            snap: true  
-        });  
+	canvas.height = window.innerHeight;
+	canvas.width = window.innerWidth;
+	canvas.addEventListener("click", takeAction);
+	ghostcanvas = document.createElement('canvas');
+	ghostcanvas.height = canvas.height;
+	ghostcanvas.width = canvas.width;
+	gctx = ghostcanvas.getContext('2d');
+	canvas.onmousedown = myDown;
+	canvas.onmouseup = myUp;
+	
+	//fixes a problem where double clicking causes text to get selected on the canvas
+    canvas.onselectstart = function () { return false; }
+	
+	// when set to true, the canvas will redraw everything
+	// invalidate() just sets this to false right now
+	// we want to call invalidate() whenever we make a change
+	var canvasValid = false;
+	var INTERVAL = 20;  // how often, in milliseconds, we check to see if a redraw is needed	
+	// make draw() fire every INTERVAL milliseconds.
+	setInterval(draw, INTERVAL);
+	
+	// The node (if any) being selected.
+	// If in the future we want to select multiple objects, this will get turned into an array
+	var mySel;
+	// The selection color and width. Right now we have a red selection with a small width
+	var mySelColor = '#CC0000';
+	var mySelWidth = 2;
+	
+	// since we can drag from anywhere in a node
+	// instead of just its x/y corner, we need to save
+	// the offset of the mouse when we start dragging.
+	var offsetx, offsety;
+	
+	// Padding and border style widths for mouse offsets
+	var stylePaddingLeft, stylePaddingTop, styleBorderLeft, styleBorderTop;
+	
+	var mx, my; //Used for mouse positions
+	
+	function invalidate() {
+		canvasValid = false;
+	}
+	
+	function clear(context)
+	{
+		context.clearRect(0, 0, canvas.width, canvas.height);
+	}	
+	
+	function Box(){
+	this.x = 0;
+	this.y = 0;
+	this.w = 1; 
+	this.h = 1;
+	this.fill = '#444444';
+	}
+	
+	function getMousePos(canvas, evt) {
+		var rect = canvas.getBoundingClientRect();
+		return {
+		x: evt.clientX - rect.left,
+		y: evt.clientY - rect.top
+		};
+	}
+	
+	// Sets mx,my to the mouse position relative to the canvas
+	// unfortunately this can be tricky, we have to worry about padding and borders
+	function getMouse(e) {
+		var element = canvas, offsetX = 0, offsetY = 0;
+
+		if (element.offsetParent) {
+			do {
+			  offsetX += element.offsetLeft;
+			  offsetY += element.offsetTop;
+			} while ((element = element.offsetParent));
+		}
+
+		// Add padding and border style widths to offset
+		offsetX += stylePaddingLeft;
+		offsetY += stylePaddingTop;
+
+		offsetX += styleBorderLeft;
+		offsetY += styleBorderTop;
+
+		mx = e.pageX - offsetX;
+		my = e.pageY - offsetY
+	}
+
+	function addRect(x, y, w, h, fill) {
+		var rect = new Box;
+		rect.x = x;
+		rect.y = y;
+		rect.w = w
+		rect.h = h;
+		//rect.fill = fill;
+		boxes.push(rect);
+		invalidate();
+	}
+
+
+	
+	
+	// fixes mouse co-ordinate problems when there's a border or padding
+	// see getMouse for more detail
+	if (document.defaultView && document.defaultView.getComputedStyle) {
+		stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingLeft'], 10) || 0;
+		stylePaddingTop  = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingTop'], 10)  || 0;
+		styleBorderLeft  = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderLeftWidth'], 10)  || 0;
+		styleBorderTop   = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderTopWidth'], 10)   || 0;
+	}
+	
+	
+	// Draws a single shape to a single context
+	// draw() will call this with the normal canvas
+	// myDown will call this with the ghost canvas
+	function drawshape(context, shape, fill) {
+	  context.fillStyle = fill;
+	  
+	  // We can skip the drawing of elements that have moved off the screen:
+	  if (shape.x > canvas.width || shape.y > canvas.height) return; 
+	  if (shape.x + shape.w < 0 || shape.y + shape.h < 0) return;
+	  
+	  context.fillRect(shape.x,shape.y,shape.w,shape.h);
+	}
+	
+	// Happens when the mouse is clicked in the canvas
+	function myDown(e){
+	  if(mode == "Mouse")
+	  {
+		  getMouse(e);
+		  clear(gctx); // clear the ghost canvas from its last use
+
+		  // run through all the boxes
+		  var l = boxes.length;
+		  for (var i = l-1; i >= 0; i--) {
+			// draw shape onto ghost context
+			drawshape(gctx, boxes[i], 'black');
+
+			// get image data at the mouse x,y pixel
+			var imageData = gctx.getImageData(mx, my, 1, 1);
+			var index = (mx + my * imageData.width) * 4;
+
+			// if the mouse pixel exists, select and break
+			if (imageData.data[3] > 0) {
+			  mySel = boxes[i];
+			  offsetx = mx - mySel.x;
+			  offsety = my - mySel.y;
+			  mySel.x = mx - offsetx;
+			  mySel.y = my - offsety;
+			  isDrag = true;
+			  canvas.onmousemove = myMove;
+			  invalidate();
+			  clear(gctx);
+			  return;
+			}
+		}
+		  // havent returned means we have selected nothing
+		  mySel = null;
+		  // clear the ghost canvas for next time
+		  clear(gctx);
+		  // invalidate because we might need the selection border to disappear
+		  invalidate();
+	}
+	}
+
+	// Happens when the mouse is moving inside the canvas
+	function myMove(e){
+	  if (isDrag){
+		getMouse(e);
+
+		mySel.x = mx - offsetx;
+		mySel.y = my - offsety;
+
+		// something is changing position so we better invalidate the canvas!
+		invalidate();
+	  }
+	}
+
+	function myUp(){
+	  isDrag = false;
+	  canvas.onmousemove = null;
+	}
+		
+	// While draw is called as often as the INTERVAL variable demands,
+	// It only ever does something if the canvas gets invalidated by our code
+	function draw() {
+	  if (canvasValid == false) {
+			clear(context);
+
+			// Add stuff you want drawn in the background all the time here
+
+			// draw all boxes
+			for (var i = 0; i < boxes.length; i++) {
+				drawshape(context, boxes[i], boxes[i].fill);
+			}
+
+			// draw selection
+			// right now this is just a stroke along the edge of the selected box
+			if (mySel != null) {
+			  context.strokeStyle = mySelColor;
+			  context.lineWidth = mySelWidth;
+			  context.strokeRect(mySel.x,mySel.y,mySel.w,mySel.h);
+			}
+
+			// Add stuff you want drawn on top all the time here
+
+			canvasValid = true;
+		}
+	}
+	
+	function takeAction(e){
+		if("Add" == mode){
+			getMouse(e);
+			var width = 150;
+			var height = 100;
+			addRect(mx - (width / 2), my - (height / 2), width, height, '#000000');
+		}
+	}
+	
+	floatingMenu.add('floatingbar',  
+	{  
+	// Represents distance from left or right browser window  
+	// border depending upon property used. Only one should be  
+	// specified.  
+	// targetLeft: 0,  
+	targetRight: 10,  
+
+	// Represents distance from top or bottom browser window  
+	// border depending upon property used. Only one should be  
+	// specified.  
+	targetTop: 10,  
+	// targetBottom: 0,  
+
+	// Uncomment one of those if you need centering on  
+	// X- or Y- axis.  
+	// centerX: true,  
+	// centerY: true,  
+
+	// Remove this one if you don't want snap effect  
+	snap: true  
+	});  
 		
 	//Select image
-   $('img').click(function(){
-	$('.selected').removeClass('selected'); // removes the previous selected class
-   $(this).addClass('selected'); // adds the class to the clicked image
-});
+	$('img').click(function(){
+		$('.selected').removeClass('selected'); // removes the previous selected class
+		$(this).addClass('selected'); // adds the class to the clicked image
+		mode = document.querySelector('.selected').id;
+	});
 		
 </script>  
- </body>
+</body>
 </html>
