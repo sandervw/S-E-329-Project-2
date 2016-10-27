@@ -20,8 +20,6 @@
 <script src="js\bootstrap-3.3.7-dist\js\bootstrap.js" ></script>
 <script src="js\floating-1.12.js" ></script>
 
-
-
 <style>
 #floatingbar
 {
@@ -88,7 +86,6 @@ img
 	var INTERVAL = 20;  // how often, in milliseconds, we check to see if a redraw is needed	
 	// make draw() fire every INTERVAL milliseconds.
 	setInterval(draw, INTERVAL);
-	
 	var myboxcolor = '#000000'
 	
 	// The node (if any) being selected.
@@ -97,25 +94,21 @@ img
 	var mySelIndex;
 	// The selection color and width. Right now we have a red selection with a small width
 	var mySelColor = '#CC0000';
-
 	var mySelWidth = 2;
 	
-	// since we can drag from anywhere in a node
-	// instead of just its x/y corner, we need to save
+	// since we can drag from anywhere in a node instead of just its x/y corner, we need to save
 	// the offset of the mouse when we start dragging.
 	var offsetx, offsety;
 	
 	// Padding and border style widths for mouse offsets
 	var stylePaddingLeft, stylePaddingTop, styleBorderLeft, styleBorderTop;
-	
 	var mx, my; //Used for mouse positions
 	
 	function invalidate() {
 		canvasValid = false;
 	}
 	
-	function clear(context)
-	{
+	function clear(context){
 		context.clearRect(0, 0, canvas.width, canvas.height);
 	}	
 	
@@ -164,7 +157,6 @@ img
 		rect.y = y;
 		rect.w = w
 		rect.h = h;
-		//rect.fill = fill;
 		boxes.push(rect);
 		invalidate();
 	}
@@ -177,7 +169,6 @@ img
 		styleBorderLeft  = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderLeftWidth'], 10)  || 0;
 		styleBorderTop   = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderTopWidth'], 10)   || 0;
 	}
-	
 	
 	// Draws a single shape to a single context
 	// draw() will call this with the normal canvas
@@ -192,16 +183,13 @@ img
 	  context.fillRect(shape.x,shape.y,shape.w,shape.h);
 	}
 	
-	// Happens when the mouse is clicked in the canvas
 	function myDown(e){
 	  if(mode == "Mouse")
 	  {
 		  getMouse(e);
 		  clear(gctx); // clear the ghost canvas from its last use
 
-		  // run through all the boxes
-		  var l = boxes.length;
-		  for (var i = l-1; i >= 0; i--) {
+		  for (var i = boxes.length-1; i >= 0; i--) {
 			// draw shape onto ghost context
 			drawshape(gctx, boxes[i], 'black');
 
@@ -224,25 +212,20 @@ img
 			  return;
 			}
 		}
-		  // havent returned means we have selected nothing
-		  mySel = null;
-		  // clear the ghost canvas for next time
-		  clear(gctx);
-		  // invalidate because we might need the selection border to disappear
-		  invalidate();
-	}
+		
+		  mySel = null;// havent returned means we have selected nothing
+		  clear(gctx); // clear the ghost canvas for next time
+		  invalidate();// invalidate because we might need the selection border to disappear
+		}
 	}
 
 	// Happens when the mouse is moving inside the canvas
 	function myMove(e){
 	  if (isDrag){
 		getMouse(e);
-
 		mySel.x = mx - offsetx;
 		mySel.y = my - offsety;
-
-		// something is changing position so we better invalidate the canvas!
-		invalidate();
+		invalidate();// something is changing position so we better invalidate the canvas!
 	  }
 	}
 
@@ -257,7 +240,7 @@ img
 	  if (canvasValid == false) {
 			clear(context);
 
-			// Add stuff you want drawn in the background all the time here
+			// Add stuff drawn in backgroudn here:
 
 			// draw all boxes
 			for (var i = 0; i < boxes.length; i++) {
@@ -272,14 +255,12 @@ img
 			  context.strokeRect(mySel.x,mySel.y,mySel.w,mySel.h);
 			}
 
-			// Add stuff you want drawn on top all the time here
-
+			// Add stuff drawn on top here
 			canvasValid = true;
 		}
 	}
 
 	function checkKey(e) {
-
 		e = e || window.event;
 
 		//Delete key pressed
@@ -292,7 +273,6 @@ img
 		}
 	}
 
-	
 	function takeAction(e){
 		if("Add" == mode){
 			getMouse(e);
@@ -303,26 +283,25 @@ img
 	}
 	
 	floatingMenu.add('floatingbar',  
-	{  
-	// Represents distance from left or right browser window  
-	// border depending upon property used. Only one should be  
-	// specified.  
-	// targetLeft: 0,  
-	targetRight: 10,  
+	{
+		// Represents distance from left or right browser window  
+		// border depending upon property used. Only one should be  
+		// specified.  
+		// targetLeft: 0,  
+		targetRight: 10,  
 
-	// Represents distance from top or bottom browser window  
-	// border depending upon property used. Only one should be  
-	// specified.  
-	targetTop: 10,  
-	// targetBottom: 0,  
+		// Represents distance from top or bottom browser window  
+		// border depending upon property used. Only one should be  
+		// specified.  
+		targetTop: 10,  
+		// targetBottom: 0,  
 
-	// Uncomment one of those if you need centering on  
-	// X- or Y- axis.  
-	// centerX: true,  
-	// centerY: true,  
+		// Uncomment one of those if you need centering on  X- or Y- axis.  
+		// centerX: true,  
+		// centerY: true,  
 
-	// Remove this one if you don't want snap effect  
-	snap: true  
+		// Remove this one if you don't want snap effect  
+		snap: true  
 	});  
 		
 	//Select image
@@ -330,8 +309,7 @@ img
 		$('.selected').removeClass('selected'); // removes the previous selected class
 		$(this).addClass('selected'); // adds the class to the clicked image
 		mode = document.querySelector('.selected').id;
-	});
-		
+	});	
 </script>  
 </body>
 </html>

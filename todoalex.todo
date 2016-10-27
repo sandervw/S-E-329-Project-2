@@ -23,8 +23,6 @@ Add text to boxes
 Save tilearray
 Add pictures
 
-
-
 \#See if we can make an XML type loader for tiles
 	If we do this we could make a GUI where you can drag and drop tiles (and images onto those tiles) to make	
 		a story (draw a line to this tile, label that line with button text, boom it exports to a thingy.)
