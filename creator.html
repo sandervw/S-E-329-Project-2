@@ -119,11 +119,11 @@
 	}	
 	
 	function Box(){
-	this.x = 0;
-	this.y = 0;
-	this.w = 1; 
-	this.h = 1;
-	this.fill = '#444444';
+		this.x = 0;
+		this.y = 0;
+		this.w = 1; 
+		this.h = 1;
+		this.fill = '#444444';
 	}
 	
 	function getMousePos(canvas, evt) {
@@ -189,6 +189,37 @@
 	  context.fillRect(shape.x,shape.y,shape.w,shape.h);
 	}
 	
+	function populateBoxPane(){
+		//Use mySel
+		//TODO
+	}
+	
+	function inspect(e)
+	{
+			getMouse(e);
+			clear(gctx); // clear the ghost canvas from its last use
+			//Is it a box?
+			for (var i = boxes.length-1; i >= 0; i--) {
+				drawshape(gctx, boxes[i], 'black');
+
+				// get image data at the mouse x,y pixel
+				var imageData = gctx.getImageData(mx, my, 1, 1);
+				var index = (mx + my * imageData.width) * 4;
+
+				// if the mouse pixel exists, select and break
+				if (imageData.data[3] > 0) {
+					mySel = boxes[i];
+					mySelIndex = i;
+					clear(gctx);
+					
+					boxpane.hidden = false;
+					populateBoxPane();
+				}
+			}
+			
+			//TODO check if it's a line
+	}
+	
 	function myDown(e){
 	  if(mode == "Mouse")
 	  {
@@ -217,9 +248,12 @@
 			  clear(gctx);
 			  return;
 			}
-		}
+		 }
 		
 		  mySel = null;// havent returned means we have selected nothing
+		  boxpane.hidden = true;
+		  linepane.hidden = true;
+		  
 		  clear(gctx); // clear the ghost canvas for next time
 		  invalidate();// invalidate because we might need the selection border to disappear
 		}
@@ -246,7 +280,7 @@
 	  if (canvasValid == false) {
 			clear(context);
 
-			// Add stuff drawn in backgroudn here:
+			// Add stuff drawn in background here:
 
 			// draw all boxes
 			for (var i = 0; i < boxes.length; i++) {
@@ -269,9 +303,19 @@
 	function checkKey(e) {
 		e = e || window.event;
 
-		//Delete key pressed
-		if(e.keyCode == 46) {
+		//Escape key pressed
+		if(e.keyCode == 27) {
 			if(mySel != null){
+				mySel = null;
+				boxpane.hidden = true;
+				linepane.hidden = true;
+				invalidate();
+			}
+		}
+		
+		//Delete key or backspace pressed when a pane is closed
+		if(e.keyCode == 46 || e.keyCode == 8) {
+			if(mySel != null && boxpane.hidden == false && linepane.hidden == false ){
 				boxes.splice(mySelIndex, 1);
 				mySel = null;
 				invalidate();
@@ -286,30 +330,15 @@
 			var height = 100;
 			addRect(mx - (width / 2), my - (height / 2), width, height, myboxcolor);
 		}
-		else if("Mouse" == mode){
-			
+		else if("Info" == mode){
+			inspect(e);
 		}
 	}
 	
 	floatingMenu.add('floatingbar',  
 	{
-		// Represents distance from left or right browser window  
-		// border depending upon property used. Only one should be  
-		// specified.  
-		// targetLeft: 0,  
 		targetRight: 10,  
-
-		// Represents distance from top or bottom browser window  
-		// border depending upon property used. Only one should be  
-		// specified.  
 		targetTop: 10,  
-		// targetBottom: 0,  
-
-		// Uncomment one of those if you need centering on  X- or Y- axis.  
-		// centerX: true,  
-		// centerY: true,  
-
-		// Remove this one if you don't want snap effect  
 		snap: true  
 	});  
 	
