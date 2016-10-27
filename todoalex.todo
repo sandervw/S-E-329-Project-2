@@ -17,6 +17,9 @@
 Make work with server
 
 GUI loader:
+change infopanel to showInfopanel(obj) and then load the appropriate
+	panel based on the type of obj. Default to calling with mysel
+			Make it so mysel can be line or box, same sel
 Close infopanel when mysel goes null
 Switch to info mode if double click in mouse.
 Info mode should select a box that I click

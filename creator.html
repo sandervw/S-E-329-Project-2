@@ -119,11 +119,17 @@
 	}	
 	
 	function Box(){
+		this.type = "box";
 		this.x = 0;
 		this.y = 0;
 		this.w = 1; 
 		this.h = 1;
 		this.fill = '#444444';
+	}
+	
+	function Line(){
+		this.type = "line";
+		this.text = "";
 	}
 	
 	function getMousePos(canvas, evt) {
@@ -315,7 +321,7 @@
 		
 		//Delete key or backspace pressed when a pane is closed
 		if(e.keyCode == 46 || e.keyCode == 8) {
-			if(mySel != null && boxpane.hidden == false && linepane.hidden == false ){
+			if(mySel != null && boxpane.hidden && linepane.hidden){
 				boxes.splice(mySelIndex, 1);
 				mySel = null;
 				invalidate();
