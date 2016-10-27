@@ -76,7 +76,8 @@ img
 	gctx = ghostcanvas.getContext('2d');
 	canvas.onmousedown = myDown;
 	canvas.onmouseup = myUp;
-	
+	document.onkeydown = checkKey;
+
 	//fixes a problem where double clicking causes text to get selected on the canvas
     canvas.onselectstart = function () { return false; }
 	
@@ -88,11 +89,15 @@ img
 	// make draw() fire every INTERVAL milliseconds.
 	setInterval(draw, INTERVAL);
 	
+	var myboxcolor = '#000000'
+	
 	// The node (if any) being selected.
 	// If in the future we want to select multiple objects, this will get turned into an array
 	var mySel;
+	var mySelIndex;
 	// The selection color and width. Right now we have a red selection with a small width
 	var mySelColor = '#CC0000';
+
 	var mySelWidth = 2;
 	
 	// since we can drag from anywhere in a node
@@ -163,9 +168,6 @@ img
 		boxes.push(rect);
 		invalidate();
 	}
-
-
-	
 	
 	// fixes mouse co-ordinate problems when there's a border or padding
 	// see getMouse for more detail
@@ -210,6 +212,7 @@ img
 			// if the mouse pixel exists, select and break
 			if (imageData.data[3] > 0) {
 			  mySel = boxes[i];
+			  mySelIndex = i;
 			  offsetx = mx - mySel.x;
 			  offsety = my - mySel.y;
 			  mySel.x = mx - offsetx;
@@ -274,13 +277,28 @@ img
 			canvasValid = true;
 		}
 	}
+
+	function checkKey(e) {
+
+		e = e || window.event;
+
+		//Delete key pressed
+		if(e.keyCode == 46) {
+			if(mySel != null){
+				boxes.splice(mySelIndex, 1);
+				mySel = null;
+				invalidate();
+			}
+		}
+	}
+
 	
 	function takeAction(e){
 		if("Add" == mode){
 			getMouse(e);
 			var width = 150;
 			var height = 100;
-			addRect(mx - (width / 2), my - (height / 2), width, height, '#000000');
+			addRect(mx - (width / 2), my - (height / 2), width, height, myboxcolor);
 		}
 	}
 	
