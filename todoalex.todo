@@ -17,6 +17,14 @@
 Make work with server
 
 GUI loader:
+Label one as a start_room
+make a linesel variable and update it appropraitely
+Consider having a popup on the left as like an info pane 
+	that only appears when I click on a tile. 
+	Allows me to set one image, text, isStart, pointval, time (seconds)
+	download a zip, and just keep a path to those images (same directory, just name?)
+	If I click on a line, it has text, and isTimeout
+		if timeout draw it in red, no text
 Make Lines between boxes
 Add text to lines
 Add text to boxes

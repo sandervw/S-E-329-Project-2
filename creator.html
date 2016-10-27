@@ -13,33 +13,13 @@
 <script src="js\json2.js"></script>
 <!-- JQuery UI Stylesheet Import -->
 <link rel="stylesheet" href="js\jquery-ui-1.12.1\jquery-ui.css"/>
+<link rel="stylesheet" href="css\creator.css"/>
 
 <!-- Bootstrap Stylesheet Import -->
 <link rel="stylesheet" href="js\bootstrap-3.3.7-dist\css\bootstrap.css"/>
 <!-- Bootstrap Javascript Import -->
 <script src="js\bootstrap-3.3.7-dist\js\bootstrap.js" ></script>
 <script src="js\floating-1.12.js" ></script>
-
-<style>
-#floatingbar
-{
-position:absolute;  
-width:80px;height:1000px;top:10px;right:10px;  
-background:#FFFFFF;  
-border:2px solid #2266AA;  
-z-index:100;
-}
-
-img
-{
-	display:block;
-	margin-left: auto;
-	margin-right:auto;
-	border:solid 1px black; margin:10px;}
-	.selected{
-		box-shadow:0px 12px 22px 1px #333;
-}
-</style>
 
 </head>
 <body>
@@ -52,10 +32,26 @@ img
 	<div id="floatingbar">
 		<img id="Mouse" src="images\builder\mouseicon.png" height="64" width="64" vspace="10"></img>
 		<img id="Add" src="images\builder\addicon.png" height="64" width="64" vspace="10"></img>
+		<img id="Info" src="images\builder\infoicon.png" height="64" width="64" vspace="10"></img>
 		<img id="Lines" src="images\builder\linesicon.png" height="64" width="64" vspace="10"></img>
 		<img id="Save" src="images\builder\saveicon.png" height="64" width="64" vspace="10"></img>
 	</div>
-
+	
+	<div id="infopanebox">
+		<form id="boxpane">
+			<Label>Is start?</label> <input type="checkbox" name="is_start" value="Is start?"></input><br>
+			<Label>Tile text</label><input type="text"></input>
+			<Label>Point value</label><input type="number"></input>
+		</form>
+	</div>
+	
+	<div id="infopaneline">
+		<form id="lineform">
+			<Label>Is timeout?</label> <input type="checkbox" name="is_timeout" value="Is timeout?"></input><br>
+			<Label>Button text</label><input type="text"></input>
+		</form>
+	</div>
+	
 	<script type="text/javascript">  
 	var mode;
 	var boxes = [];
@@ -75,7 +71,17 @@ img
 	canvas.onmousedown = myDown;
 	canvas.onmouseup = myUp;
 	document.onkeydown = checkKey;
+	
+	var boxpane = document.getElementById('infopanebox');
+	var linepane = document.getElementById('infopaneline');
 
+	boxpane.hidden = true;
+	linepane.hidden = true;
+	
+	function reset(form){
+		document.getElementById(form).reset();
+	}
+	
 	//fixes a problem where double clicking causes text to get selected on the canvas
     canvas.onselectstart = function () { return false; }
 	
@@ -280,6 +286,9 @@ img
 			var height = 100;
 			addRect(mx - (width / 2), my - (height / 2), width, height, myboxcolor);
 		}
+		else if("Mouse" == mode){
+			
+		}
 	}
 	
 	floatingMenu.add('floatingbar',  
@@ -303,6 +312,20 @@ img
 		// Remove this one if you don't want snap effect  
 		snap: true  
 	});  
+	
+	floatingMenu.add('infopanebox',
+	{
+		targetLeft: 10,
+		targetTop: 10,
+		snap: true
+	});
+	
+	floatingMenu.add('infopaneline',
+	{
+		targetLeft: 10,
+		targetTop: 10,
+		snap: true
+	});
 		
 	//Select image
 	$('img').click(function(){
