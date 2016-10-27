@@ -23,10 +23,9 @@ change infopanel to showInfopanel(obj) and then load the appropriate
 Close infopanel when mysel goes null
 Switch to info mode if double click in mouse.
 Info mode should select a box that I click
-Fix delete functionality. Sigh.
+\#Fix delete functionality. Sigh.
 Todo: whenever mysel changes, update the appropraite panel.
 Label one as a start_room--and update this label
-make a linesel variable and update it appropraitely
 Consider having a popup on the left as like an info pane 
 	that only appears when I click on a tile. 
 	Allows me to set one image, text, isStart, pointval, time (seconds)
