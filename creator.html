@@ -20,6 +20,7 @@
 <!-- Bootstrap Javascript Import -->
 <script src="js\bootstrap-3.3.7-dist\js\bootstrap.js" ></script>
 <script src="js\floating-1.12.js" ></script>
+<script src="js\simulate.js" ></script>
 
 </head>
 <body>
@@ -54,6 +55,7 @@
 	
 	<script type="text/javascript">  
 	var mode;
+	var roomnum = 1;
 	var boxes = [];
 	var isDrag = false;
 	var canvas = document.getElementById("canvas");
@@ -95,7 +97,6 @@
 	var myboxcolor = '#000000'
 	
 	// The node (if any) being selected.
-	// If in the future we want to select multiple objects, this will get turned into an array
 	var mySel;
 	var mySelIndex;
 	// The selection color and width. Right now we have a red selection with a small width
@@ -120,16 +121,35 @@
 	
 	function Box(){
 		this.type = "box";
+		this.name = "room" & roomnum;
 		this.x = 0;
 		this.y = 0;
 		this.w = 1; 
 		this.h = 1;
+		this.midx = this.x + this.w / 2;
+		this.midy = this.y + this.h / 2;		
 		this.fill = '#444444';
+		this.lines = [];
+		
+		roomnum = roomnum + 1;
+	}
+	
+		function addRect(x, y, w, h, fill) {
+		var rect = new Box;
+		rect.x = x;
+		rect.y = y;
+		rect.w = w
+		rect.h = h;
+		rect.midx = this.x + this.w / 2;
+		rect.midy = this.y + this.h / 2;boxes.push(rect);
+		invalidate();
 	}
 	
 	function Line(){
 		this.type = "line";
 		this.text = "";
+		this.toname=""
+		this.istimeout = false;
 	}
 	
 	function getMousePos(canvas, evt) {
@@ -163,14 +183,13 @@
 		my = e.pageY - offsetY
 	}
 
-	function addRect(x, y, w, h, fill) {
-		var rect = new Box;
-		rect.x = x;
-		rect.y = y;
-		rect.w = w
-		rect.h = h;
-		boxes.push(rect);
-		invalidate();
+	function findBoxByName(name){
+		for (var i = boxes.length-1; i >= 0; i--) {
+			if(name == boxes[i].name){
+				return boxes[i];
+			}
+		}
+		return null;
 	}
 	
 	// fixes mouse co-ordinate problems when there's a border or padding
@@ -227,8 +246,7 @@
 	}
 	
 	function myDown(e){
-	  if(mode == "Mouse")
-	  {
+	  if(mode == "Mouse"){
 		  getMouse(e);
 		  clear(gctx); // clear the ghost canvas from its last use
 
@@ -253,6 +271,11 @@
 			  invalidate();
 			  clear(gctx);
 			  return;
+			}
+			//Check if it exists as a line.
+			else{
+				clear(gctx);
+				
 			}
 		 }
 		
@@ -330,7 +353,11 @@
 	}
 
 	function takeAction(e){
-		if("Add" == mode){
+		if("Mouse" == mode){
+			canvas.onmousedown = myDown;
+			canvas.onmouseup = myUp;
+		}
+		else if("Add" == mode){
 			getMouse(e);
 			var width = 150;
 			var height = 100;
@@ -339,6 +366,63 @@
 		else if("Info" == mode){
 			inspect(e);
 		}
+		else if("Lines" == mode){
+			var started = false;
+			var x0, y0;
+			
+			 // This is called when you start holding down the mouse button.
+			// This starts the pencil drawing.
+			canvas.onmousedown = function (e) {
+				getMouse(e);
+				x0 = mx;
+				y0 = my;
+				started = true;
+			};
+
+			canvas.onmousemove = function (e) {
+			if (!started) {
+				return;
+			  }
+			  if (started) {
+			  context.clearRect(0, 0, canvas.width, canvas.height);
+				//invalidate();
+				
+				// draw all boxes
+			for (var i = 0; i < boxes.length; i++) {
+				drawshape(context, boxes[i], boxes[i].fill);
+			}
+
+			// draw selection
+			// right now this is just a stroke along the edge of the selected box
+			if (mySel != null) {
+			  context.strokeStyle = mySelColor;
+			  context.lineWidth = mySelWidth;
+			  context.strokeRect(mySel.x,mySel.y,mySel.w,mySel.h);
+			}
+				
+				
+				getMouse(e);
+				
+				context.beginPath();
+				context.moveTo(x0, y0);
+				context.lineTo(mx, my);
+				context.strokeStyle = '#FF00FF';
+				context.lineWidth = 1;
+				context.stroke();		
+				
+				context.closePath();
+			 }
+			};
+
+			// This is called when you release the mouse button.
+			canvas.onmouseup = function (e) {
+				 if (started) {
+					started = false;		
+				}
+				invalidate();
+			}
+		}
+	
 	}
 	
 	floatingMenu.add('floatingbar',  
@@ -367,6 +451,9 @@
 		$('.selected').removeClass('selected'); // removes the previous selected class
 		$(this).addClass('selected'); // adds the class to the clicked image
 		mode = document.querySelector('.selected').id;
+		if(mode != "Add"){//Onclick behavior isn't set until the first click. This initalizes onclick to circumvent this.
+			simulate(document.getElementById("canvas"), "click");
+		}
 	});	
 </script>  
 </body>
