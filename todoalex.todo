@@ -16,24 +16,25 @@
 \#Change buttons to have text`
 Make work with server
 
-Make just_draw its own function
-When we hit save, find the start_box and replace all instances of that name with start_room
+\#Make just_draw its own function
+\#Fix delete functionality. Sigh.
+\#Make Lines between boxes
+
 change infopanel to showInfopanel(obj) and then load the appropriate
 	panel based on the type of obj. Default to calling with mysel
 			Make it so mysel can be line or box, same sel
 Close infopanel when mysel goes null
 Switch to info mode if double click in mouse.
 Info mode should select a box that I click
-\#Fix delete functionality. Sigh.
 Todo: whenever mysel changes, update the appropraite panel.
-Label one as a start_room--and update this label
+
+When we hit save, find the start_box and replace all instances of that name with start_room
 Consider having a popup on the left as like an info pane 
 	that only appears when I click on a tile. 
 	Allows me to set one image, text, isStart, pointval, time (seconds)
 	download a zip, and just keep a path to those images (same directory, just name?)
 	If I click on a line, it has text, and isTimeout
 		if timeout draw it in red, no text
-\#Make Lines between boxes
 Make lines know what box I start, end in, and update appropraitely.
 Add text to lines
 Add text to boxes

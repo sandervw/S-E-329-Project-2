@@ -37,18 +37,16 @@
 	</div>
 	
 	<div id="infopanebox">
-		<form id="boxpane">
-			<Label>Is start?</label> <input type="checkbox" name="is_start" value="Is start?"></input><br>
-			<Label>Tile text</label><input type="text"></input>
-			<Label>Point value</label><input type="number"></input>
-		</form>
+			<Label>Is start?</label> <input id="startbox" type="checkbox" name="is_start" value="Is start?"></input><br>
+			<Label>Tile text</label><input id="textbox" type="text"></input>
+			<Label>Point value</label><input id="pointvalbox" type="number"></input>
+			<Label>Time (seconds)</label><input id="timebox" type="number"></input>
+			<Label>Image</label><button id="imagebox2" onclick="alert('hit')"></button>
 	</div>
 	
 	<div id="infopaneline">
-		<form id="lineform">
 			<Label>Is timeout?</label> <input type="checkbox" name="is_timeout" value="Is timeout?"></input><br>
 			<Label>Button text</label><input type="text"></input>
-		</form>
 	</div>
 	
 	<script type="text/javascript">  
@@ -217,27 +215,34 @@
 		//TODO
 	}
 	
+	//Also sets myself
+	function isinbox(){
+		clear(gctx); // clear the ghost canvas from its last use
+		//Is it a box?
+		for (var i = boxes.length-1; i >= 0; i--) {
+			drawshape(gctx, boxes[i], 'black');
+
+			// get image data at the mouse x,y pixel
+			var imageData = gctx.getImageData(mx, my, 1, 1);
+			var index = (mx + my * imageData.width) * 4;
+
+			// if the mouse pixel exists
+			if (imageData.data[3] > 0) {
+				mySel = boxes[i];
+				mySelIndex = i;
+				clear(gctx);
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	function inspect(e)
 	{
 			getMouse(e);
-			clear(gctx); // clear the ghost canvas from its last use
-			//Is it a box?
-			for (var i = boxes.length-1; i >= 0; i--) {
-				drawshape(gctx, boxes[i], 'black');
-
-				// get image data at the mouse x,y pixel
-				var imageData = gctx.getImageData(mx, my, 1, 1);
-				var index = (mx + my * imageData.width) * 4;
-
-				// if the mouse pixel exists, select and break
-				if (imageData.data[3] > 0) {
-					mySel = boxes[i];
-					mySelIndex = i;
-					clear(gctx);
-					
-					boxpane.hidden = false;
-					populateBoxPane();
-				}
+			if(isinbox()){
+				boxpane.hidden = false;
+				populateBoxPane();
 			}
 			
 			//TODO check if it's a line
@@ -246,20 +251,7 @@
 	function myDown(e){
 	  if(mode == "Mouse"){
 		  getMouse(e);
-		  clear(gctx); // clear the ghost canvas from its last use
-
-		  for (var i = boxes.length-1; i >= 0; i--) {
-			// draw shape onto ghost context
-			drawshape(gctx, boxes[i], 'black');
-
-			// get image data at the mouse x,y pixel
-			var imageData = gctx.getImageData(mx, my, 1, 1);
-			var index = (mx + my * imageData.width) * 4;
-
-			// if the mouse pixel exists, select and break
-			if (imageData.data[3] > 0) {
-			  mySel = boxes[i];
-			  mySelIndex = i;
+		  if(isinbox()){
 			  offsetx = mx - mySel.x;
 			  offsety = my - mySel.y;
 			  mySel.x = mx - offsetx;
@@ -267,22 +259,18 @@
 			  isDrag = true;
 			  canvas.onmousemove = myMove;
 			  invalidate();
-			  clear(gctx);
 			  return;
 			}
 			//Check if it exists as a line.
 			else{
 				clear(gctx);
-				
 			}
-		 }
-		
-		  mySel = null;// havent returned means we have selected nothing
-		  boxpane.hidden = true;
-		  linepane.hidden = true;
-		  
-		  clear(gctx); // clear the ghost canvas for next time
-		  invalidate();// invalidate because we might need the selection border to disappear
+			mySel = null;// havent returned means we have selected nothing
+			boxpane.hidden = true;
+			linepane.hidden = true;
+
+			clear(gctx); // clear the ghost canvas for next time
+			invalidate();// invalidate because we might need the selection border to disappear
 		}
 	}
 
@@ -300,15 +288,9 @@
 	  isDrag = false;
 	  canvas.onmousemove = null;
 	}
-		
-	// While draw is called as often as the INTERVAL variable demands,
-	// It only ever does something if the canvas gets invalidated by our code
-	function draw() {
-	  if (canvasValid == false) {
-			clear(context);
-
-			// Add stuff drawn in background here:
-
+	
+	
+	function justDraw(){
 			// draw all boxes
 			for (var i = 0; i < boxes.length; i++) {
 				drawshape(context, boxes[i], boxes[i].fill);
@@ -321,6 +303,17 @@
 			  context.lineWidth = mySelWidth;
 			  context.strokeRect(mySel.x,mySel.y,mySel.w,mySel.h);
 			}
+	}
+		
+	// While draw is called as often as the INTERVAL variable demands,
+	// It only ever does something if the canvas gets invalidated by our code
+	function draw() {
+	  if (canvasValid == false) {
+			clear(context);
+
+			// Add stuff drawn in background here:
+
+			justDraw();
 
 			// Add stuff drawn on top here
 			canvasValid = true;
@@ -388,18 +381,7 @@
 			  context.clearRect(0, 0, canvas.width, canvas.height);
 				//invalidate();
 				
-				// draw all boxes
-			for (var i = 0; i < boxes.length; i++) {
-				drawshape(context, boxes[i], boxes[i].fill);
-			}
-
-			// draw selection
-			// right now this is just a stroke along the edge of the selected box
-			if (mySel != null) {
-			  context.strokeStyle = mySelColor;
-			  context.lineWidth = mySelWidth;
-			  context.strokeRect(mySel.x,mySel.y,mySel.w,mySel.h);
-			}
+				justDraw()
 				
 				getMouse(e);
 				
