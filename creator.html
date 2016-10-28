@@ -20,8 +20,6 @@
 <!-- Bootstrap Javascript Import -->
 <script src="js\bootstrap-3.3.7-dist\js\bootstrap.js" ></script>
 <script src="js\floating-1.12.js" ></script>
-<script src="js\simulate.js" ></script>
-
 </head>
 <body>
 		<div class="row">
@@ -353,11 +351,7 @@
 	}
 
 	function takeAction(e){
-		if("Mouse" == mode){
-			canvas.onmousedown = myDown;
-			canvas.onmouseup = myUp;
-		}
-		else if("Add" == mode){
+		if("Add" == mode){
 			getMouse(e);
 			var width = 150;
 			var height = 100;
@@ -365,6 +359,13 @@
 		}
 		else if("Info" == mode){
 			inspect(e);
+		}
+	}
+	
+	function init_mode(){
+		if("Mouse" == mode){
+			canvas.onmousedown = myDown;
+			canvas.onmouseup = myUp;
 		}
 		else if("Lines" == mode){
 			var started = false;
@@ -421,7 +422,6 @@
 				invalidate();
 			}
 		}
-	
 	}
 	
 	floatingMenu.add('floatingbar',  
@@ -450,9 +450,7 @@
 		$('.selected').removeClass('selected'); // removes the previous selected class
 		$(this).addClass('selected'); // adds the class to the clicked image
 		mode = document.querySelector('.selected').id;
-		if(mode != "Add"){//Onclick behavior isn't set until the first click. This initalizes onclick to circumvent this. This is *not* elegant; it relies on 60 lines of JS (simulate.js) that is only used to eliminate one click. An elegant fix would be to set initalize in an init funciton, rather than on the first click.
-			simulate(document.getElementById("canvas"), "click");
-		}
+		init_mode();
 	});	
 </script>  
 </body>

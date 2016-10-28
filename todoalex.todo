@@ -16,6 +16,7 @@
 \#Change buttons to have text`
 Make work with server
 
+Make just_draw its own function
 When we hit save, find the start_box and replace all instances of that name with start_room
 change infopanel to showInfopanel(obj) and then load the appropriate
 	panel based on the type of obj. Default to calling with mysel
