@@ -15,6 +15,7 @@
 \#Change global array to a global map for easier insertion
 \#Change buttons to have text`
 Make work with server
+fix save/load UI (disappearing elements, clicking start first)
 
 \#Make just_draw its own function
 \#Fix delete functionality. Sigh.
@@ -24,27 +25,26 @@ Make work with server
 \#biggest thing on todo: make the line inspector work with lines
 \#and make the div switch seamlessly between the two based on what's click (if I'm in line and I switch to box, for example)
 Deal with duplicate arrows draw in opposite direction (like if I want "go back"). Can we do an offset?
-change infopanel to showInfopanel(obj) and then load the appropriate
-	panel based on the type of obj. Default to calling with mysel
-			Make it so mysel can be line or box, same sel
+\#change infopanel to showInfopanel(obj) and then load the appropriate
+\#	panel based on the type of obj. Default to calling with mysel
+\#			Make it so mysel can be line or box, same sel
 \#Close infopanel when mysel goes null
 Switch to info mode if double click in mouse.
-Info mode should select a box that I click
-Todo: whenever mysel changes, update the appropraite panel.
+\#Info mode should select a box that I click
+\#Todo: whenever mysel changes, update the appropraite panel.
 
 When we hit save, find the start_box and replace all instances of that name with start_room
 \#Consider having a popup on the left as like an info pane 
 \#	that only appears when I click on a tile. 
-	Allows me to set one image, text, isStart, pointval, time (seconds)
+\#	Allows me to set one image, text, isStart, pointval, time (seconds)
+	add image support to infobox
 	download a zip, and just keep a path to those images (same directory, just name?)
 \#	If I click on a line, it has text, and isTimeout
 \#		if timeout draw it in red, no text
-Make lines know what box I start, end in, and update appropraitely.
-Add text to lines
-Add text to boxes
+\#Make lines know what box I start, end in, and update appropraitely.
+\#Add text to lines
+\#Add text to boxes
 Save tilearray
-Add pictures
-fix save/load UI (disappearing elements, clicking start first)
 
 \#See if we can make an XML type loader for tiles
 	If we do this we could make a GUI where you can drag and drop tiles (and images onto those tiles) to make	
