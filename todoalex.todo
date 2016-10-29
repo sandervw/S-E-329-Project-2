@@ -21,6 +21,9 @@ fix save/load UI (disappearing elements, clicking start first)
 \#Fix delete functionality. Sigh.
 \#Make Lines between boxes
 
+
+implement isFinal imgpath and expirename for boxes
+
 \#Update box pos when box moves
 \#biggest thing on todo: make the line inspector work with lines
 \#and make the div switch seamlessly between the two based on what's click (if I'm in line and I switch to box, for example)
