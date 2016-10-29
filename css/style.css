@@ -219,3 +219,8 @@ margin-left:-202px;
     font-family: arcadeClassic;
     src: url('ARCADECLASSIC.TTF');
 }
+
+@font-face {
+    font-family: matrixFont;
+    src: url('Matrix.ttf');
+}

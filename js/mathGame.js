@@ -49,20 +49,24 @@ var mathGame = {
 		mathGame.playerImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Player.png';
 		mathGame.enemy1Image = new Image();
 		mathGame.enemy1Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy1.png';
+		mathGame.enemy1Name = 'a  goblin';
 		mathGame.enemy2Image = new Image();
 		mathGame.enemy2Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy2.png';
+		mathGame.enemy2Name = 'a  frost  giant';
 		mathGame.enemy3Image = new Image();
 		mathGame.enemy3Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy3.png';
+		mathGame.enemy3Name = 'a  dragon';
 		mathGame.squareImage = new Image();
 		mathGame.squareImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Square.png';
 		mathGame.attackImage = new Image();
 		mathGame.attackImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Attack.png';
+		mathGame.gameFont = 'arcadeClassic';
 		
 		mathGame.menuAudio.play();
 		mathGame.canvas = document.getElementsByTagName('canvas')[0];
 		InputManager.connect(document, mathGame.canvas);
-		mathGame.mainMenu = new Menu(["Start Game","Main Menu"],375, 50, 400, 0);
-		mathGame.mainGame = new Game(0, 1, 0, 0, '+', 0);
+		mathGame.mainMenu = new Menu(["Start Game","Main Menu", "Change Theme"],375, 50, 400, 0);
+		mathGame.mainGame = new Game(0, 1, 0, 0, '+', 0, 40);
 		mathGame.state = 0;
 		mathGame.shouldRender = 0;
 		mathGame.shouldUpdate = 1;
@@ -110,12 +114,12 @@ var mathGame = {
 	},
 		
 	update: function() {
-		if(mathGame.state == 0 || mathGame.state == 1 || mathGame.state == 3 || mathGame.state == 4) mathGame.mainMenu.Update();
+		if(mathGame.state == 0 || mathGame.state == 1 || mathGame.state == 3 || mathGame.state == 4 || mathGame.state == 5) mathGame.mainMenu.Update();
 		else if(mathGame.state == 2) mathGame.mainGame.Update();
 	},
 
 	render: function() {
-		if(mathGame.state == 0 || mathGame.state == 1){
+		if(mathGame.state == 0 || mathGame.state == 1 || mathGame.state == 5){
 			mathGame.ctx.clearRect(0, 0, mathGame.WIDTH, mathGame.HEIGHT);
 			mathGame.ctx.drawImage(mathGame.menuBackground,0,0, mathGame.menuBackground.width, mathGame.menuBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT); 
 			mathGame.mainMenu.Render();
@@ -205,9 +209,9 @@ Menu.prototype.Render = function()
 
 	mathGame.ctx.textAlign = "center";
 	mathGame.ctx.fillStyle = "Green";
-	mathGame.ctx.font = 70 + "px arcadeClassic";
+	mathGame.ctx.font = 70 + "px " + mathGame.gameFont;
 	mathGame.ctx.fillText('Math4Fun', mathGame.WIDTH/2, 100);
-	mathGame.ctx.font = 60 + "px arcadeClassic";
+	mathGame.ctx.font = 60 + "px " + mathGame.gameFont;
 	mathGame.ctx.fillText('The  Wacky  New  Math  Game!', mathGame.WIDTH/2, 160);
 	mathGame.ctx.fillStyle = "White";
 
@@ -221,7 +225,7 @@ Menu.prototype.Render = function()
 			mathGame.ctx.fillStyle = "Green";
 			size = this.fontSize;
 		}
-		mathGame.ctx.font = size.toString() + "px arcadeClassic";
+		mathGame.ctx.font = size.toString() + "px " + mathGame.gameFont;
 		y += this.fontSize;
 		mathGame.ctx.fillText(this.items[i], mathGame.WIDTH/2, y);
 		mathGame.ctx.fillStyle = "White";
@@ -265,6 +269,10 @@ function setMenuState(newState){
 		else if(newState == 1){
 			window.location.reload();
 		}
+		else if(newState == 2){
+			mathGame.mainMenu.items = ['Arcade  Classic', 'Matrix', 'Lord of the Rings', 'Back'];
+			mathGame.state = 5;
+		}
 	}
 	else if (mathGame.state == 1){
 		if(newState == 0){
@@ -278,7 +286,8 @@ function setMenuState(newState){
 			mathGame.menuAudio.pause();
 			mathGame.menuAudio.currentTime = 0;
 			mathGame.gameAudio.play();
-			mathGame.mainGame = new Game(0, 2, 0, 0, '+', 0);
+			mathGame.mainGame.difficulty = 2;
+			mathGame.mainGame.message = 'Oh  no,  ' + mathGame.enemy2Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 			mathGame.state = 2;
 			mathGame.shouldRender = 1;
 		}
@@ -286,12 +295,13 @@ function setMenuState(newState){
 			mathGame.menuAudio.pause();
 			mathGame.menuAudio.currentTime = 0;
 			mathGame.gameAudio.play();
-			mathGame.mainGame = new Game(0, 3, 0, 0, '+', 0);
+			mathGame.mainGame.difficulty = 3;
+			mathGame.mainGame.message = 'Oh  no,  ' + mathGame.enemy3Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 			mathGame.state = 2;
 			mathGame.shouldRender = 1;
 		}
 		else if(newState == 3){
-			mathGame.mainMenu.items = ['Start Game', 'Main Menu'];
+			mathGame.mainMenu.items = ['Start Game', 'Main Menu', 'Change Theme'];
 			mathGame.state = 0;
 		}
 	}
@@ -301,17 +311,17 @@ function setMenuState(newState){
 			mathGame.gameAudio.currentTime = 0;
 			mathGame.gameAudio.play();
 			if(mathGame.mainGame.difficulty == 1){
-				mathGame.mainGame.message = 'Oh  no,  a  goblin  has  appeared!  Solve  the  problems  to  strike  it!';
+				mathGame.mainGame.message = 'Oh  no,  ' + mathGame.enemy1Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 			}
 			else if(mathGame.mainGame.difficulty == 2){
-				mathGame.mainGame.message = 'Oh  no,  a  frost  giant  has  appeared!  Solve  the  problems  to  strike  it!';
+				mathGame.mainGame.message = 'Oh  no,  ' + mathGame.enemy2Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 			} 
 			else if(mathGame.mainGame.difficulty == 3){
-				mathGame.mainGame.message = 'Oh  no,  a  dragon  has  appeared!  Solve  the  problems  to  strike  it!';
+				mathGame.mainGame.message = 'Oh  no,  ' + mathGame.enemy3Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 			}
 			mathGame.mainGame.gameState = 0;
-			mathGame.mainGame.monsterHP = 3;
-			mathGame.mainGame.playerHP = 3;
+			mathGame.mainGame.monsterHP = 7;
+			mathGame.mainGame.playerHP = 7;
 			mathGame.state = 2;
 			mathGame.shouldRender = 1;
 		}
@@ -340,9 +350,86 @@ function setMenuState(newState){
 			window.location.reload();
 		}
 	}
+	else if (mathGame.state == 5){
+		if(newState == 0){
+			mathGame.ResourcePack = 'ArcadeClassic';
+			mathGame.menuAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.gameFont = 'arcadeClassic';
+			mathGame.menuAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/MenuMusic.mp3');
+			mathGame.gameAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/FightMusic.mp3');
+			mathGame.attackAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/Attack.mp3');
+			mathGame.menuBackground = new Image();
+			mathGame.menuBackground.src = 'MathGameResources/' + mathGame.ResourcePack + '/MenuBackground.png';
+			mathGame.gameBackground = new Image();
+			mathGame.gameBackground.src = 'MathGameResources/' + mathGame.ResourcePack + '/GameBackground.png';
+			mathGame.playerImage = new Image();
+			mathGame.playerImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Player.png';
+			mathGame.enemy1Image = new Image();
+			mathGame.enemy1Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy1.png';
+			mathGame.enemy1Name = 'a  goblin';
+			mathGame.enemy2Image = new Image();
+			mathGame.enemy2Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy2.png';
+			mathGame.enemy2Name = 'a  frost  giant';
+			mathGame.enemy3Image = new Image();
+			mathGame.enemy3Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy3.png';
+			mathGame.enemy3Name = 'a  dragon';
+			mathGame.squareImage = new Image();
+			mathGame.squareImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Square.png';
+			mathGame.attackImage = new Image();
+			mathGame.attackImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Attack.png';
+			mathGame.mainMenu.items = ['Start Game', 'Main Menu', 'Change Theme'];
+			mathGame.mainGame = new Game(0, 1, 0, 0, '+', 0, 40);
+			mathGame.menuAudio.play();
+			mathGame.state = 0;
+		}
+		else if(newState == 1){
+			mathGame.ResourcePack = 'Matrix';
+			mathGame.menuAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.gameFont = 'matrixFont';
+			mathGame.menuAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/MenuMusic.mp3');
+			mathGame.gameAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/FightMusic.mp3');
+			mathGame.attackAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/Attack.mp3');
+			mathGame.menuBackground = new Image();
+			mathGame.menuBackground.src = 'MathGameResources/' + mathGame.ResourcePack + '/MenuBackground.png';
+			mathGame.gameBackground = new Image();
+			mathGame.gameBackground.src = 'MathGameResources/' + mathGame.ResourcePack + '/GameBackground.png';
+			mathGame.playerImage = new Image();
+			mathGame.playerImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Player.png';
+			mathGame.enemy1Image = new Image();
+			mathGame.enemy1Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy1.png';
+			mathGame.enemy1Name = 'an  agent';
+			mathGame.enemy2Image = new Image();
+			mathGame.enemy2Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy2.png';
+			mathGame.enemy2Name = 'a  group  of  agents';
+			mathGame.enemy3Image = new Image();
+			mathGame.enemy3Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy3.png';
+			mathGame.enemy3Name = 'a  sentinel';
+			mathGame.squareImage = new Image();
+			mathGame.squareImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Square.png';
+			mathGame.attackImage = new Image();
+			mathGame.attackImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Attack.png';
+			mathGame.mainMenu.items = ['Start Game', 'Main Menu', 'Change Theme'];
+			mathGame.mainGame = new Game(0, 1, 0, 0, '+', 0, 26);
+			mathGame.menuAudio.play();
+			mathGame.state = 0;
+		}
+		else if (newState == 2)
+		{
+			
+		}
+		else if (newState == 3){
+			mathGame.mainMenu.items = ['Start Game', 'Main Menu', 'Change Theme'];
+			mathGame.menuAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.menuAudio.play();
+			mathGame.state = 0;
+		}
+	}
 }
 
-Game = function (gameState, difficulty, x, y, operation, answer){
+Game = function (gameState, difficulty, x, y, operation, answer, fontSize){
 
 	this.highScore = 0;
 	this.gameState = gameState;
@@ -354,15 +441,16 @@ Game = function (gameState, difficulty, x, y, operation, answer){
 	this.operation = operation;
 	this.answer = answer;
 	this.input = 'Hit  Space  to  Continue...';
+	this.fontSize = fontSize;
 	
 	if(difficulty == 1){
-		this.message = 'Oh  no,  a  goblin  has  appeared!  Solve  the  problems  to  strike  it!';
+		this.message = 'Oh  no,  ' + mathGame.enemy1Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 	}
 	else if(difficulty == 2){
-		this.message = 'Oh  no,  a  frost  giant  has  appeared!  Solve  the  problems  to  strike  it!';
+		this.message = 'Oh  no,  ' + mathGame.enemy2Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 	}
 	else if(difficulty == 3){
-		this.message = 'Oh  no,  a  dragon  has  appeared!  Solve  the  problems  to  strike  it!';
+		this.message = 'Oh  no,  ' + mathGame.enemy3Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 	}
 	
 }
@@ -376,7 +464,7 @@ Game.prototype.Render = function(){
 	mathGame.ctx.textAlign = "center";
 	mathGame.ctx.fillStyle = "Black";
 	
-	mathGame.ctx.font = "40px arcadeClassic";
+	mathGame.ctx.font = this.fontSize + "px " + mathGame.gameFont;
 	
 	if(this.gameState == 0){
 		mathGame.ctx.fillText(this.message, mathGame.WIDTH/2, mathGame.HEIGHT-140);
