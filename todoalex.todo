@@ -21,11 +21,13 @@ Make work with server
 \#Make Lines between boxes
 
 \#Update box pos when box moves
+\#biggest thing on todo: make the line inspector work with lines
+\#and make the div switch seamlessly between the two based on what's click (if I'm in line and I switch to box, for example)
 Deal with duplicate arrows draw in opposite direction (like if I want "go back"). Can we do an offset?
 change infopanel to showInfopanel(obj) and then load the appropriate
 	panel based on the type of obj. Default to calling with mysel
 			Make it so mysel can be line or box, same sel
-Close infopanel when mysel goes null
+\#Close infopanel when mysel goes null
 Switch to info mode if double click in mouse.
 Info mode should select a box that I click
 Todo: whenever mysel changes, update the appropraite panel.
@@ -36,7 +38,7 @@ When we hit save, find the start_box and replace all instances of that name with
 	Allows me to set one image, text, isStart, pointval, time (seconds)
 	download a zip, and just keep a path to those images (same directory, just name?)
 \#	If I click on a line, it has text, and isTimeout
-		if timeout draw it in red, no text
+\#		if timeout draw it in red, no text
 Make lines know what box I start, end in, and update appropraitely.
 Add text to lines
 Add text to boxes

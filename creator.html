@@ -241,6 +241,7 @@
 	
 	//Certainly a way to do this more efficiently/less duplicate dcode
 	function populateFromBoxPane(){
+	console.log(mySel);
 		if(mySel == null){
 				return;
 			}
@@ -250,7 +251,8 @@
 				 mySel.points = pointbox.value;
 				 mySel.time = timebox.value;
 			}else if(mySel.type == "line"){
-				//TODO line
+				mySel.istimeout = istimeoutbox.checked;
+				mySel.text = btntxt2.value;	
 			}
 	
 	}
@@ -267,9 +269,8 @@
 			timebox.value = mySel.time;
 			
 		}else if(mySel.type == "line"){
-			
-			
-			//TODO line
+			istimeoutbox.checked = mySel.istimeout;
+			btntxt2.value = mySel.text;
 		}
 	}
 	
@@ -289,7 +290,8 @@
 				mySel = boxes[i];
 				//Clear pane
 				for(var qq = 0; qq < boxvars.length; qq++){
-					boxvars[qq].value = 0;
+					boxvars[qq].value = "";
+					boxvars[qq].checked = false
 				}
 				mySelIndex = i;
 				clear(gctx);
@@ -324,7 +326,7 @@
 
 					// if the mouse pixel exists
 					if (imageData.data[3] > 0) {
-						mySel = boxes[i];
+						mySel = boxes[i].lines[j];
 						mySelIndex = i;
 						clear(gctx);
 						return true;
@@ -338,11 +340,14 @@
 	{
 			getMouse(e);
 			if(isinbox(mx, my)){
+				linepane.hidden = true;
 				boxpane.hidden = false;
 				populateBoxPane();
 			}
 			else if(isinline(mx, my)){
+				boxpane.hidden = true;
 				linepane.hidden = false;
+				populateBoxPane();
 			}
 			
 	}
