@@ -45,8 +45,8 @@
 	</div>
 	
 	<div id="infopaneline">
-			<Label>Is timeout?</label> <input type="checkbox" name="is_timeout" value="Is timeout?"></input><br>
-			<Label>Button text</label><input type="text"></input>
+			<Label>Is timeout?</label> <input type="checkbox" id="is_timeout" name="is_timeout" value="Is timeout?"></input><br>
+			<Label>Button text</label><input id="nexttxt" type="text"></input>
 	</div>
 	
 	<script type="text/javascript">  
@@ -70,15 +70,39 @@
 	canvas.onmouseup = myUp;
 	document.onkeydown = checkKey;
 	
+	var boxvars = [];//Used to clear vars between clicks.
+	
+	//Box
+	var sbox = document.getElementById("startbox");
+	sbox.addEventListener("change", populateFromBoxPane);
+	boxvars.push(sbox);
+	var scenbox = document.getElementById("textbox");
+	boxvars.push(scenbox)
+	scenbox.addEventListener("change", populateFromBoxPane);
+	var pointbox = document.getElementById("pointvalbox");
+	pointbox.addEventListener("change", populateFromBoxPane);
+	boxvars.push(pointbox);
+	var timebox = document.getElementById("timebox");
+	timebox.addEventListener("change", populateFromBoxPane);
+	boxvars.push(timebox);
+	var imgbtn2 = document.getElementById("imagebox2");
+	imgbtn2.addEventListener("change", populateFromBoxPane);
+	boxvars.push(imgbtn2);
+	
+	
+	//Line
+	var istimeoutbox = document.getElementById("is_timeout");
+	istimeoutbox.addEventListener("change", populateFromBoxPane);
+	boxvars.push(istimeoutbox);
+	var btntxt2 = document.getElementById("nexttxt");
+	btntxt2.addEventListener("change", populateFromBoxPane);
+	boxvars.push(btntxt2);
+	
 	var boxpane = document.getElementById('infopanebox');
 	var linepane = document.getElementById('infopaneline');
 
 	boxpane.hidden = true;
 	linepane.hidden = true;
-	
-	function reset(form){
-		document.getElementById(form).reset();
-	}
 	
 	//fixes a problem where double clicking causes text to get selected on the canvas
     canvas.onselectstart = function () { return false; }
@@ -117,7 +141,11 @@
 	
 	function Box(){
 		this.type = "box";
-		this.name = "room" & roomnum;
+		this.name = "room" + roomnum;
+		this.scentext = "";
+		this.points = 0;
+		this.time = 0;
+		this.startroom = false;
 		this.x = 0;
 		this.y = 0;
 		this.w = 1; 
@@ -130,21 +158,22 @@
 		roomnum = roomnum + 1;
 	}
 	
-		function addRect(x, y, w, h, fill) {
+	function addRect(x, y, w, h, fill) {
 		var rect = new Box;
 		rect.x = x;
 		rect.y = y;
 		rect.w = w
 		rect.h = h;
-		rect.midx = this.x + this.w / 2;
-		rect.midy = this.y + this.h / 2;boxes.push(rect);
+		rect.midx = rect.x + rect.w / 2;
+		rect.midy = rect.y + rect.h / 2;
+		boxes.push(rect);
 		invalidate();
 	}
 	
-	function Line(){
+	function Line(name){
 		this.type = "line";
 		this.text = "";
-		this.toname=""
+		this.toname = name;
 		this.istimeout = false;
 	}
 	
@@ -210,25 +239,58 @@
 	  context.fillRect(shape.x,shape.y,shape.w,shape.h);
 	}
 	
-	function populateBoxPane(){
-		//Use mySel
-		//TODO
+	//Certainly a way to do this more efficiently/less duplicate dcode
+	function populateFromBoxPane(){
+		if(mySel == null){
+				return;
+			}
+			if(mySel.type == "box"){				
+				 mySel.startroom = sbox.checked;
+				 mySel.scentext = scenbox.value;
+				 mySel.points = pointbox.value;
+				 mySel.time = timebox.value;
+			}else if(mySel.type == "line"){
+				//TODO line
+			}
+	
 	}
 	
-	//Also sets myself
-	function isinbox(){
+	function populateBoxPane(){
+	
+		if(mySel == null){
+			return;
+		}
+		if(mySel.type == "box"){
+			sbox.checked = mySel.startroom;
+			scenbox.value = mySel.scentext;
+			pointbox.value = mySel.points;
+			timebox.value = mySel.time;
+			
+		}else if(mySel.type == "line"){
+			
+			
+			//TODO line
+		}
+	}
+	
+	//Also sets mySelf
+	function isinbox(x, y){
 		clear(gctx); // clear the ghost canvas from its last use
 		//Is it a box?
 		for (var i = boxes.length-1; i >= 0; i--) {
 			drawshape(gctx, boxes[i], 'black');
 
 			// get image data at the mouse x,y pixel
-			var imageData = gctx.getImageData(mx, my, 1, 1);
-			var index = (mx + my * imageData.width) * 4;
+			var imageData = gctx.getImageData(x, y, 1, 1);
+			var index = (x + y * imageData.width) * 4;
 
 			// if the mouse pixel exists
 			if (imageData.data[3] > 0) {
 				mySel = boxes[i];
+				//Clear pane
+				for(var qq = 0; qq < boxvars.length; qq++){
+					boxvars[qq].value = 0;
+				}
 				mySelIndex = i;
 				clear(gctx);
 				return true;
@@ -237,21 +299,58 @@
 		return false;
 	}
 	
+	function isinline(x, y){
+		//Also sets mySel
+		clear(gctx); // clear the ghost canvas from its last use
+		//Is it a box?
+		for (var i = boxes.length-1; i >= 0; i--) {
+			//Draw lines
+			for(var j = 0; j < boxes[i].lines.length; j++){
+				//drawshape(gctx, boxes[i], 'black');
+				//Draw all lines
+					var source = boxes[i];
+					var dest = findBoxByName(source.lines[j].toname);
+					gctx.beginPath();
+					gctx.moveTo(source.midx, source.midy);
+					gctx.lineTo(dest.midx, dest.midy);
+					gctx.strokeStyle = '#000000';
+					gctx.lineWidth = 10;
+					gctx.stroke();		
+					gctx.closePath();
+					
+					// get image data at the mouse x,y pixel
+					var imageData = gctx.getImageData(x, y, 1, 1);
+					var index = (x + y * imageData.width) * 4;
+
+					// if the mouse pixel exists
+					if (imageData.data[3] > 0) {
+						mySel = boxes[i];
+						mySelIndex = i;
+						clear(gctx);
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		
 	function inspect(e)
 	{
 			getMouse(e);
-			if(isinbox()){
+			if(isinbox(mx, my)){
 				boxpane.hidden = false;
 				populateBoxPane();
 			}
+			else if(isinline(mx, my)){
+				linepane.hidden = false;
+			}
 			
-			//TODO check if it's a line
 	}
 	
 	function myDown(e){
 	  if(mode == "Mouse"){
 		  getMouse(e);
-		  if(isinbox()){
+		  if(isinbox(mx, my)){
 			  offsetx = mx - mySel.x;
 			  offsety = my - mySel.y;
 			  mySel.x = mx - offsetx;
@@ -280,6 +379,8 @@
 		getMouse(e);
 		mySel.x = mx - offsetx;
 		mySel.y = my - offsety;
+		mySel.midx = mySel.x + mySel.w / 2;
+		mySel.midy = mySel.y + mySel.h / 2;
 		invalidate();// something is changing position so we better invalidate the canvas!
 	  }
 	}
@@ -289,13 +390,28 @@
 	  canvas.onmousemove = null;
 	}
 	
-	
 	function justDraw(){
 			// draw all boxes
 			for (var i = 0; i < boxes.length; i++) {
 				drawshape(context, boxes[i], boxes[i].fill);
+				//Draw all lines
+				for(var j = 0; j < boxes[i].lines.length; j++){
+					var source = boxes[i];
+					var dest = findBoxByName(source.lines[j].toname);
+					context.beginPath();
+					context.moveTo(source.midx, source.midy);
+					context.lineTo(dest.midx, dest.midy);
+					if(dest.istimeout){
+						context.strokeStyle = '#FF0000';
+					}else{
+						context.strokeStyle = '#FF00FF';
+					}
+					context.lineWidth = 10;
+					context.stroke();		
+					context.closePath();
+				}
 			}
-
+			
 			// draw selection
 			// right now this is just a stroke along the edge of the selected box
 			if (mySel != null) {
@@ -308,6 +424,10 @@
 	// While draw is called as often as the INTERVAL variable demands,
 	// It only ever does something if the canvas gets invalidated by our code
 	function draw() {
+	  if(mySel == null){
+		boxpane.hidden = true;
+		linepane.hidden = true;
+	  }
 	  if (canvasValid == false) {
 			clear(context);
 
@@ -356,11 +476,7 @@
 	}
 	
 	function init_mode(){
-		if("Mouse" == mode){
-			canvas.onmousedown = myDown;
-			canvas.onmouseup = myUp;
-		}
-		else if("Lines" == mode){
+		if("Lines" == mode){
 			var started = false;
 			var x0, y0;
 			
@@ -370,7 +486,10 @@
 				getMouse(e);
 				x0 = mx;
 				y0 = my;
-				started = true;
+				
+				if(isinbox(mx, my)){
+					started = true;
+				}
 			};
 
 			canvas.onmousemove = function (e) {
@@ -384,14 +503,12 @@
 				justDraw()
 				
 				getMouse(e);
-				
 				context.beginPath();
 				context.moveTo(x0, y0);
 				context.lineTo(mx, my);
 				context.strokeStyle = '#FF00FF';
 				context.lineWidth = 1;
 				context.stroke();		
-				
 				context.closePath();
 			 }
 			};
@@ -399,11 +516,21 @@
 			// This is called when you release the mouse button.
 			canvas.onmouseup = function (e) {
 				 if (started) {
-					started = false;		
+					started = false;
+					getMouse(e);
+					var source = mySel;
+					if(isinbox(mx, my) && source != mySel){
+						source.lines.push(new Line(mySel.name));
+					}
 				}
 				invalidate();
 			}
 		}
+		else{
+			canvas.onmousedown = myDown;
+			canvas.onmouseup = myUp;
+			canvas.onmousemove = null;
+			}
 	}
 	
 	floatingMenu.add('floatingbar',  

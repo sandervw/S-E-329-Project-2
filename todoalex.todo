@@ -20,6 +20,8 @@ Make work with server
 \#Fix delete functionality. Sigh.
 \#Make Lines between boxes
 
+\#Update box pos when box moves
+Deal with duplicate arrows draw in opposite direction (like if I want "go back"). Can we do an offset?
 change infopanel to showInfopanel(obj) and then load the appropriate
 	panel based on the type of obj. Default to calling with mysel
 			Make it so mysel can be line or box, same sel
@@ -29,17 +31,18 @@ Info mode should select a box that I click
 Todo: whenever mysel changes, update the appropraite panel.
 
 When we hit save, find the start_box and replace all instances of that name with start_room
-Consider having a popup on the left as like an info pane 
-	that only appears when I click on a tile. 
+\#Consider having a popup on the left as like an info pane 
+\#	that only appears when I click on a tile. 
 	Allows me to set one image, text, isStart, pointval, time (seconds)
 	download a zip, and just keep a path to those images (same directory, just name?)
-	If I click on a line, it has text, and isTimeout
+\#	If I click on a line, it has text, and isTimeout
 		if timeout draw it in red, no text
 Make lines know what box I start, end in, and update appropraitely.
 Add text to lines
 Add text to boxes
 Save tilearray
 Add pictures
+fix save/load UI (disappearing elements, clicking start first)
 
 \#See if we can make an XML type loader for tiles
 	If we do this we could make a GUI where you can drag and drop tiles (and images onto those tiles) to make	
@@ -49,3 +52,4 @@ Consider adding some kind of save/load (rudimentary solution: give tiles a "is p
 --add false hints like go grab fire extinguisher--
 Consider adding some type of inventory
 make story bigger
+Add visual cue of which way arrow is going
