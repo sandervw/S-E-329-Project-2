@@ -270,7 +270,7 @@ function setMenuState(newState){
 			window.location.reload();
 		}
 		else if(newState == 2){
-			mathGame.mainMenu.items = ['Arcade  Classic', 'Matrix', 'Lord of the Rings', 'Back'];
+			mathGame.mainMenu.items = ['Arcade  Classic', 'Matrix', 'Underwater', 'Back'];
 			mathGame.state = 5;
 		}
 	}
@@ -417,7 +417,36 @@ function setMenuState(newState){
 		}
 		else if (newState == 2)
 		{
-			
+			mathGame.ResourcePack = 'Water';
+			mathGame.menuAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.gameFont = 'waterFont';
+			mathGame.menuAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/MenuMusic.mp3');
+			mathGame.gameAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/FightMusic.mp3');
+			mathGame.attackAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/Attack.mp3');
+			mathGame.menuBackground = new Image();
+			mathGame.menuBackground.src = 'MathGameResources/' + mathGame.ResourcePack + '/MenuBackground.png';
+			mathGame.gameBackground = new Image();
+			mathGame.gameBackground.src = 'MathGameResources/' + mathGame.ResourcePack + '/GameBackground.png';
+			mathGame.playerImage = new Image();
+			mathGame.playerImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Player.png';
+			mathGame.enemy1Image = new Image();
+			mathGame.enemy1Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy1.png';
+			mathGame.enemy1Name = 'a  fish';
+			mathGame.enemy2Image = new Image();
+			mathGame.enemy2Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy2.png';
+			mathGame.enemy2Name = 'a  crab';
+			mathGame.enemy3Image = new Image();
+			mathGame.enemy3Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy3.png';
+			mathGame.enemy3Name = 'a  shark';
+			mathGame.squareImage = new Image();
+			mathGame.squareImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Square.png';
+			mathGame.attackImage = new Image();
+			mathGame.attackImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Attack.png';
+			mathGame.mainMenu.items = ['Start Game', 'Main Menu', 'Change Theme'];
+			mathGame.mainGame = new Game(0, 1, 0, 0, '+', 0, 36);
+			mathGame.menuAudio.play();
+			mathGame.state = 0;
 		}
 		else if (newState == 3){
 			mathGame.mainMenu.items = ['Start Game', 'Main Menu', 'Change Theme'];

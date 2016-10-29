@@ -224,3 +224,8 @@ margin-left:-202px;
     font-family: matrixFont;
     src: url('Matrix.ttf');
 }
+
+@font-face {
+    font-family: waterFont;
+    src: url('waterFont.ttf');
+}
