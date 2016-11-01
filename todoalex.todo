@@ -35,6 +35,9 @@ Deal with duplicate arrows draw in opposite direction (like if I want "go back")
 Switch to info mode if double click in mouse.
 \#Info mode should select a box that I click
 \#Todo: whenever mysel changes, update the appropraite panel.
+\#Fix score
+\#Fix Text
+
 
 When we hit save, find the start_box and replace all instances of that name with start_room
 \#Consider having a popup on the left as like an info pane 
@@ -47,7 +50,10 @@ When we hit save, find the start_box and replace all instances of that name with
 \#Make lines know what box I start, end in, and update appropraitely.
 \#Add text to lines
 \#Add text to boxes
-Save tilearray
+\#Save tilearray
+Make it so if you don't check isStart, the first box is start. Or it gives a warning, whatever.
+Make save work on clicksave, not on click canvas.
+Add support for finalroom
 
 \#See if we can make an XML type loader for tiles
 	If we do this we could make a GUI where you can drag and drop tiles (and images onto those tiles) to make	
