@@ -420,7 +420,7 @@
 					context.beginPath();
 					context.moveTo(source.midx, source.midy);
 					context.lineTo(dest.midx, dest.midy);
-					if(dest.istimeout){
+					if(source.lines[j].istimeout){
 						context.strokeStyle = '#FF0000';
 					}else{
 						context.strokeStyle = '#FF00FF';
@@ -544,7 +544,7 @@
 			{
 				nxts.push(new nxttile(boxes[i].lines[j].toname, boxes[i].lines[j].text));
 			}
-			new tile(boxes[i].name, boxes[i].text, nxts, boxes[i].time, boxes[i].imgpath, boxes[i].expirename, boxes[i].points, boxes[i].isFinal); 
+			new tile(boxes[i].name, boxes[i].scentext, nxts, boxes[i].time, boxes[i].imgpath, boxes[i].expirename, parseInt(boxes[i].points, 10), boxes[i].isFinal); 
 			console.log(exportboxes);
 		}
 		
