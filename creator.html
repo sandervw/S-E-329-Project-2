@@ -420,7 +420,7 @@
 					context.beginPath();
 					context.moveTo(source.midx, source.midy);
 					context.lineTo(dest.midx, dest.midy);
-					if(dest.istimeout){
+					if(source.lines[j].istimeout){
 						context.strokeStyle = '#FF0000';
 					}else{
 						context.strokeStyle = '#FF00FF';

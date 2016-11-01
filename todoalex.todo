@@ -1,66 +1,17 @@
-\#Add tiles
-\#Make lose condition (if expired...)
-\#	And end conditions (is this the last tile? If yes, submit high score)
-\#	Add a timeout tile (so a normal tile but it triggers on timeout.)
-\#Make it prettier (add bootstrap)
-\#stylize images
-\#	don't forget to reset expired on new tile.
-\#Have tiles give different scores (the highest score is police)
-\#Add text difficulty slider 
 	and implement the array difficulty thing
-\#add main menu->start page.
-\#add a score mechanism
-\#	tiles + max_time-time_used or something.
-\#consider giving a tile a background image and loading that.
-\#Change global array to a global map for easier insertion
-\#Change buttons to have text`
 Make work with server
-fix save/load UI (disappearing elements, clicking start first)
-
-\#Make just_draw its own function
-\#Fix delete functionality. Sigh.
-\#Make Lines between boxes
-
-
+fix save/load UI (disappearing elements, clicking start first) in readingtest.html
 implement isFinal imgpath and expirename for boxes
-
-\#Update box pos when box moves
-\#biggest thing on todo: make the line inspector work with lines
-\#and make the div switch seamlessly between the two based on what's click (if I'm in line and I switch to box, for example)
 Deal with duplicate arrows draw in opposite direction (like if I want "go back"). Can we do an offset?
-\#change infopanel to showInfopanel(obj) and then load the appropriate
-\#	panel based on the type of obj. Default to calling with mysel
-\#			Make it so mysel can be line or box, same sel
-\#Close infopanel when mysel goes null
 Switch to info mode if double click in mouse.
-\#Info mode should select a box that I click
-\#Todo: whenever mysel changes, update the appropraite panel.
-\#Fix score
-\#Fix Text
-
-
-When we hit save, find the start_box and replace all instances of that name with start_room
-\#Consider having a popup on the left as like an info pane 
-\#	that only appears when I click on a tile. 
-\#	Allows me to set one image, text, isStart, pointval, time (seconds)
 	add image support to infobox
 	download a zip, and just keep a path to those images (same directory, just name?)
-\#	If I click on a line, it has text, and isTimeout
-\#		if timeout draw it in red, no text
-\#Make lines know what box I start, end in, and update appropraitely.
-\#Add text to lines
-\#Add text to boxes
-\#Save tilearray
 Make it so if you don't check isStart, the first box is start. Or it gives a warning, whatever.
 Make save work on clicksave, not on click canvas.
 Add support for finalroom
-
-\#See if we can make an XML type loader for tiles
-	If we do this we could make a GUI where you can drag and drop tiles (and images onto those tiles) to make	
-		a story (draw a line to this tile, label that line with button text, boom it exports to a thingy.)
-			an xml file which can be loaded.
+Implement timeout
+		and don't draw the button if it's a timout.
 Consider adding some kind of save/load (rudimentary solution: give tiles a "is player here" or even better, have a variable for what they've done called "playeroom" and keep track of state that way.)
---add false hints like go grab fire extinguisher--
 Consider adding some type of inventory
-make story bigger
 Add visual cue of which way arrow is going
+Add save / load for the creator
