@@ -263,7 +263,7 @@ Menu.prototype.Update = function()
 function setMenuState(newState){
 	if (mathGame.state == 0){
 		if(newState == 0){
-			mathGame.mainMenu.items = ['Easy', 'Medium', 'Hard', 'Back'];
+			mathGame.mainMenu.items = ['Easy', 'Medium', 'Hard', 'Nightmare', 'Back'];
 			mathGame.state = 1;
 		}
 		else if(newState == 1){
@@ -301,6 +301,15 @@ function setMenuState(newState){
 			mathGame.shouldRender = 1;
 		}
 		else if(newState == 3){
+			mathGame.menuAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.gameAudio.play();
+			mathGame.mainGame.difficulty = 4;
+			mathGame.mainGame.message = 'Oh  no,  ' + mathGame.enemy3Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
+			mathGame.state = 2;
+			mathGame.shouldRender = 1;
+		}
+		else if(newState == 4){
 			mathGame.mainMenu.items = ['Start Game', 'Main Menu', 'Change Theme'];
 			mathGame.state = 0;
 		}
@@ -467,8 +476,10 @@ Game = function (gameState, difficulty, x, y, operation, answer, fontSize){
 	this.difficulty = difficulty;
 	this.x = x;
 	this.y = y;
+	this.z = 0;
 	this.operation = operation;
 	this.answer = answer;
+	this.answer2 = 0;
 	this.input = 'Hit  Space  to  Continue...';
 	this.fontSize = fontSize;
 	
@@ -479,6 +490,9 @@ Game = function (gameState, difficulty, x, y, operation, answer, fontSize){
 		this.message = 'Oh  no,  ' + mathGame.enemy2Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 	}
 	else if(difficulty == 3){
+		this.message = 'Oh  no,  ' + mathGame.enemy3Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
+	}
+	else if(difficulty == 4){
 		this.message = 'Oh  no,  ' + mathGame.enemy3Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 	}
 	
@@ -528,6 +542,11 @@ Game.prototype.RenderEntities = function() {
 		mathGame.ctx.drawImage(mathGame.playerImage,0,0, mathGame.playerImage.width, mathGame.playerImage.height, 0, mathGame.HEIGHT-500, 500, 600);
 		mathGame.ctx.drawImage(mathGame.squareImage,0,0, mathGame.squareImage.width, mathGame.squareImage.height, 0, mathGame.HEIGHT-230, mathGame.WIDTH, 250);
 	}
+	else if(this.difficulty == 4){
+		mathGame.ctx.drawImage(mathGame.enemy3Image,0,0, mathGame.enemy3Image.width, mathGame.enemy3Image.height, mathGame.WIDTH-450, 50, 400, 400);
+		mathGame.ctx.drawImage(mathGame.playerImage,0,0, mathGame.playerImage.width, mathGame.playerImage.height, 0, mathGame.HEIGHT-500, 500, 600);
+		mathGame.ctx.drawImage(mathGame.squareImage,0,0, mathGame.squareImage.width, mathGame.squareImage.height, 0, mathGame.HEIGHT-230, mathGame.WIDTH, 250);
+	}
 }
 
 Game.prototype.Update = function(){
@@ -550,8 +569,9 @@ Game.prototype.Update = function(){
 			mathGame.shouldRender = 1;
 		}
 		else if(InputManager.padPressed & InputManager.PAD.OK){
-			var temp = parseInt(this.input);
-			if(temp == this.answer){
+			if(this.difficulty != 4) var temp = parseInt(this.input);
+			else if (this.difficulty == 4) var temp = parseFloat(this.input);
+			if(temp == this.answer && this.difficulty != 4){
 				this.monsterHP-=1;
 				mathGame.attackAudio.play();
 				if(this.monsterHP != 0 && this.difficulty == 1){
@@ -586,6 +606,21 @@ Game.prototype.Update = function(){
 					this.input = 'Hit  Space  to  Continue...';
 					this.gameState = 3;
 					this.highScore += 50;
+				}
+			}
+			else if (((temp < this.answer + 0.01 && temp > this.answer - 0.01) || (temp < this.answer2 + 0.01 && temp > this.answer2 - 0.01)) && this.difficulty == 4){
+				this.monsterHP-=1;
+				mathGame.attackAudio.play();
+				if(this.monsterHP != 0){
+					this.message = 'You  should  just  give  up.';
+					this.input = 'Hit  Space  to  Continue...';
+					this.gameState = 2;
+				}
+				if(this.monsterHP == 0){
+					this.message = 'You  probably  cheated.';
+					this.input = 'Hit  Space  to  Continue...';
+					this.gameState = 3;
+					this.highScore += 100;
 				}
 			}
 			else{
@@ -663,28 +698,59 @@ Game.prototype.setNewEquation = function(){
 	}
 	
 	if(this.difficulty == 3){
-		this.x = Math.floor(Math.random() * 10) + 10;
-		this.y = Math.floor(Math.random() * 10) + 10;
+		this.x = Math.floor(Math.random() * 10) + 5;
+		this.y = Math.floor(Math.random() * 10) + 5;
+		this.z = Math.floor(Math.random() * 10) + 5;
 		var temp = Math.floor(Math.random() * 4);
 		if(temp == 0){
 			this.operation = '+';
-			this.answer = this.x + this.y;
+			this.operation2 = '/';
+			this.y = this.y * this.z;
+			this.answer = this.x + (this.y / this.z);
 		}
 		if(temp == 1){
 			this.operation = '-';
-			this.answer = this.x - this.y;
+			this.operation2 = '*';
+			this.answer = this.x - (this.y * this.z);
 		}
 		if(temp == 2){
 			this.operation = '*';
-			this.answer = this.x * this.y;
+			this.operation2 = '+';
+			this.answer = (this.x * this.y) + this.z;
 		}
 		if(temp == 3){
 			this.operation = '/';
-			this.answer = this.x;
+			this.operation2 = '-';
 			this.x = this.x * this.y;
+			this.answer = (this.x / this.y) - this.z;
 		}
-		this.message = 'The  result  of  ' + this.x + '  ' + this.operation + '  ' + this.y + '  is:';
+		this.message = 'The  result  of  ' + this.x + '  ' + this.operation + '  ' + this.y + '  ' + this.operation2 + '  ' + this.z + '  is:';
 		this.input = '';
+	}
+	
+	if(this.difficulty == 4){
+		//God help you
+		var a = Math.floor(Math.random() * 4) + 1;
+		var b = Math.floor(Math.random() * 4) + 9;
+		var c = Math.floor(Math.random() * 4) + 1;
+		var d = Math.floor(Math.random() * 4) + 5;
+		var derivativeX = Math.floor(Math.random() * 4) + 1;
+		var temp = Math.floor(Math.random()*2);
+		if(temp == 0){
+			this.answer = (-b + Math.sqrt((b*b) - (4*a*c)))/(2*a);
+			this.answer2 = (-b - Math.sqrt((b*b) - (4*a*c)))/(2*a);
+			console.log(this.answer);
+			console.log(this.answer2);
+			this.message = 'Find  a  root  of  the  polynomial:  ' + a + ' (x^2) + ' + b + ' (x) + ' + c + ':';
+			this.input = '';
+		}
+		if(temp == 1){
+			this.answer = (3*a*derivativeX*derivativeX + 2*b*derivativeX + c);
+			this.answer2 = 100000;
+			console.log(this.answer);
+			this.message = 'Find  the  value  of  the  derivative  at  x = ' + derivativeX + ':  ' + a + ' (x^3) + ' + b + ' (x^2) + ' + c + ' (x) - ' + d + ':' ;
+			this.input = '';
+		}
 	}
 	
 }
