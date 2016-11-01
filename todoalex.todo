@@ -1,6 +1,6 @@
 	and implement the array difficulty thing
 Make work with server
-fix save/load UI (disappearing elements, clicking start first) in readingtest.html
+\#fix save/load UI (disappearing elements, clicking start first) in readingtest.html
 implement isFinal imgpath and expirename for boxes
 Deal with duplicate arrows draw in opposite direction (like if I want "go back"). Can we do an offset?
 Switch to info mode if double click in mouse.
