@@ -1,0 +1,251 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <link rel='shortcut icon' href='favicon.ico' type='image/x-icon'/>
+  <title>Products for Education and Development</title>
+
+  <!--Stylesheet Import -->
+  <link rel="stylesheet" href="css\style.css"/>
+  <!-- JQuery Javascript -->
+  <script src="js\jquery-3.1.1.min.js"></script>
+
+  <!-- JQuery UI Javascript -->
+  <script src="js\jquery-ui-1.12.1\jquery-ui.js"></script>
+  <!-- JQuery UI Stylesheet Import -->
+  <link rel="stylesheet" href="js\jquery-ui-1.12.1\jquery-ui.css"/>
+
+  <!-- Javascript Import -->
+  <script src="js\InputManager.js"></script>
+
+  <script src="http://localhost:5000/socket.io/socket.io.js"></script>
+  <script src="js\mathGame.js"></script>
+  <script src="js\readingGame.js"></script>
+  <script src="js\writingGame.js"></script>
+  <script src="js\pageScript.js"></script>
+
+  <!-- Bootstrap Stylesheet Import -->
+  <link rel="stylesheet" href="js\bootstrap-3.3.7-dist\css\bootstrap.css"/>
+  <!-- Bootstrap Javascript Import -->
+  <script src="js\bootstrap-3.3.7-dist\js\bootstrap.js" ></script>
+
+  </head>
+  <body>
+    <!-- Banner / Title / Log in, Log out -->
+    <div id="mainPage">
+    <div id="banner" class="container-fluid">
+      <div class="row">
+        <div id="logo" class="col-xs-1">
+        </div>
+        <div  class="col-xs-8">
+          <h1 >Products for Education and Development<br><small>A C+=1; Project</small></h1>
+        </div>
+        <div style="float-right">
+          <!-- Log in and sign up buttons, these should convert to log out / profile buttons after they are logged in -->
+          <div class="col-xs-6 form-group" style="margin-top: 24px; width: 110px;">
+            <button type="button" class="form-control btn btn-primary" onclick="logIn_show()">Log In</button>
+          </div>
+          <div class="col-xs-6 form-group"style="margin-top: 24px; width: 110px;">
+            <button type="button" class="form-control btn btn-success" onclick="signUp_show()">Sign Up</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Banner -->
+    <!-- Main Container -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+          <li role="navigation" class="active sidebar-brand"><a href="#" id="navHeader">Navigation</a></li>
+          <li role="navigation" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="#"><span class="caret"></span> Math Game</a>
+            <ul class="dropdown-menu">
+              <li><a href="#" class="btn-math">New Game</a></li>
+              <li id="mathHS"><a href="#">High Scores</a></li>
+            </ul>
+          </li>
+          <li role="navigation" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="#"><span class="caret"></span> Writing Game</a>
+            <ul class="dropdown-menu">
+              <li><a href="#" class="btn-writing">New Game</a></li>
+              <li id="writingHS"><a href="#">High Scores</a></li>
+            </ul>
+          </li>
+          <li role="navigation" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="#"><span class="caret"></span> Reading Game</a>
+            <ul class="dropdown-menu">
+              <li><a href="#" class="btn-reading">New Game</a></li>
+              <li id="readingHS"><a href="#">High Scores</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    <!-- End Sidebar -->
+    <!-- Content -->
+    <div id="page-content-wrapper" >
+      <div class="container-fluid main">
+        <div class="row">
+            <div class="col-sm-4"style="height: 300px;">
+              <img class="img-responsive" src="images\pandabear.png"alt="profile" style="max-height:100%;"></img>
+            </div>
+            <div class="col-sm-4">
+              <div class="row">
+                <div class="col-xs-6 text-right">
+                  <h5>User Name:</h5>
+                </div>
+                <div class="col-xs-6">
+                  <h4><small>Acc</small></h4>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-6 text-right">
+                  <h5>Member Since:</h5>
+                </div>
+                <div class="col-xs-6">
+                  <h4><small>MM/DD/YYYY</small></h4>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-6 text-right">
+                  <h5>Location:</h5>
+                </div>
+                <div class="col-xs-6">
+                  <h4><small>Country</small></h4>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-6 text-right">
+                  <h5>Gender:</h5>
+                </div>
+                <div class="col-xs-6">
+                  <h4><small>F/M</small></h4>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4 panel-group">
+              <div class="panel panel-info">
+                <div class="panel-heading">Math Game High Score</div>
+                <div class="panel-body">Score</div>
+              </div>
+              <div class="panel panel-warning">
+                <div class="panel-heading">Writing Game High Score</div>
+                <div class="panel-body">Score</div>
+              </div>
+              <div class="panel panel-danger">
+                <div class="panel-heading">Reading Game High Score</div>
+                <div class="panel-body">Score</div>
+              </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+              <div class="panel-group">
+                <div class="panel panel-primary">
+                  <div class="panel-heading">Friends</div>
+                  <div class="panel-body">Username</div>
+                  <div class="panel-body">Username</div>
+                  <div class="panel-body">Username</div>
+                  <div class="panel-body">Username</div>
+                  <div class="panel-body">Username</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-9">
+              <div class="panel-group">
+                <div class="panel panel-success">
+                  <div class="panel-heading">Username</div>
+                  <div class="panel-body">Comment</div>
+                </div>
+                <div class="panel panel-success">
+                  <div class="panel-heading">Username</div>
+                  <div class="panel-body">Comment</div>
+                </div>
+                <div class="panel panel-success">
+                  <div class="panel-heading">Username</div>
+                  <div class="panel-body">Comment</div>
+                </div>
+                <div class="panel panel-success">
+                  <div class="panel-heading">Username</div>
+                  <div class="panel-body">Comment</div>
+                </div>
+                <div class="panel panel-success">
+                  <div class="panel-heading">Username</div>
+                  <div class="panel-body">Comment</div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <!-- End Content -->
+  </div>
+<!-- Footer -->
+<!-- End Footer -->
+  <canvas id='game'></canvas>
+</body>
+  <!-- Invisible Div that appears when user clicks the sign up button -->
+  <div id="signUp">
+    <div id="popupSignUp">
+      <h2>Join the PED Community!<br><small>It's fun, we promise</small></h2>
+      <form>
+      <div class="form-group">
+        <!-- Notification Divs -->
+        <div id="signUp_Success" class="alert alert-success" role="alert">
+          <strong>Done!</strong> You successfully signed up!
+        </div>
+        <div id="signUp_Failure" class="alert alert-danger" role="alert">
+          <strong>Whoops!</strong>
+        </div>
+        <label for="name">Name:</label>
+        <input class="form-control" id="name" maxLength="25" name="name" placeholder="FirstName LastName" type="text">
+        <label for="email">Email:</label>
+        <input class="form-control" id="email" name="email" placeholder="username@domain.com" type="email">
+        <label for="username">Username:</label>
+        <input class="form-control" id="username" name="username" placeholder="ExampleGuy1247" type="text">
+        <label for="password">Password:</label>
+        <input class="form-control" id="password" name="password" placeholder="Eight characters or more characters with capitals, symbols and numbers" type="password">
+        <label for="cfrmpassword">Confirm Password:</label>
+        <input class="form-control" id="cfrmpassword" name="cfrmpassword" placeholder="Enter the same password to confirm you typed it correctly" type="password">
+        <br>
+        Ask your parents for permission before signing up.
+
+        <div class=row>
+          <div class="col-xs-1"></div>
+          <div class="col-xs-8">
+            <button type="button" id="btnSignUp" class="btn btn-success">Sign Up</button>
+          </div>
+          <div class="col-xs-2">
+            <button id="close" class="btn btn-danger" onclick ="signUp_hide()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </form>
+    </div>
+  </div>
+  <!-- End sign up prompt -->
+  <!-- Invisible Div that appears when user clicks the log in button -->
+  <div id="logIn">
+    <div id="popupLogIn">
+      <h2>Log In<br><small>Welcome Back!</small></h2>
+      <div class="form-group">
+      <label for="username">Username:</label>
+      <input class="form-control" id="loginUsername" name="username" placeholder="ExampleGuy1247" type="text">
+      <label for="password">Password:</label>
+      <input class="form-control" id="loginPassword" name="password" placeholder="Eight characters or more characters with capitals, symbols and numbers" type="password">
+      <br>
+        <div class=row>
+          <div class="col-xs-1"></div>
+          <div class="col-xs-8">
+            <button id="ConfirmLogin" class="btn btn-primary">Log In</button>
+          </div>
+          <div class="col-xs-2">
+            <button id="close" class="btn btn-danger" onclick ="logIn_hide()">Cancel</button>
+          </div>
+        </div>
+        <br />
+        <div class="loginError text-center text-danger">
+        </div
+      </div>
+    </div>
+  </div>
+  <!-- End log in prompt -->
+</html>
