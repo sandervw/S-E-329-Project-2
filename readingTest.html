@@ -10,6 +10,7 @@
   
   <!-- JQuery UI Javascript -->
   <script src="js\jquery-ui-1.12.1\jquery-ui.js"></script>
+  <script src="js\json2.js"></script>
   <!-- JQuery UI Stylesheet Import -->
   <link rel="stylesheet" href="js\jquery-ui-1.12.1\jquery-ui.css"/>
 
@@ -32,61 +33,59 @@ var score = 0;// -15;//You get 15 for the first slide
 start = new Date().getTime();
 var time = Math.round((new Date().getTime() - start)/1000)  
 
+var data = JSON.stringify( rooms );
+var fileName = "my-download.json";
+
+var ready = false;
+
+function loadFile() {
+	ready = true;
+    var input, file, fr;
+
+    if (typeof window.FileReader !== 'function') {
+      alert("The file API isn't supported on this browser yet.");
+      return;
+    }
+
+    input = document.getElementById('fileinput');
+    if (!input) {
+      alert("Um, couldn't find the fileinput element.");
+    }
+    else if (!input.files) {
+      alert("This browser doesn't seem to support the `files` property of file inputs.");
+    }
+    else if (!input.files[0]) {
+      alert("Please select a file before clicking 'Load'");
+    }
+    else {
+      file = input.files[0];
+      fr = new FileReader();
+      fr.onload = receivedText;
+      fr.readAsText(file);
+    }
+
+    function receivedText(e) {
+      lines = e.target.result;
+      var newArr = JSON.parse(JSON.parse(lines));
+	  console.log( newArr)
+	  rooms = newArr;
+    }
+  }
+
 this.init = function init(){
+	if(!ready){
+		alert("Please load a file!")
+		return;
+	}
+	
 	var star = document.getElementById("beginbtn");
 	star.style.visibility = "hidden";
-	//star.innerHTML = "";
+	var field = document.getElementById("fieldset");
+	field.hidden=true;
 	var slide = document.getElementById("difficulty");
-	var nxts = [];
+
+	loadTile("start_room");
 	
-	//Start room
-	var tmp = new nxttile("wait_for_police", "Call the police");
-	nxts.push(tmp);
-	tmp = new nxttile("ignore_break_glass", "Ignore the sound");
-	nxts.push(tmp);
-	tmp = new nxttile("three_men_robbing", "Investigate the noise");
-	nxts.push(tmp);
-	var path = "images/reading/desk.png"
-	var t = new tile("start_room", "You're a security guard at a large museum. It's just after midnight, halfway through your shift. You hear a noise like glass breaking in the distance", nxts, 5, path,"ignore_break_glass", 0, 0);
-	nxts = [];
-	
-	//Call police
-	tmp = new nxttile("hang_up_and_investigate", "Hang up and investigate");
-	nxts.push(tmp);
-	path = "images/reading/phone.png"
-	new tile("wait_for_police", "The dispatcher asks you your name, location, and nature of your emergency. She asks you to stay on the line until an officer can arrive.", nxts, 5 * 60, path);
-	nxts = [];
-	
-	//hang up and investigate
-	path = "images/reading/van.png"
-	new tile("hang_up_and_investigate", "The criminals were fast. The time you wasted on the phone was enough for them to get away, leaving no trace except for a black van speeding off into the night. The police question you, but their investigation turns up nothing. You're fired within the month.", nxts, 0, path);
-	nxts = [];
-	
-	//Ignore the noise
-	path = "images/reading/theft.png"
-	new tile("ignore_break_glass", "Aside from a few creaks, bumps, and squeaky hinges (normal museum noises, you're sure), you have a quiet night. The next day the curator arrives and discovers almost $300,000 worth of theft. You are fired for your negligence, and struggle to find another job.", nxts, 0, path);
-	nxts = [];
-	
-	//Investigate the noise
-	tmp = new nxttile("sneak_away", "Sneak away back to your desk");
-	nxts.push(tmp);
-	tmp = new nxttile("confront_robbers", "Announce your presence and arrest them");
-	nxts.push(tmp);
-	path = "images/reading/masks.png"
-	new tile("three_men_robbing", "You see three men in the Egyptian Jewels exhibit. They are wearing ski masks and are filling burlap sacks with ancient jewels. You do not believe they see you.", nxts, 10, path);
-	nxts = [];
-	
-	//sneak away
-	path = "images/reading/hiding.png"
-	new tile("sneak_away", "One of the robbers must have noticed a security guard sneaking away, because the next day the entire museum is cleared out. Several million dollars worthof jewels, paintings, and relic are stolen and appear on the black market over the next few months. You are fired and jailed for your negligence and compliance in the robbery.", nxts, 0, path);
-	nxts = [];
-	
-	//Confront the robbers
-	path = "images/reading/cuffs.png"
-	new tile("confront_robbers", "The robbers are startled by you. They immediately surrender. The police come, arresting the man. You're interviewed on the news, and receive a promotion the next day.", nxts, 0, path);
-	nxts = [];
-	
-	loadTile(t.name); 
 	clock(); 
 
 	intervalId = setInterval(clock, 1000);
@@ -142,6 +141,9 @@ var tile = function(name, scenariotext, options, time, imgpath, onExpireName, po
 
 var loadTile = function(name, isFinal)
 {
+	console.log(name)
+	console.log( rooms)
+	console.log(rooms[name])
 	var slide = document.getElementById('difficulty');
 	slide.style.visibility = "hidden";
 	context.clearRect(0, 0, canvas.width, canvas.height);
@@ -260,9 +262,39 @@ function clock(){
 		<div  class="col-xs-4" id="difficulty"></div>
 		<div class="col-xs-4" id="amount"></div>
 	</div>	
+	<div class="row" id="fieldset">
+		<div>
+		<form id="jsonFile" name="jsonFile" enctype="multipart/form-data" method="post">
+		  <fieldset>
+			 <input type='file' id='fileinput'>
+			 <input type='button' id='btnLoad' value='Load' onclick='loadFile();'>
+		  </fieldset>
+		</form>
+		</div>
+	</div>
    </center>
  </body>
  <script>
+var saveData = function () {
+	newTiles();
+	var data = JSON.stringify( rooms );
+	var fileName = "my-download.json";
+
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+  //  return function (data, fileName) {
+	console.log( data);
+	console.log( fileName)      
+	  var json = JSON.stringify(data),
+            blob = new Blob([json], {type: "octet/stream"}),
+            url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+}; 
+ 
 		start = new Date().getTime();
 	  $( "#difficulty" ).slider({
       value:1,

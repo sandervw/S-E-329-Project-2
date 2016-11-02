@@ -56,7 +56,7 @@ InputManager = new function()
 		'a0': 48, 'a1': 49, 'a2': 50, 'a3': 51, 'a4': 52, 'a5': 53, 'a6': 54, 'a7': 55, 'a8': 56, 'a9': 57,
 		'NUM_PAD_ASTERISK': 106, 'NUM_PAD_PLUS_SIGN': 107, 'NUM_PAD_HYPHEN_MINUS': 109, 'NUM_PAD_FULL_STOP': 110,
 		'NUM_PAD_SOLIDUS': 111,
-		'NUM_LOCK': 144, 'SCROLL_LOCK': 145, 'SEMICOLON': 186, 'EQUALS_SIGN': 187, 'COMMA': 188, 'HYPHEN-MINUS': 189,
+		'NUM_LOCK': 144, 'SCROLL_LOCK': 145, 'MINUSSIGN': 173, 'SEMICOLON': 186, 'EQUALS_SIGN': 187, 'COMMA': 188, 'HYPHEN_MINUS': 189,
 		'FULL_STOP': 190, 'SOLIDUS': 191, 'GRAVE_ACCENT': 192, 'LEFT_SQUARE_BRACKET': 219, 'REVERSE_SOLIDUS': 220,
 		'RIGHT_SQUARE_BRACKET': 221, 'APOSTROPHE': 222};
 
@@ -174,10 +174,22 @@ InputManager = new function()
 			state = state | this.PAD.NUMBER;
 			this.number = 9;
 		}
+		if (this.currentlyPressedKeys[this.KEY.MINUSSIGN]){
+			state = state | this.PAD.NUMBER;
+			this.number = '-';
+		}
+		if (this.currentlyPressedKeys[this.KEY.HYPHEN_MINUS]){
+			state = state | this.PAD.NUMBER;
+			this.number = '-';
+		}
 		if (this.currentlyPressedKeys[this.KEY.NUM_PAD_HYPHEN_MINUS]){
 			state = state | this.PAD.NUMBER;
 			this.number = '-';
-		}		
+		}
+		if (this.currentlyPressedKeys[this.KEY.FULL_STOP]){
+			state = state | this.PAD.NUMBER;
+			this.number = '.';
+		}
 		if (this.mouseDown || this.mouseClick) 		        state = state | this.PAD.OK;
 		if (this.currentlyPressedKeys[this.KEY.ESCAPE]) 	state = state | this.PAD.CANCEL;
 		if (this.currentlyPressedKeys[this.KEY.BACKSPACE]) 	state = state | this.PAD.BACKSPACE;

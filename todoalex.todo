@@ -1,28 +1,17 @@
-\#Add tiles
-Make lose condition (if expired...)
-	And end conditions (is this the last tile? If yes, submit high score)
-	Add a timeout tile (so a normal tile but it triggers on timeout.)
-\#Make it prettier (add bootstrap)
-\#stylize images
-\#	don't forget to reset expired on new tile.
-Have tiles give different scores (the highest score is police)
-\#Add text difficulty slider 
 	and implement the array difficulty thing
-\#add main menu->start page.
-\#add a score mechanism
-\#	tiles + max_time-time_used or something.
-\#consider giving a tile a background image and loading that.
-\#Change global array to a global map for easier insertion
-\#Change buttons to have text`
 Make work with server
-
-
-See if we can make an XML type loader for tiles
-	If we do this we could make a GUI where you can drag and drop tiles (and images onto those tiles) to make	
-		a story (draw a line to this tile, label that line with button text, boom it exports to a thingy.)
-			an xml file which can be loaded.
-Consider adding some kind of save/load (rudimentary solution: give tiles a "is player here" or even better, have a variable
-called "playeroom" and keep track of state that way.)
---add false hints like go grab fire extinguisher--
+\#fix save/load UI (disappearing elements, clicking start first) in readingtest.html
+implement isFinal imgpath and expirename for boxes
+Deal with duplicate arrows draw in opposite direction (like if I want "go back"). Can we do an offset?
+Switch to info mode if double click in mouse.
+	add image support to infobox
+	download a zip, and just keep a path to those images (same directory, just name?)
+Make it so if you don't check isStart, the first box is start. Or it gives a warning, whatever.
+Make save work on clicksave, not on click canvas.
+Add support for finalroom
+Implement timeout
+		and don't draw the button if it's a timout.
+Consider adding some kind of save/load (rudimentary solution: give tiles a "is player here" or even better, have a variable for what they've done called "playeroom" and keep track of state that way.)
 Consider adding some type of inventory
-make story bigger
+Add visual cue of which way arrow is going
+Add save / load for the creator
