@@ -35,7 +35,6 @@ var mathGame = {
 	android: null,
 	ios:  null,
 	init: function(){
-		mathGame.highScore = 0;
 		
 		mathGame.ResourcePack = 'ArcadeClassic';
 		mathGame.menuAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/MenuMusic.mp3');
@@ -115,7 +114,7 @@ var mathGame = {
 		
 	update: function() {
 		if(mathGame.state == 0 || mathGame.state == 1 || mathGame.state == 3 || mathGame.state == 4 || mathGame.state == 5) mathGame.mainMenu.Update();
-		else if(mathGame.state == 2) mathGame.mainGame.Update();
+		else if(mathGame.state == 2 || mathGame.state == 6) mathGame.mainGame.Update();
 	},
 
 	render: function() {
@@ -135,6 +134,13 @@ var mathGame = {
 			mathGame.ctx.clearRect(0, 0, mathGame.WIDTH, mathGame.HEIGHT);
 			mathGame.ctx.drawImage(mathGame.gameBackground,0,0, mathGame.gameBackground.width, mathGame.gameBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT); 
 			mathGame.mainMenu.Render();
+			mathGame.shouldRender = 0;
+		}
+		else if(mathGame.state == 6){
+			mathGame.ctx.clearRect(0, 0, mathGame.WIDTH, mathGame.HEIGHT);
+			mathGame.ctx.drawImage(mathGame.menuBackground,0,0, mathGame.menuBackground.width, mathGame.menuBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT);
+			mathGame.mainMenu.Render();
+			mathGame.mainGame.Render();
 			mathGame.shouldRender = 0;
 		}
 	},
@@ -335,7 +341,12 @@ function setMenuState(newState){
 			mathGame.shouldRender = 1;
 		}
 		else if(newState == 1){
-			//submit high score;
+			mathGame.mainMenu.items = ['High  Score:', mathGame.mainGame.highScore];
+			mathGame.mainGame.message = 'Press  enter  to  submit.';
+			mathGame.mainGame.Input = '';
+			mathGame.state = 6;
+			mathGame.mainGame.gameState = 4;
+			mathGame.shouldRender = 1;
 		}
 		else if(newState == 2){
 			mathGame.gameAudio.pause();
@@ -348,7 +359,12 @@ function setMenuState(newState){
 	}
 	else if (mathGame.state == 4){
 		if(newState == 0){
-			//submit high score;
+			mathGame.mainMenu.items = ['High  Score:', mathGame.mainGame.highScore];
+			mathGame.mainGame.message = 'Press  enter  to  submit.';
+			mathGame.mainGame.Input = '';
+			mathGame.state = 6;
+			mathGame.mainGame.gameState = 4;
+			mathGame.shouldRender = 1;
 		}
 		else if(newState == 1){
 			mathGame.gameAudio.pause();
@@ -502,21 +518,25 @@ Game.prototype.constructor = Game;
 
 Game.prototype.Render = function(){
 	
-	this.RenderEntities();
-	
 	mathGame.ctx.textAlign = "center";
 	mathGame.ctx.fillStyle = "Black";
 	
 	mathGame.ctx.font = this.fontSize + "px " + mathGame.gameFont;
 	
 	if(this.gameState == 0){
+		this.RenderEntities();
 		mathGame.ctx.fillText(this.message, mathGame.WIDTH/2, mathGame.HEIGHT-140);
 		mathGame.ctx.fillStyle = "Green";
 		mathGame.ctx.fillText(this.input, mathGame.WIDTH/2, mathGame.HEIGHT-70);
 		mathGame.ctx.fillText('Player  HP:  ' + this.playerHP + '/7', 170, mathGame.HEIGHT-190);
 		mathGame.ctx.fillText('Monster  HP:  ' + this.monsterHP + '/7', mathGame.WIDTH-170, mathGame.HEIGHT-190);
 	}
+	else if (this.gameState == 4 || this.gameState == 5){
+		mathGame.ctx.fillStyle = "Green";
+		mathGame.ctx.fillText(this.message, mathGame.WIDTH/2, mathGame.HEIGHT-140);
+	}
 	else{
+		this.RenderEntities();
 		mathGame.ctx.fillText(this.message, mathGame.WIDTH/2, mathGame.HEIGHT-140);
 		mathGame.ctx.fillStyle = "Green";
 		mathGame.ctx.fillText(this.input, mathGame.WIDTH/2, mathGame.HEIGHT-70);
@@ -650,6 +670,21 @@ Game.prototype.Update = function(){
 				mathGame.state = 4;
 				mathGame.mainMenu.items = ['Submit High Score', 'Return to Main Menu', 'Exit Game'];
 			}
+		}
+	}
+	else if(this.gameState == 4){
+		if (InputManager.padPressed & InputManager.PAD.OK){
+			Node.submit(username, this.highScore);
+			this.message = 'High  score  was  submitted,  press  enter  to  return  to  main  menu.';
+			this.gameState = 5;
+			mathGame.shouldRender = 1;
+		}
+	}
+	else if(this.gameState == 5){
+		if (InputManager.padPressed & InputManager.PAD.OK){
+			mathGame.gameAudio.pause();
+			mathGame.gameAudio.currentTime = 0;
+			mathGame.init();
 		}
 	}
 }
