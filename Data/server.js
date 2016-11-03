@@ -3,12 +3,24 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var fs = require('fs');
+var mysql = require('mysql');
 
+
+var connection = mysql.createConnection(
+    {
+      host     : '127.0.0.1',
+      user     : 'root',
+      password : 'root',
+      database : 'PED',
+    }
+);
+
+connection.connect();
 // Routes and io.on statement with listeners on 'connection'
 
 /*
     localhost:4000 and localhost:4000/index.html will send the main page
-    
+
     all assets and assets in sub-directories can be accessed by adding their pathing
         ex:localhost:4000/images/pandabear.png
 */
@@ -25,39 +37,21 @@ var usersActive = [];//Users in lobby for multiplayer games
 io.sockets.on('connection', function(socket) {
     //Handle username/password validation, add to UsersOn/UsersActive
     socket.on('login', function(loginData) {
-        console.log("user: "+loginData.split(" ")[0]);
-        
-        var users = fs.readFileSync(__dirname+"\\users.txt");
-        users = users.toString().split('\n');
-
         var success = false;
-        var found = false;
 
-        for (var i = 0; i < users.length;i++){
-            if(loginData.localeCompare(users[i].trim()) == 0){
-				success=true;
-				for(var j=0;j<usersOn.length;j++){
-					if(usersOn[j]==loginData.split(" ")[0]){
-						found=true;
-					}
-				}
-				if(!found){
-					usersOn.push(loginData.split(" ")[0]);
-					usersActive.push(loginData.split(" ")[0]);
-					sendUsersActive();
-				}
-                break;
+        var usr  = mysql.escape(loginData.split(" ")[0]);
+        var pw   = mysql.escape(loginData.split(" ")[1]);
+        connection.query("SELECT * FROM ACCOUNTS WHERE USERNAME = " + usr + " AND PASSWORD = MD5("+pw+")", function(err,rows){
+            console.log(err);
+            if(rows.length > 0){
+              console.log(rows);
+              socket.emit('loginResponse', rows(0).ID);
             }
-        }
-		if(success&&!found){
-			socket.emit('loginResponse','success');
-		}
-		else if(success&&found){
-			socket.emit('loginResponse','user is already logged on!');
-		}
-        else 
-			socket.emit('loginResponse','Invalid username/password');
-    });
+            else
+              socket.emit('loginResponse','Invalid username/password');
+            });
+        });
+
     //Handle logging out and taking the user out of the user arrays
     socket.on('logout', function(username){
         console.log("got logout request!");
@@ -71,6 +65,30 @@ io.sockets.on('connection', function(socket) {
         }
         sendUsersActive();
     });
+  socket.on('signUp', function(Name, Email, Username, Pass){
+    var usr  = mysql.escape(Username);
+    var pw   = mysql.escape(Pass);
+    var ml   = mysql.escape(Email);
+    var nm   = mysql.escape(Name);
+
+    connection.query("CALL SIGNUP("+ usr +","+ pw +","+ Name +","+ ml")", function(err,rows){
+        console.log(err);
+        if(rows.length > 0){
+          console.log(rows);
+          socket.emit('signupResponse','success');
+        }
+        else
+          socket.emit('signupResponse','Sign up failed.');
+        });
+    });
+
+  socket.on('submitMathHighscore', function(userID, Score){
+    var usr  = mysql.escape(userID);
+    var sc   = mysql.escape(Score);
+    connection.query("INSERT INTO HIGHSCOREMATH (AccountID, HighScore) Values ("+usr+","+sc+");", function(err,rows){
+
+    });
+  });
     //Add a new person to the lobby, relay the change to all users
 	socket.on('addToLobby', function(username){
 		usersActive.push(username);
@@ -78,10 +96,10 @@ io.sockets.on('connection', function(socket) {
     });
 	//Notify users of an update to the users available, somebody new joined
     socket.on('populateUsers', function(){
-       sendUsersActive(); 
+       sendUsersActive();
     });
 	//Send user the list of users they should see
-	socket.on('requestUpdate', function(username){  
+	socket.on('requestUpdate', function(username){
 		var yourUsers = [];
 		for(var i=0;i<usersActive.length;i++){
 			if(usersActive[i]!=username){
@@ -102,10 +120,10 @@ io.sockets.on('connection', function(socket) {
             if(index > -1)
             {
                 usersActive.splice(index, 1);
-            }            
+            }
         }
         initializeGame(gameType);
-        sendUsersActive(); 
+        sendUsersActive();
     });
     //Notify players of an update to the users array
     function sendUsersActive(){
