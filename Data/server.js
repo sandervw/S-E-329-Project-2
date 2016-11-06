@@ -65,13 +65,14 @@ io.sockets.on('connection', function(socket) {
         }
         sendUsersActive();
     });
+
   socket.on('signUp', function(Name, Email, Username, Pass){
     var usr  = mysql.escape(Username);
     var pw   = mysql.escape(Pass);
     var ml   = mysql.escape(Email);
     var nm   = mysql.escape(Name);
 
-    connection.query("CALL SIGNUP("+ usr +","+ pw +","+ Name +","+ ml")", function(err,rows){
+    connection.query("CALL SIGNUP("+ usr +","+ pw +","+ Name +","+ ml+")", function(err,rows){
         console.log(err);
         if(rows.length > 0){
           console.log(rows);
