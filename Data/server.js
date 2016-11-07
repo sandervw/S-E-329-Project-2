@@ -45,7 +45,7 @@ io.sockets.on('connection', function(socket) {
             console.log(err);
             if(rows.length > 0){
               console.log(rows);
-              socket.emit('loginResponse', rows(0).ID);
+              socket.emit('loginResponse', rows[0].ID);
             }
             else
               socket.emit('loginResponse','Invalid username/password');
@@ -126,6 +126,13 @@ io.sockets.on('connection', function(socket) {
         initializeGame(gameType);
         sendUsersActive();
     });
+
+    socket.on('getMathHighScores', function(Account){
+      connection.query("Select acc.Username, HIGHSCORE from HIGHSCOREMATH LEFT JOIN ACCOUNTS acc ON AccountID = acc.ID;", function(err,rows){
+        socket.emit('returnMathHighScores',rows);
+      });
+    });
+
     //Notify players of an update to the users array
     function sendUsersActive(){
 		socket.emit('updateAvailable');
