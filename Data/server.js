@@ -71,15 +71,19 @@ io.sockets.on('connection', function(socket) {
     var pw   = mysql.escape(Pass);
     var ml   = mysql.escape(Email);
     var nm   = mysql.escape(Name);
+    console.log(usr);
 
-    connection.query("CALL SIGNUP("+ usr +","+ pw +","+ Name +","+ ml+")", function(err,rows){
-        console.log(err);
+    console.log(pw);
+    console.log(ml);
+    console.log(nm);
+    connection.query("Insert Into Accounts (Username, Password, Name, Email) Values ("+ usr +",md5("+ pw +"),"+ nm +","+ ml +");", function(err,rows){
+        console.log(rows);
         if(rows.length > 0){
           console.log(rows);
-          socket.emit('signupResponse','success');
+          socket.emit('signupResponse',rows.insertId);
         }
         else
-          socket.emit('signupResponse','Sign up failed.');
+          socket.emit('signupResponse','failed');
         });
     });
 

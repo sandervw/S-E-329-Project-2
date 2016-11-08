@@ -105,7 +105,9 @@ $(document).ready(function(){
     var cfrmPassword = $("#cfrmpassword").val();
     var username = $("#username").val();
     var name = $("#name").val();
+    var email = $("#email").val();
     var fail = false;
+
     $("#signUp_Failure").hide();
     $("#signUp_Failure").html("<strong>Whoops!</strong>");
     if(name.length < 1){
@@ -133,7 +135,18 @@ $(document).ready(function(){
     } else {
       //This shouldn't actually say success, this is when we use php to execute
       //a password check and stuff.
-      $("#signUp_Success").show("fade");
+      socket.emit('signUp',name,email,username,password)
+      socket.on("signupResponse",function(response){
+        console.log(response);
+        if(response != 'failed'){
+          $("#signUp_Success").show("fade");
+          accountID = response;
+        }
+        else{
+          $("#signUp_Failure").show("fade");
+
+        }
+      });
     }
   });
 
