@@ -138,7 +138,7 @@ $(document).ready(function(){
       socket.emit('signUp',name,email,username,password)
       socket.on("signupResponse",function(response){
         console.log(response);
-        if(response != 'failed'){
+        if(response !== 'failed'){
           $("#signUp_Success").show("fade");
           accountID = response;
         }
@@ -156,15 +156,16 @@ $(document).ready(function(){
 
       socket.emit("login",user+" "+pass);
       socket.on("loginResponse", function(response){
-			if(response != ""){
-              $(".loginError").html(response);
-			}
-			else{
-        accountID = response;
-        console.log(response);
-				setUsername($("#popupLogin").text());
-			}
-		});
+        console.log('accIDLogin' + response);
+  			if(response !== "Invalid username/password"){
+          $(".loginError").html(response);
+  			}
+  			else{
+  				setUsername($("#popupLogin").text());
+  			}
+          accountID = response;
+        console.log('accIDLoginpost' + accountID);
+  		});
   });
 
   //Function To Hide Banner and Nav Bar

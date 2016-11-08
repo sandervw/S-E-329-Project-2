@@ -44,7 +44,7 @@ io.sockets.on('connection', function(socket) {
         connection.query("SELECT * FROM ACCOUNTS WHERE USERNAME = " + usr + " AND PASSWORD = MD5("+pw+")", function(err,rows){
             console.log(err);
             if(rows.length > 0){
-              console.log(rows);
+              console.log(rows[0].ID);
               socket.emit('loginResponse', rows[0].ID);
             }
             else
@@ -88,10 +88,11 @@ io.sockets.on('connection', function(socket) {
     });
 
   socket.on('submitMathHighscore', function(userID, Score){
+    console.log(userID);
     var usr  = mysql.escape(userID);
     var sc   = mysql.escape(Score);
     connection.query("INSERT INTO HIGHSCOREMATH (AccountID, HighScore) Values ("+usr+","+sc+");", function(err,rows){
-
+      console.log('error submitting high score' + err);
     });
   });
     //Add a new person to the lobby, relay the change to all users

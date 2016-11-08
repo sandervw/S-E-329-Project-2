@@ -18,7 +18,7 @@ function start_MathGame(){
 		};
 	})();
 	mathGame.init();
-	
+
 	console.log(mathGame);
 	window.addEventListener('resize', mathGame.resize, false);
 }
@@ -35,7 +35,7 @@ var mathGame = {
 	android: null,
 	ios:  null,
 	init: function(){
-		
+
 		mathGame.ResourcePack = 'ArcadeClassic';
 		mathGame.menuAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/MenuMusic.mp3');
 		mathGame.gameAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/FightMusic.mp3');
@@ -60,7 +60,7 @@ var mathGame = {
 		mathGame.attackImage = new Image();
 		mathGame.attackImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Attack.png';
 		mathGame.gameFont = 'arcadeClassic';
-		
+
 		mathGame.menuAudio.play();
 		mathGame.canvas = document.getElementsByTagName('canvas')[0];
 		InputManager.connect(document, mathGame.canvas);
@@ -77,11 +77,11 @@ var mathGame = {
 		mathGame.currentWidth = mathGame.WIDTH;
 		mathGame.ctx = mathGame.canvas.getContext('2d');
 		mathGame.menuBackground.onload = function(){
-			mathGame.ctx.drawImage(mathGame.menuBackground,0,0);  
+			mathGame.ctx.drawImage(mathGame.menuBackground,0,0);
 			mathGame.mainMenu.Render();
 		}
 		mathGame.gameBackground.onload = function(){
-			mathGame.ctx.drawImage(mathGame.gameBackground,0,0, mathGame.gameBackground.width, mathGame.gameBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT);  
+			mathGame.ctx.drawImage(mathGame.gameBackground,0,0, mathGame.gameBackground.width, mathGame.gameBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT);
 			mathGame.mainGame.Render();
 		}
 		mathGame.ua = navigator.userAgent.toLowerCase();
@@ -111,7 +111,7 @@ var mathGame = {
 		mathGame.resize();
 		mathGame.loop();
 	},
-		
+
 	update: function() {
 		if(mathGame.state == 0 || mathGame.state == 1 || mathGame.state == 3 || mathGame.state == 4 || mathGame.state == 5) mathGame.mainMenu.Update();
 		else if(mathGame.state == 2 || mathGame.state == 6) mathGame.mainGame.Update();
@@ -120,19 +120,19 @@ var mathGame = {
 	render: function() {
 		if(mathGame.state == 0 || mathGame.state == 1 || mathGame.state == 5){
 			mathGame.ctx.clearRect(0, 0, mathGame.WIDTH, mathGame.HEIGHT);
-			mathGame.ctx.drawImage(mathGame.menuBackground,0,0, mathGame.menuBackground.width, mathGame.menuBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT); 
+			mathGame.ctx.drawImage(mathGame.menuBackground,0,0, mathGame.menuBackground.width, mathGame.menuBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT);
 			mathGame.mainMenu.Render();
 			mathGame.shouldRender = 0;
 		}
 		else if(mathGame.state == 2){
 			mathGame.ctx.clearRect(0, 0, mathGame.WIDTH, mathGame.HEIGHT);
-			mathGame.ctx.drawImage(mathGame.gameBackground,0,0, mathGame.gameBackground.width, mathGame.gameBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT); 
+			mathGame.ctx.drawImage(mathGame.gameBackground,0,0, mathGame.gameBackground.width, mathGame.gameBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT);
 			mathGame.mainGame.Render();
 			mathGame.shouldRender = 0;
 		}
 		else if(mathGame.state == 3 || mathGame.state == 4){
 			mathGame.ctx.clearRect(0, 0, mathGame.WIDTH, mathGame.HEIGHT);
-			mathGame.ctx.drawImage(mathGame.gameBackground,0,0, mathGame.gameBackground.width, mathGame.gameBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT); 
+			mathGame.ctx.drawImage(mathGame.gameBackground,0,0, mathGame.gameBackground.width, mathGame.gameBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT);
 			mathGame.mainMenu.Render();
 			mathGame.shouldRender = 0;
 		}
@@ -199,13 +199,13 @@ mathGame.Input = {
 };
 
 Menu = function (items, y, fontSize, width, selected){
-	
+
 	this.items = items;
 	this.y = y;
 	this.fontSize = fontSize;
 	this.width = width;
 	this.selected = selected;
-	
+
 }
 
 Menu.prototype.constructor = Menu;
@@ -335,7 +335,7 @@ function setMenuState(newState){
 			}
 			else if(mathGame.mainGame.difficulty == 2){
 				mathGame.mainGame.message = 'Oh  no,  ' + mathGame.enemy2Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
-			} 
+			}
 			else if(mathGame.mainGame.difficulty == 3){
 				mathGame.mainGame.message = 'Oh  no,  ' + mathGame.enemy3Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 			}
@@ -513,7 +513,7 @@ Game = function (gameState, difficulty, x, y, operation, answer, fontSize){
 	this.answer2 = 0;
 	this.input = 'Hit  Space  to  Continue...';
 	this.fontSize = fontSize;
-	
+
 	if(difficulty == 1){
 		this.message = 'Oh  no,  ' + mathGame.enemy1Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 	}
@@ -526,18 +526,18 @@ Game = function (gameState, difficulty, x, y, operation, answer, fontSize){
 	else if(difficulty == 4){
 		this.message = 'Oh  no,  ' + mathGame.enemy3Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 	}
-	
+
 }
 
 Game.prototype.constructor = Game;
 
 Game.prototype.Render = function(){
-	
+
 	mathGame.ctx.textAlign = "center";
 	mathGame.ctx.fillStyle = "Black";
-	
+
 	mathGame.ctx.font = this.fontSize + "px " + mathGame.gameFont;
-	
+
 	if(this.gameState == 0){
 		this.RenderEntities();
 		mathGame.ctx.fillText(this.message, mathGame.WIDTH/2, mathGame.HEIGHT-140);
@@ -558,7 +558,7 @@ Game.prototype.Render = function(){
 		mathGame.ctx.fillText('Player  HP:  ' + this.playerHP + '/7', 170, mathGame.HEIGHT-190);
 		mathGame.ctx.fillText('Monster  HP:  ' + this.monsterHP + '/7', mathGame.WIDTH-170, mathGame.HEIGHT-190);
 	}
-	
+
 }
 
 Game.prototype.RenderEntities = function() {
@@ -585,7 +585,7 @@ Game.prototype.RenderEntities = function() {
 }
 
 Game.prototype.Update = function(){
-	
+
 	InputManager.padUpdate();
 	if(this.gameState == 0 || this.gameState == 2){
 		if (InputManager.padPressed & InputManager.PAD.OK){
@@ -694,6 +694,7 @@ Game.prototype.Update = function(){
 				this.message = 'You need to be logged in to submit a high score,  press  enter  to  return  to  main  menu.';
 			}
 			else{
+				console.log("Game account ID" + accountID);
 				socket.emit("submitMathHighscore", accountID, mathGame.mainGame.highScore);
 				this.message = 'High  score  was  submitted,  press  enter  to  return  to  main  menu.';
 			}
@@ -711,7 +712,7 @@ Game.prototype.Update = function(){
 }
 
 Game.prototype.setNewEquation = function(){
-	
+
 	if(this.difficulty == 1){
 		this.x = Math.floor(Math.random() * 10);
 		this.y = Math.floor(Math.random() * 10);
@@ -727,7 +728,7 @@ Game.prototype.setNewEquation = function(){
 		this.message = 'The  result  of  ' + this.x + '  ' + this.operation + '  ' + this.y + '  is:';
 		this.input = '';
 	}
-	
+
 	if(this.difficulty == 2){
 		this.x = Math.floor(Math.random() * 10) + 5;
 		this.y = Math.floor(Math.random() * 10) + 5;
@@ -752,7 +753,7 @@ Game.prototype.setNewEquation = function(){
 		this.message = 'The  result  of  ' + this.x + '  ' + this.operation + '  ' + this.y + '  is:';
 		this.input = '';
 	}
-	
+
 	if(this.difficulty == 3){
 		this.x = Math.floor(Math.random() * 10) + 5;
 		this.y = Math.floor(Math.random() * 10) + 5;
@@ -783,7 +784,7 @@ Game.prototype.setNewEquation = function(){
 		this.message = 'The  result  of  ' + this.x + '  ' + this.operation + '  ' + this.y + '  ' + this.operation2 + '  ' + this.z + '  is:';
 		this.input = '';
 	}
-	
+
 	if(this.difficulty == 4){
 		//God help you
 		var a = Math.floor(Math.random() * 4) + 1;
@@ -808,7 +809,7 @@ Game.prototype.setNewEquation = function(){
 			this.input = '';
 		}
 	}
-	
+
 }
 
 function sleep(milliseconds) {
