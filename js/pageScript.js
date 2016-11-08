@@ -11,6 +11,7 @@ function signUp_hide(){
 //Function To Display Log In mathGameup
 function logIn_show() {
   document.getElementById('logIn').style.display = "block";
+  document.getElementById('loginUsername').focus();
 }
 
 //Function to Hide Log In mathGameup
@@ -27,11 +28,22 @@ $(document).ready(function(){
   //socket.connect();
   $("#signUp_Failure").hide();
   $("#signUp_Success").hide();
+  $("#userDisplay").hide();
+  $("#signOutButton").hide();
+  $("#multiplayerLobby").hide();
+  $("#postGame").hide();
+  $(".writingGame").hide();
   $(".btn-math").click(function(){
-  	start_MathGame();
+        start_MathGame();
 	});
   $(".btn-writing").click(function(){
-  	start_WritingGame();
+        joinLobby(socket,$("#userDisplay").html());
+	});
+  $("#exitWritingGame").click(function(){
+        $(".writingGame").hide();
+        $("#multiplayerLobby").hide();
+        $("#postGame").hide();
+        $("#mainPage").show();
 	});
 
   socket.on('returnMathHighScores',function(rows){
@@ -174,8 +186,13 @@ $(document).ready(function(){
     $("#sidebar-wrapper").hide();
     $("#page-content-wrapper").css({position: "absolute", left:0});
   }
-  function setUsername(){
-      console.log("Successful login!");
+  function setUsername(username){
+      console.log("Successful login:"+username+"!");
       logIn_hide();
+      $("#loginButton").hide();
+      $("#signupButton").hide();
+      $("#userDisplay").show();
+      $("#userDisplay").html(username);
+      $("#signOutButton").show();
   }
 });

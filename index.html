@@ -33,7 +33,7 @@
   <body>
     <!-- Banner / Title / Log in, Log out -->
     <div id="mainPage">
-    <div id="banner" class="container-fluid">
+    <div id="banner" class="container-fluid navbar navbar-default">
       <div class="row">
         <div id="logo" class="col-xs-1">
         </div>
@@ -43,17 +43,21 @@
         <div style="float-right">
           <!-- Log in and sign up buttons, these should convert to log out / profile buttons after they are logged in -->
           <div class="col-xs-6 form-group" style="margin-top: 24px; width: 110px;">
-            <button type="button" class="form-control btn btn-primary" onclick="logIn_show()">Log In</button>
+            <button id="loginButton" type="button" class="form-control btn btn-primary" onclick="logIn_show()">Log In</button>
+            <button id="userDisplay" type="button" class="form-control btn btn-primary" ></button>
           </div>
           <div class="col-xs-6 form-group"style="margin-top: 24px; width: 110px;">
-            <button type="button" class="form-control btn btn-success" onclick="signUp_show()">Sign Up</button>
+            <button id="signupButton" type="button" class="form-control btn btn-success" onclick="signUp_show()">Sign Up</button>
+            <button id="signOutButton" type="button" class="form-control btn btn-success">Sign Out</button>
+          </div>
+          <div class="col-xs-6 form-group"style="margin-top: 24px; width: 110px;">
           </div>
         </div>
       </div>
     </div>
     <!-- End Banner -->
     <!-- Main Container -->
-    <div id="wrapper">
+    <div id="wrapper" style="margin-top:100px">
       <!-- Sidebar -->
       <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
@@ -223,8 +227,6 @@
                           </tr><tr class="active"><td>9</td><td>...</td><td>12</td></tr><tr class="active"><td>10</td><td>...</td><td>12</td></tr><tr class="active"><td>11</td><td>...</td><td>12</td></tr><tr class="active"><td>12</td><td>...</td><td>12</td></tr></tbody></table>
                 </div>
               </div>
-
-
             </div>
         </div>
       </div>
@@ -234,7 +236,33 @@
   </div>
 <!-- Footer -->
 <!-- End Footer -->
-  <canvas id='game'></canvas>
+    <canvas id='game'></canvas>
+    <div id="multiplayerLobby" class="text-center">
+        <div id="difficulties">
+            <h1>Choose your difficulty</h1>
+            <button id="difficulty3" class="form-control">Easy</button>
+            <button id="difficulty5" class="form-control">Medium</button>
+            <button id="difficulty7" class="form-control">Hard</button>
+        </div>
+        <h1 id="waiting">Waiting for another player...</h1>
+        <button id="exitLobby" class="form-control">Exit Lobby</button>
+    </div>
+    <div class="writingGame">
+        <canvas id="writingCanvas"></canvas>
+        <div class="row">
+            <h1 id = "life" class="pull-left" style="margin-left:15px;margin-top:0;width:40%">
+                YOU: <label id = "lifePoints" style="color:rgb(0,0,255);">100</label>
+            </h1>
+            <input id="entered" type="text" class="col-offset-sm-4 text-center" style="height:35px;width:20%;font-size:35px;"/>
+            <h1 id = "opplife" class="pull-right" style="margin-top:0;">
+                OPPONENT: <label id = "oppLifePoints" style="margin-right:15px;color:rgb(255,0,127)">100</label>
+            </h1>
+        </div>
+    </div>
+    <div id='postGame'>
+        <h1 id='postGameMessage' class="text-center"></h1>
+        <button id="exitWritingGame" class="form-control">Exit Game</button>
+    </div>
 </body>
   <!-- Invisible Div that appears when user clicks the sign up button -->
   <div id="signUp">
