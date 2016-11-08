@@ -34,6 +34,7 @@ $(document).ready(function(){
   $("#postGame").hide();
   $(".writingGame").hide();
   $("#profiledocument").hide();
+  $("#readingGame").hide();
   $(".btn-math").click(function(){
         start_MathGame();
 	});
