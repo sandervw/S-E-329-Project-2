@@ -35,18 +35,37 @@ var mathGame = {
 	android: null,
 	ios:  null,
 	init: function(){
-		mathGame.highScore = 0;
-		mathGame.menuAudio = new Audio('sounds/MathIsFun.mp3');
-		mathGame.gameAudio = new Audio('sounds/MathGameBattleMusic.mp3');
+		
+		mathGame.ResourcePack = 'ArcadeClassic';
+		mathGame.menuAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/MenuMusic.mp3');
+		mathGame.gameAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/FightMusic.mp3');
+		mathGame.attackAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/Attack.mp3');
+		mathGame.menuBackground = new Image();
+		mathGame.menuBackground.src = 'MathGameResources/' + mathGame.ResourcePack + '/MenuBackground.png';
+		mathGame.gameBackground = new Image();
+		mathGame.gameBackground.src = 'MathGameResources/' + mathGame.ResourcePack + '/GameBackground.png';
+		mathGame.playerImage = new Image();
+		mathGame.playerImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Player.png';
+		mathGame.enemy1Image = new Image();
+		mathGame.enemy1Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy1.png';
+		mathGame.enemy1Name = 'a  goblin';
+		mathGame.enemy2Image = new Image();
+		mathGame.enemy2Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy2.png';
+		mathGame.enemy2Name = 'a  frost  giant';
+		mathGame.enemy3Image = new Image();
+		mathGame.enemy3Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy3.png';
+		mathGame.enemy3Name = 'a  dragon';
+		mathGame.squareImage = new Image();
+		mathGame.squareImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Square.png';
+		mathGame.attackImage = new Image();
+		mathGame.attackImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Attack.png';
+		mathGame.gameFont = 'arcadeClassic';
+		
 		mathGame.menuAudio.play();
 		mathGame.canvas = document.getElementsByTagName('canvas')[0];
 		InputManager.connect(document, mathGame.canvas);
-		mathGame.menuBackground = new Image();
-		mathGame.menuBackground.src = 'images/mathgamebackground.jpg';
-		mathGame.mainMenu = new Menu(["Start Game","Main Menu"],375, 50, 400, 0);
-		mathGame.gameBackground = new Image();
-		mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty1Stage1.png';
-		mathGame.mainGame = new Game(0, 1, 0, 0, '+', 0);
+		mathGame.mainMenu = new Menu(["Start Game","Main Menu", "Change Theme"],375, 50, 400, 0);
+		mathGame.mainGame = new Game(0, 1, 0, 0, '+', 0, 40);
 		mathGame.state = 0;
 		mathGame.shouldRender = 0;
 		mathGame.shouldUpdate = 1;
@@ -94,12 +113,12 @@ var mathGame = {
 	},
 		
 	update: function() {
-		if(mathGame.state == 0 || mathGame.state == 1 || mathGame.state == 3 || mathGame.state == 4) mathGame.mainMenu.Update();
-		else if(mathGame.state == 2) mathGame.mainGame.Update();
+		if(mathGame.state == 0 || mathGame.state == 1 || mathGame.state == 3 || mathGame.state == 4 || mathGame.state == 5) mathGame.mainMenu.Update();
+		else if(mathGame.state == 2 || mathGame.state == 6) mathGame.mainGame.Update();
 	},
 
 	render: function() {
-		if(mathGame.state == 0 || mathGame.state == 1){
+		if(mathGame.state == 0 || mathGame.state == 1 || mathGame.state == 5){
 			mathGame.ctx.clearRect(0, 0, mathGame.WIDTH, mathGame.HEIGHT);
 			mathGame.ctx.drawImage(mathGame.menuBackground,0,0, mathGame.menuBackground.width, mathGame.menuBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT); 
 			mathGame.mainMenu.Render();
@@ -115,6 +134,13 @@ var mathGame = {
 			mathGame.ctx.clearRect(0, 0, mathGame.WIDTH, mathGame.HEIGHT);
 			mathGame.ctx.drawImage(mathGame.gameBackground,0,0, mathGame.gameBackground.width, mathGame.gameBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT); 
 			mathGame.mainMenu.Render();
+			mathGame.shouldRender = 0;
+		}
+		else if(mathGame.state == 6){
+			mathGame.ctx.clearRect(0, 0, mathGame.WIDTH, mathGame.HEIGHT);
+			mathGame.ctx.drawImage(mathGame.menuBackground,0,0, mathGame.menuBackground.width, mathGame.menuBackground.height, 0, 0, mathGame.WIDTH, mathGame.HEIGHT);
+			mathGame.mainMenu.Render();
+			mathGame.mainGame.Render();
 			mathGame.shouldRender = 0;
 		}
 	},
@@ -188,6 +214,11 @@ Menu.prototype.Render = function()
 {
 
 	mathGame.ctx.textAlign = "center";
+	mathGame.ctx.fillStyle = "Green";
+	mathGame.ctx.font = 70 + "px " + mathGame.gameFont;
+	mathGame.ctx.fillText('Math4Fun', mathGame.WIDTH/2, 100);
+	mathGame.ctx.font = 60 + "px " + mathGame.gameFont;
+	mathGame.ctx.fillText('The  Wacky  New  Math  Game!', mathGame.WIDTH/2, 160);
 	mathGame.ctx.fillStyle = "White";
 
 	var y = this.y;
@@ -200,7 +231,7 @@ Menu.prototype.Render = function()
 			mathGame.ctx.fillStyle = "Green";
 			size = this.fontSize;
 		}
-		mathGame.ctx.font = size.toString() + "px arcadeClassic";
+		mathGame.ctx.font = size.toString() + "px " + mathGame.gameFont;
 		y += this.fontSize;
 		mathGame.ctx.fillText(this.items[i], mathGame.WIDTH/2, y);
 		mathGame.ctx.fillStyle = "White";
@@ -238,11 +269,20 @@ Menu.prototype.Update = function()
 function setMenuState(newState){
 	if (mathGame.state == 0){
 		if(newState == 0){
-			mathGame.mainMenu.items = ['Easy', 'Medium', 'Hard', 'Back'];
+			mathGame.mainMenu.items = ['Easy', 'Medium', 'Hard', 'Nightmare', 'Back'];
 			mathGame.state = 1;
 		}
 		else if(newState == 1){
-			window.location.reload();
+			mathGame.menuAudio.pause();
+			mathGame.gameAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.gameAudio.currentTime = 0;
+			$('#mainPage').show();
+			$("#game").hide();
+		}
+		else if(newState == 2){
+			mathGame.mainMenu.items = ['Arcade  Classic', 'Matrix', 'Underwater', 'Back'];
+			mathGame.state = 5;
 		}
 	}
 	else if (mathGame.state == 1){
@@ -257,8 +297,8 @@ function setMenuState(newState){
 			mathGame.menuAudio.pause();
 			mathGame.menuAudio.currentTime = 0;
 			mathGame.gameAudio.play();
-			mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty2Stage1.png';
-			mathGame.mainGame = new Game(0, 2, 0, 0, '+', 0);
+			mathGame.mainGame.difficulty = 2;
+			mathGame.mainGame.message = 'Oh  no,  ' + mathGame.enemy2Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 			mathGame.state = 2;
 			mathGame.shouldRender = 1;
 		}
@@ -266,13 +306,22 @@ function setMenuState(newState){
 			mathGame.menuAudio.pause();
 			mathGame.menuAudio.currentTime = 0;
 			mathGame.gameAudio.play();
-			mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty3Stage1.png';
-			mathGame.mainGame = new Game(0, 3, 0, 0, '+', 0);
+			mathGame.mainGame.difficulty = 3;
+			mathGame.mainGame.message = 'Oh  no,  ' + mathGame.enemy3Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 			mathGame.state = 2;
 			mathGame.shouldRender = 1;
 		}
 		else if(newState == 3){
-			mathGame.mainMenu.items = ['Start Game', 'Main Menu'];
+			mathGame.menuAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.gameAudio.play();
+			mathGame.mainGame.difficulty = 4;
+			mathGame.mainGame.message = 'Oh  no,  ' + mathGame.enemy3Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
+			mathGame.state = 2;
+			mathGame.shouldRender = 1;
+		}
+		else if(newState == 4){
+			mathGame.mainMenu.items = ['Start Game', 'Main Menu', 'Change Theme'];
 			mathGame.state = 0;
 		}
 	}
@@ -282,25 +331,27 @@ function setMenuState(newState){
 			mathGame.gameAudio.currentTime = 0;
 			mathGame.gameAudio.play();
 			if(mathGame.mainGame.difficulty == 1){
-				mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty1Stage1.png';
-				mathGame.mainGame.message = 'Oh  no,  a  goblin  has  appeared!  Solve  the  problems  to  strike  it!';
+				mathGame.mainGame.message = 'Oh  no,  ' + mathGame.enemy1Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 			}
 			else if(mathGame.mainGame.difficulty == 2){
-				mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty2Stage1.png';
-				mathGame.mainGame.message = 'Oh  no,  a  frost  giant  has  appeared!  Solve  the  problems  to  strike  it!';
+				mathGame.mainGame.message = 'Oh  no,  ' + mathGame.enemy2Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 			} 
 			else if(mathGame.mainGame.difficulty == 3){
-				mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty3Stage1.png';
-				mathGame.mainGame.message = 'Oh  no,  a  dragon  has  appeared!  Solve  the  problems  to  strike  it!';
+				mathGame.mainGame.message = 'Oh  no,  ' + mathGame.enemy3Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 			}
 			mathGame.mainGame.gameState = 0;
-			mathGame.mainGame.monsterHP = 3;
-			mathGame.mainGame.playerHP = 3;
+			mathGame.mainGame.monsterHP = 7;
+			mathGame.mainGame.playerHP = 7;
 			mathGame.state = 2;
 			mathGame.shouldRender = 1;
 		}
 		else if(newState == 1){
-			//submit high score;
+			mathGame.mainMenu.items = ['High  Score:', mathGame.mainGame.highScore];
+			mathGame.mainGame.message = 'Press  enter  to  submit.';
+			mathGame.mainGame.Input = '';
+			mathGame.state = 6;
+			mathGame.mainGame.gameState = 4;
+			mathGame.shouldRender = 1;
 		}
 		else if(newState == 2){
 			mathGame.gameAudio.pause();
@@ -308,12 +359,22 @@ function setMenuState(newState){
 			mathGame.init();
 		}
 		else if(newState == 3){
-			window.location.reload();
+			mathGame.menuAudio.pause();
+			mathGame.gameAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.gameAudio.currentTime = 0;
+			$('#mainPage').show();
+			$("#game").hide();
 		}
 	}
 	else if (mathGame.state == 4){
 		if(newState == 0){
-			//submit high score;
+			mathGame.mainMenu.items = ['High  Score:', mathGame.mainGame.highScore];
+			mathGame.mainGame.message = 'Press  enter  to  submit.';
+			mathGame.mainGame.Input = '';
+			mathGame.state = 6;
+			mathGame.mainGame.gameState = 4;
+			mathGame.shouldRender = 1;
 		}
 		else if(newState == 1){
 			mathGame.gameAudio.pause();
@@ -321,32 +382,149 @@ function setMenuState(newState){
 			mathGame.init();
 		}
 		else if(newState == 2){
-			window.location.reload();
+			mathGame.menuAudio.pause();
+			mathGame.gameAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.gameAudio.currentTime = 0;
+			$('#mainPage').show();
+			$("#game").hide();
+		}
+	}
+	else if (mathGame.state == 5){
+		if(newState == 0){
+			mathGame.ResourcePack = 'ArcadeClassic';
+			mathGame.menuAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.gameFont = 'arcadeClassic';
+			mathGame.menuAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/MenuMusic.mp3');
+			mathGame.gameAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/FightMusic.mp3');
+			mathGame.attackAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/Attack.mp3');
+			mathGame.menuBackground = new Image();
+			mathGame.menuBackground.src = 'MathGameResources/' + mathGame.ResourcePack + '/MenuBackground.png';
+			mathGame.gameBackground = new Image();
+			mathGame.gameBackground.src = 'MathGameResources/' + mathGame.ResourcePack + '/GameBackground.png';
+			mathGame.playerImage = new Image();
+			mathGame.playerImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Player.png';
+			mathGame.enemy1Image = new Image();
+			mathGame.enemy1Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy1.png';
+			mathGame.enemy1Name = 'a  goblin';
+			mathGame.enemy2Image = new Image();
+			mathGame.enemy2Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy2.png';
+			mathGame.enemy2Name = 'a  frost  giant';
+			mathGame.enemy3Image = new Image();
+			mathGame.enemy3Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy3.png';
+			mathGame.enemy3Name = 'a  dragon';
+			mathGame.squareImage = new Image();
+			mathGame.squareImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Square.png';
+			mathGame.attackImage = new Image();
+			mathGame.attackImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Attack.png';
+			mathGame.mainMenu.items = ['Start Game', 'Main Menu', 'Change Theme'];
+			mathGame.mainGame = new Game(0, 1, 0, 0, '+', 0, 40);
+			mathGame.menuAudio.play();
+			mathGame.state = 0;
+		}
+		else if(newState == 1){
+			mathGame.ResourcePack = 'Matrix';
+			mathGame.menuAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.gameFont = 'matrixFont';
+			mathGame.menuAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/MenuMusic.mp3');
+			mathGame.gameAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/FightMusic.mp3');
+			mathGame.attackAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/Attack.mp3');
+			mathGame.menuBackground = new Image();
+			mathGame.menuBackground.src = 'MathGameResources/' + mathGame.ResourcePack + '/MenuBackground.png';
+			mathGame.gameBackground = new Image();
+			mathGame.gameBackground.src = 'MathGameResources/' + mathGame.ResourcePack + '/GameBackground.png';
+			mathGame.playerImage = new Image();
+			mathGame.playerImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Player.png';
+			mathGame.enemy1Image = new Image();
+			mathGame.enemy1Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy1.png';
+			mathGame.enemy1Name = 'an  agent';
+			mathGame.enemy2Image = new Image();
+			mathGame.enemy2Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy2.png';
+			mathGame.enemy2Name = 'a  group  of  agents';
+			mathGame.enemy3Image = new Image();
+			mathGame.enemy3Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy3.png';
+			mathGame.enemy3Name = 'a  sentinel';
+			mathGame.squareImage = new Image();
+			mathGame.squareImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Square.png';
+			mathGame.attackImage = new Image();
+			mathGame.attackImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Attack.png';
+			mathGame.mainMenu.items = ['Start Game', 'Main Menu', 'Change Theme'];
+			mathGame.mainGame = new Game(0, 1, 0, 0, '+', 0, 26);
+			mathGame.menuAudio.play();
+			mathGame.state = 0;
+		}
+		else if (newState == 2)
+		{
+			mathGame.ResourcePack = 'Water';
+			mathGame.menuAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.gameFont = 'waterFont';
+			mathGame.menuAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/MenuMusic.mp3');
+			mathGame.gameAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/FightMusic.mp3');
+			mathGame.attackAudio = new Audio('MathGameResources/' + mathGame.ResourcePack + '/Attack.mp3');
+			mathGame.menuBackground = new Image();
+			mathGame.menuBackground.src = 'MathGameResources/' + mathGame.ResourcePack + '/MenuBackground.png';
+			mathGame.gameBackground = new Image();
+			mathGame.gameBackground.src = 'MathGameResources/' + mathGame.ResourcePack + '/GameBackground.png';
+			mathGame.playerImage = new Image();
+			mathGame.playerImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Player.png';
+			mathGame.enemy1Image = new Image();
+			mathGame.enemy1Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy1.png';
+			mathGame.enemy1Name = 'a  fish';
+			mathGame.enemy2Image = new Image();
+			mathGame.enemy2Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy2.png';
+			mathGame.enemy2Name = 'a  crab';
+			mathGame.enemy3Image = new Image();
+			mathGame.enemy3Image.src = 'MathGameResources/' + mathGame.ResourcePack + '/Enemy3.png';
+			mathGame.enemy3Name = 'a  shark';
+			mathGame.squareImage = new Image();
+			mathGame.squareImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Square.png';
+			mathGame.attackImage = new Image();
+			mathGame.attackImage.src = 'MathGameResources/' + mathGame.ResourcePack + '/Attack.png';
+			mathGame.mainMenu.items = ['Start Game', 'Main Menu', 'Change Theme'];
+			mathGame.mainGame = new Game(0, 1, 0, 0, '+', 0, 36);
+			mathGame.menuAudio.play();
+			mathGame.state = 0;
+		}
+		else if (newState == 3){
+			mathGame.mainMenu.items = ['Start Game', 'Main Menu', 'Change Theme'];
+			mathGame.menuAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.menuAudio.play();
+			mathGame.state = 0;
 		}
 	}
 }
 
-Game = function (gameState, difficulty, x, y, operation, answer){
+Game = function (gameState, difficulty, x, y, operation, answer, fontSize){
 
 	this.highScore = 0;
 	this.gameState = gameState;
-	this.playerHP = 3;
-	this.monsterHP = 3;
+	this.playerHP = 7;
+	this.monsterHP = 7;
 	this.difficulty = difficulty;
 	this.x = x;
 	this.y = y;
+	this.z = 0;
 	this.operation = operation;
 	this.answer = answer;
+	this.answer2 = 0;
 	this.input = 'Hit  Space  to  Continue...';
+	this.fontSize = fontSize;
 	
 	if(difficulty == 1){
-		this.message = 'Oh  no,  a  goblin  has  appeared!  Solve  the  problems  to  strike  it!';
+		this.message = 'Oh  no,  ' + mathGame.enemy1Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 	}
 	else if(difficulty == 2){
-		this.message = 'Oh  no,  a  frost  giant  has  appeared!  Solve  the  problems  to  strike  it!';
+		this.message = 'Oh  no,  ' + mathGame.enemy2Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 	}
 	else if(difficulty == 3){
-		this.message = 'Oh  no,  a  dragon  has  appeared!  Solve  the  problems  to  strike  it!';
+		this.message = 'Oh  no,  ' + mathGame.enemy3Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
+	}
+	else if(difficulty == 4){
+		this.message = 'Oh  no,  ' + mathGame.enemy3Name + '  has  appeared!  Solve  the  problems  to  strike  it!';
 	}
 	
 }
@@ -358,23 +536,52 @@ Game.prototype.Render = function(){
 	mathGame.ctx.textAlign = "center";
 	mathGame.ctx.fillStyle = "Black";
 	
-	mathGame.ctx.font = "40px arcadeClassic";
+	mathGame.ctx.font = this.fontSize + "px " + mathGame.gameFont;
 	
 	if(this.gameState == 0){
+		this.RenderEntities();
 		mathGame.ctx.fillText(this.message, mathGame.WIDTH/2, mathGame.HEIGHT-140);
 		mathGame.ctx.fillStyle = "Green";
 		mathGame.ctx.fillText(this.input, mathGame.WIDTH/2, mathGame.HEIGHT-70);
-		mathGame.ctx.fillText('Player  HP:  ' + this.playerHP + '/3', 170, mathGame.HEIGHT-190);
-		mathGame.ctx.fillText('Monster  HP:  ' + this.monsterHP + '/3', mathGame.WIDTH-170, mathGame.HEIGHT-190);
+		mathGame.ctx.fillText('Player  HP:  ' + this.playerHP + '/7', 170, mathGame.HEIGHT-190);
+		mathGame.ctx.fillText('Monster  HP:  ' + this.monsterHP + '/7', mathGame.WIDTH-170, mathGame.HEIGHT-190);
+	}
+	else if (this.gameState == 4 || this.gameState == 5){
+		mathGame.ctx.fillStyle = "Green";
+		mathGame.ctx.fillText(this.message, mathGame.WIDTH/2, mathGame.HEIGHT-140);
 	}
 	else{
+		this.RenderEntities();
 		mathGame.ctx.fillText(this.message, mathGame.WIDTH/2, mathGame.HEIGHT-140);
 		mathGame.ctx.fillStyle = "Green";
 		mathGame.ctx.fillText(this.input, mathGame.WIDTH/2, mathGame.HEIGHT-70);
-		mathGame.ctx.fillText('Player  HP:  ' + this.playerHP + '/3', 170, mathGame.HEIGHT-190);
-		mathGame.ctx.fillText('Monster  HP:  ' + this.monsterHP + '/3', mathGame.WIDTH-170, mathGame.HEIGHT-190);
+		mathGame.ctx.fillText('Player  HP:  ' + this.playerHP + '/7', 170, mathGame.HEIGHT-190);
+		mathGame.ctx.fillText('Monster  HP:  ' + this.monsterHP + '/7', mathGame.WIDTH-170, mathGame.HEIGHT-190);
 	}
 	
+}
+
+Game.prototype.RenderEntities = function() {
+	if(this.difficulty == 1){
+		mathGame.ctx.drawImage(mathGame.enemy1Image,0,0, mathGame.enemy1Image.width, mathGame.enemy1Image.height, mathGame.WIDTH-350, 100, 250, 250);
+		mathGame.ctx.drawImage(mathGame.playerImage,0,0, mathGame.playerImage.width, mathGame.playerImage.height, 0, mathGame.HEIGHT-500, 500, 600);
+		mathGame.ctx.drawImage(mathGame.squareImage,0,0, mathGame.squareImage.width, mathGame.squareImage.height, 0, mathGame.HEIGHT-230, mathGame.WIDTH, 250);
+	}
+	else if(this.difficulty == 2){
+		mathGame.ctx.drawImage(mathGame.enemy2Image,0,0, mathGame.enemy2Image.width, mathGame.enemy2Image.height, mathGame.WIDTH-375, 100, 300, 300);
+		mathGame.ctx.drawImage(mathGame.playerImage,0,0, mathGame.playerImage.width, mathGame.playerImage.height, 0, mathGame.HEIGHT-500, 500, 600);
+		mathGame.ctx.drawImage(mathGame.squareImage,0,0, mathGame.squareImage.width, mathGame.squareImage.height, 0, mathGame.HEIGHT-230, mathGame.WIDTH, 250);
+	}
+	else if(this.difficulty == 3){
+		mathGame.ctx.drawImage(mathGame.enemy3Image,0,0, mathGame.enemy3Image.width, mathGame.enemy3Image.height, mathGame.WIDTH-450, 50, 400, 400);
+		mathGame.ctx.drawImage(mathGame.playerImage,0,0, mathGame.playerImage.width, mathGame.playerImage.height, 0, mathGame.HEIGHT-500, 500, 600);
+		mathGame.ctx.drawImage(mathGame.squareImage,0,0, mathGame.squareImage.width, mathGame.squareImage.height, 0, mathGame.HEIGHT-230, mathGame.WIDTH, 250);
+	}
+	else if(this.difficulty == 4){
+		mathGame.ctx.drawImage(mathGame.enemy3Image,0,0, mathGame.enemy3Image.width, mathGame.enemy3Image.height, mathGame.WIDTH-450, 50, 400, 400);
+		mathGame.ctx.drawImage(mathGame.playerImage,0,0, mathGame.playerImage.width, mathGame.playerImage.height, 0, mathGame.HEIGHT-500, 500, 600);
+		mathGame.ctx.drawImage(mathGame.squareImage,0,0, mathGame.squareImage.width, mathGame.squareImage.height, 0, mathGame.HEIGHT-230, mathGame.WIDTH, 250);
+	}
 }
 
 Game.prototype.Update = function(){
@@ -397,69 +604,63 @@ Game.prototype.Update = function(){
 			mathGame.shouldRender = 1;
 		}
 		else if(InputManager.padPressed & InputManager.PAD.OK){
-			var temp = parseInt(this.input);
-			if(temp == this.answer){
+			if(this.difficulty != 4) var temp = parseInt(this.input);
+			else if (this.difficulty == 4) var temp = parseFloat(this.input);
+			if(temp == this.answer && this.difficulty != 4){
 				this.monsterHP-=1;
-				if(this.monsterHP == 2 && this.difficulty == 1){
-					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty1Stage2.png';
+				mathGame.attackAudio.play();
+				if(this.monsterHP != 0 && this.difficulty == 1){
 					this.message = 'The  monster  has  been  hurt.';
 					this.input = 'Hit  Space  to  Continue...';
 					this.gameState = 2;
 				}
-				if(this.monsterHP == 1 && this.difficulty == 1){
-					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty1Stage3.png';
-					this.message = 'The  monster  has  been  severely  hurt.';
-					this.input = 'Hit  Space  to  Continue...';
-					this.gameState = 2;
-				}
 				if(this.monsterHP == 0 && this.difficulty == 1){
-					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty1Stage4.png';
 					this.message = 'The  monster  has  been  slain.';
 					this.input = 'Hit  Space  to  Continue...';
 					this.gameState = 3;
 					this.highScore += 10;
 				}
-				if(this.monsterHP == 2 && this.difficulty == 2){
-					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty2Stage2.png';
+				if(this.monsterHP != 0 && this.difficulty == 2){
 					this.message = 'The  monster  has  been  hurt.';
 					this.input = 'Hit  Space  to  Continue...';
 					this.gameState = 2;
 				}
-				if(this.monsterHP == 1 && this.difficulty == 2){
-					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty2Stage3.png';
-					this.message = 'The  monster  has  been  severely  hurt.';
-					this.input = 'Hit  Space  to  Continue...';
-					this.gameState = 2;
-				}
 				if(this.monsterHP == 0 && this.difficulty == 2){
-					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty2Stage4.png';
 					this.message = 'The  monster  has  been  slain.';
 					this.input = 'Hit  Space  to  Continue...';
 					this.gameState = 3;
 					this.highScore += 30;
 				}
-				if(this.monsterHP == 2 && this.difficulty == 3){
-					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty3Stage2.png';
+				if(this.monsterHP != 0 && this.difficulty == 3){
 					this.message = 'The  monster  has  been  hurt.';
 					this.input = 'Hit  Space  to  Continue...';
 					this.gameState = 2;
 				}
-				if(this.monsterHP == 1 && this.difficulty == 3){
-					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty3Stage3.png';
-					this.message = 'The  monster  has  been  severely  hurt.';
-					this.input = 'Hit  Space  to  Continue...';
-					this.gameState = 2;
-				}
 				if(this.monsterHP == 0 && this.difficulty == 3){
-					mathGame.gameBackground.src = 'images/mathGameFightScreens/Difficulty3Stage4.png';
 					this.message = 'The  monster  has  been  slain.';
 					this.input = 'Hit  Space  to  Continue...';
 					this.gameState = 3;
 					this.highScore += 50;
 				}
 			}
+			else if (((temp < this.answer + 0.01 && temp > this.answer - 0.01) || (temp < this.answer2 + 0.01 && temp > this.answer2 - 0.01)) && this.difficulty == 4){
+				this.monsterHP-=1;
+				mathGame.attackAudio.play();
+				if(this.monsterHP != 0){
+					this.message = 'You  should  just  give  up.';
+					this.input = 'Hit  Space  to  Continue...';
+					this.gameState = 2;
+				}
+				if(this.monsterHP == 0){
+					this.message = 'You  probably  cheated.';
+					this.input = 'Hit  Space  to  Continue...';
+					this.gameState = 3;
+					this.highScore += 100;
+				}
+			}
 			else{
 				this.playerHP-=1;
+				mathGame.attackAudio.play();
 				if(this.playerHP>0){
 					this.message = 'The monster has struck you. Do not surrender!';
 					this.input = 'Hit  Space  to  Continue...';
@@ -484,6 +685,27 @@ Game.prototype.Update = function(){
 				mathGame.state = 4;
 				mathGame.mainMenu.items = ['Submit High Score', 'Return to Main Menu', 'Exit Game'];
 			}
+		}
+	}
+	else if(this.gameState == 4){
+		if (InputManager.padPressed & InputManager.PAD.OK){
+			//TODO
+			if(accountID === null){
+				this.message = 'You need to be logged in to submit a high score,  press  enter  to  return  to  main  menu.';
+			}
+			else{
+				socket.emit("submitMathHighscore", accountID, mathGame.mainGame.highScore);
+				this.message = 'High  score  was  submitted,  press  enter  to  return  to  main  menu.';
+			}
+			this.gameState = 5;
+			mathGame.shouldRender = 1;
+		}
+	}
+	else if(this.gameState == 5){
+		if (InputManager.padPressed & InputManager.PAD.OK){
+			mathGame.gameAudio.pause();
+			mathGame.gameAudio.currentTime = 0;
+			mathGame.init();
 		}
 	}
 }
@@ -532,28 +754,68 @@ Game.prototype.setNewEquation = function(){
 	}
 	
 	if(this.difficulty == 3){
-		this.x = Math.floor(Math.random() * 10) + 10;
-		this.y = Math.floor(Math.random() * 10) + 10;
+		this.x = Math.floor(Math.random() * 10) + 5;
+		this.y = Math.floor(Math.random() * 10) + 5;
+		this.z = Math.floor(Math.random() * 10) + 5;
 		var temp = Math.floor(Math.random() * 4);
 		if(temp == 0){
 			this.operation = '+';
-			this.answer = this.x + this.y;
+			this.operation2 = '/';
+			this.y = this.y * this.z;
+			this.answer = this.x + (this.y / this.z);
 		}
 		if(temp == 1){
 			this.operation = '-';
-			this.answer = this.x - this.y;
+			this.operation2 = '*';
+			this.answer = this.x - (this.y * this.z);
 		}
 		if(temp == 2){
 			this.operation = '*';
-			this.answer = this.x * this.y;
+			this.operation2 = '+';
+			this.answer = (this.x * this.y) + this.z;
 		}
 		if(temp == 3){
 			this.operation = '/';
-			this.answer = this.x;
+			this.operation2 = '-';
 			this.x = this.x * this.y;
+			this.answer = (this.x / this.y) - this.z;
 		}
-		this.message = 'The  result  of  ' + this.x + '  ' + this.operation + '  ' + this.y + '  is:';
+		this.message = 'The  result  of  ' + this.x + '  ' + this.operation + '  ' + this.y + '  ' + this.operation2 + '  ' + this.z + '  is:';
 		this.input = '';
 	}
 	
+	if(this.difficulty == 4){
+		//God help you
+		var a = Math.floor(Math.random() * 4) + 1;
+		var b = Math.floor(Math.random() * 4) + 9;
+		var c = Math.floor(Math.random() * 4) + 1;
+		var d = Math.floor(Math.random() * 4) + 5;
+		var derivativeX = Math.floor(Math.random() * 4) + 1;
+		var temp = Math.floor(Math.random()*2);
+		if(temp == 0){
+			this.answer = (-b + Math.sqrt((b*b) - (4*a*c)))/(2*a);
+			this.answer2 = (-b - Math.sqrt((b*b) - (4*a*c)))/(2*a);
+			console.log(this.answer);
+			console.log(this.answer2);
+			this.message = 'Find  a  root  of  the  polynomial:  ' + a + ' (x^2) + ' + b + ' (x) + ' + c + ':';
+			this.input = '';
+		}
+		if(temp == 1){
+			this.answer = (3*a*derivativeX*derivativeX + 2*b*derivativeX + c);
+			this.answer2 = 100000;
+			console.log(this.answer);
+			this.message = 'Find  the  value  of  the  derivative  at  x = ' + derivativeX + ':  ' + a + ' (x^3) + ' + b + ' (x^2) + ' + c + ' (x) - ' + d + ':' ;
+			this.input = '';
+		}
+	}
+	
+}
+
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
 }

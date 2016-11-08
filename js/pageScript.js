@@ -19,11 +19,13 @@ function logIn_hide(){
   document.getElementById('logIn').style.display = "none";
   $(".loginError").html("");
 }
-
+var mathHighScores;
 var socket = io.connect();
+var accountID;
 
 $(document).ready(function(){
-  //socket.connect(); 
+    socket.emit('getMathHighScores',"");
+  //socket.connect();
   $("#signUp_Failure").hide();
   $("#signUp_Success").hide();
   $("#userDisplay").hide();
@@ -43,25 +45,28 @@ $(document).ready(function(){
         $("#postGame").hide();
         $("#mainPage").show();
 	});
-  $("#mathHS").click(function(){
+
+  socket.on('returnMathHighScores',function(rows){
     //Start table
     var table = "<h1>High Scores<br><small>Math Game</small></h1><table class='table table-responsive table-hover table-bordered table-condensed'><thead><tr><th style='width:30px;'>Rank</th><th>Username</th><th>Score</th></tr></thead><tbody>";
     //Add rows - this will be a database pull and a for loop later
-    table = table + "<tr class='success'><td>1</td><td>Pr0NoSc0Pes420</td><td>420</td></tr>";
-    table = table + "<tr class='warning'><td>2</td><td>HowToPlay</td><td>235</td></tr>";
-    table = table + "<tr class='danger'><td>3</td><td>zzzjeez</td><td>120</td></tr>";
-    table = table + "<tr class='active'><td>4</td><td>...</td><td>12</td></tr>";
-    table = table + "<tr class='active'><td>5</td><td>...</td><td>12</td></tr>";
-    table = table + "<tr class='active'><td>6</td><td>...</td><td>12</td></tr>";
-    table = table + "<tr class='active'><td>7</td><td>...</td><td>12</td></tr>";
-    table = table + "<tr class='active'><td>8</td><td>...</td><td>12</td></tr>";
-    table = table + "<tr class='active'><td>9</td><td>...</td><td>12</td></tr>";
-    table = table + "<tr class='active'><td>10</td><td>...</td><td>12</td></tr>";
-    table = table + "<tr class='active'><td>11</td><td>...</td><td>12</td></tr>";
-    table = table + "<tr class='active'><td>12</td><td>...</td><td>12</td></tr>";
+    console.log(rows);
+    var i = 0;
+    for(i = 0; i < rows.length; i++){
+      table = table + "<tr class='active'><td>"+ (i+1) +"</td><td>" + rows[i].Username + "</td><td>"+ rows[i].HIGHSCORE +"</td></tr>";
+    }
+
     //End table
     table = table + "</tbody></table>";
-    $("#page-content-wrapper").html(table);
+    mathHighScores = table;
+
+    $("#MHS").html(mathHighScores);
+  });
+
+  $("#mathHS").click(function(){
+    socket.emit('getMathHighScores',"");
+    $("#page-content-wrapper").html(mathHighScores);
+
   });
 
   $("#writingHS").click(function(){
@@ -147,18 +152,20 @@ $(document).ready(function(){
   $("#ConfirmLogin").click(function(){
       var user = $("#loginUsername").val();
       var pass = $("#loginPassword").val();
-      
+
       socket.emit("login",user+" "+pass);
       socket.on("loginResponse", function(response){
-			if(response=='success'){
-				setUsername(user);
+			if(response != ""){
+              $(".loginError").html(response);
 			}
 			else{
-                $(".loginError").html(response);
+        accountID = response;
+        console.log(response);
+				setUsername($("#popupLogin").text());
 			}
 		});
   });
-  
+
   //Function To Hide Banner and Nav Bar
   function hide_Banner_And_Nav(){
     $("#banner").hide();
@@ -175,4 +182,3 @@ $(document).ready(function(){
       $("#signOutButton").show();
   }
 });
-

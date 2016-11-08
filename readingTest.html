@@ -36,7 +36,10 @@ var time = Math.round((new Date().getTime() - start)/1000)
 var data = JSON.stringify( rooms );
 var fileName = "my-download.json";
 
+var ready = false;
+
 function loadFile() {
+	ready = true;
     var input, file, fr;
 
     if (typeof window.FileReader !== 'function') {
@@ -70,8 +73,15 @@ function loadFile() {
   }
 
 this.init = function init(){
+	if(!ready){
+		alert("Please load a file!")
+		return;
+	}
+	
 	var star = document.getElementById("beginbtn");
 	star.style.visibility = "hidden";
+	var field = document.getElementById("fieldset");
+	field.hidden=true;
 	var slide = document.getElementById("difficulty");
 
 	loadTile("start_room");
@@ -252,7 +262,7 @@ function clock(){
 		<div  class="col-xs-4" id="difficulty"></div>
 		<div class="col-xs-4" id="amount"></div>
 	</div>	
-	<div class="row">
+	<div class="row" id="fieldset">
 		<div>
 		<form id="jsonFile" name="jsonFile" enctype="multipart/form-data" method="post">
 		  <fieldset>
