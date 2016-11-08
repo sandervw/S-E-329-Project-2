@@ -273,7 +273,12 @@ function setMenuState(newState){
 			mathGame.state = 1;
 		}
 		else if(newState == 1){
-			window.location.reload();
+			mathGame.menuAudio.pause();
+			mathGame.gameAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.gameAudio.currentTime = 0;
+			$('#mainPage').show();
+			$("#game").hide();
 		}
 		else if(newState == 2){
 			mathGame.mainMenu.items = ['Arcade  Classic', 'Matrix', 'Underwater', 'Back'];
@@ -354,7 +359,12 @@ function setMenuState(newState){
 			mathGame.init();
 		}
 		else if(newState == 3){
-			window.location.reload();
+			mathGame.menuAudio.pause();
+			mathGame.gameAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.gameAudio.currentTime = 0;
+			$('#mainPage').show();
+			$("#game").hide();
 		}
 	}
 	else if (mathGame.state == 4){
@@ -372,7 +382,12 @@ function setMenuState(newState){
 			mathGame.init();
 		}
 		else if(newState == 2){
-			window.location.reload();
+			mathGame.menuAudio.pause();
+			mathGame.gameAudio.pause();
+			mathGame.menuAudio.currentTime = 0;
+			mathGame.gameAudio.currentTime = 0;
+			$('#mainPage').show();
+			$("#game").hide();
 		}
 	}
 	else if (mathGame.state == 5){
@@ -674,8 +689,14 @@ Game.prototype.Update = function(){
 	}
 	else if(this.gameState == 4){
 		if (InputManager.padPressed & InputManager.PAD.OK){
-			Node.submit(username, this.highScore);
-			this.message = 'High  score  was  submitted,  press  enter  to  return  to  main  menu.';
+			//TODO
+			if(accountID === null){
+				this.message = 'You need to be logged in to submit a high score,  press  enter  to  return  to  main  menu.';
+			}
+			else{
+				socket.emit("submitMathHighscore", accountID, mathGame.mainGame.highScore);
+				this.message = 'High  score  was  submitted,  press  enter  to  return  to  main  menu.';
+			}
 			this.gameState = 5;
 			mathGame.shouldRender = 1;
 		}
