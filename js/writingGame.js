@@ -1,136 +1,346 @@
-//Function to Start the writing Game
-function start_WritingGame(){
-	//  hide_Banner_And_Nav();
+function joinLobby(socket,username){
+//handle forced login
+    if(username == null||username == ""){
+        alert("You must be signed in to play this game");
+        logIn_show();
+        return;
+    }
+//handle lobbying
 	$('#mainPage').hide();
-	$('body').css({height: "100%"});
-	$('html').css({height: "100%"});
-	$("#game").show();
-	// http://paulirish.com/2011/requestanimationframe-for-smart-animating
-	// shim layer with setTimeout fallback
-	window.requestAnimFrame = (function(){
-		return  window.requestAnimationFrame       ||
-		window.webkitRequestAnimationFrame ||
-		window.mozRequestAnimationFrame    ||
-		window.oRequestAnimationFrame      ||
-		window.msRequestAnimationFrame     ||
-		function( callback ){
-			window.setTimeout(callback, 1000 / 60);
+    $('#postGame').hide();
+    $('#multiplayerLobby').show();
+    $('#difficulties').show();
+    $('#waiting').hide();
+    $('#exitLobby').click(function(){
+        $('#mainPage').show();
+        $('#multiplayerLobby').hide();
+    });
+    $('#difficulty3').click(function(){
+        readyUp(socket,username,3);
+    });
+    $('#difficulty5').click(function(){
+        readyUp(socket,username,5);
+    });
+    $('#difficulty7').click(function(){
+        readyUp(socket,username,7);
+    });
+}
+function readyUp(socket,username,difficulty){
+    socket.on("startGame",function(player1,player2){
+        console.log("start game received with:"+player1+", and "+player2);
+        if(username==player1){
+            start_WritingGame(socket,username,difficulty,player2);
+        }
+        else if(username==player2){
+            start_WritingGame(socket,username,difficulty,player1);
+        }
+    });
+    socket.emit("readyUp",difficulty,username);
+    $('#difficulties').hide();
+    $('#waiting').show();
+    $('#exitLobby').click(function(){
+        $('#mainPage').show();
+        $('#multiplayerLobby').hide();
+    });
+}
+//Function to Start the Writing Game
+function start_WritingGame(socket,username,difficulty,oppname){
+//declare game variables
+    var ctx;
+	var background;
+	var life;
+	var oppLife;
+	var stringList 	 = new Array();
+	var intervalList = new Array();
+	var incorrect    = new Audio('sounds/incorrect.mp3');
+	var correct 	 = new Audio('sounds/correct.mp3');
+	var winGame		 = new Audio('sounds/win.mp3');
+	var loseGame	 = new Audio('sounds/lose.mp3');
+	var timerOffset  = 10000;
+	var dead 		 = false;
+	var c            = document.getElementById("writingCanvas");
+	var textBox      = document.getElementById("entered");
+    var score        = 0;
+
+//declare functions
+	//Make lines
+    var text = function(str,isMyText,xPos) {
+		var obj = {
+			x: xPos,
+			y: Math.max(Math.floor((Math.random()*c.height))/20*20,20),
+			c: "#0000ff",
+			txt: str,
+			pixels: null,
+            isMine:isMyText,
+			draw: function() {
+				ctx.fillStyle = this.c;
+				ctx.font = "20px Arial";
+				ctx.fillText(this.txt, this.x, this.y);
+			},
+			fall: function(){
+                if(isMyText==true){
+                    ctx.fillStyle = background;
+                    ctx.fillRect(this.x-1, this.y - 15, this.pixels, 20);
+                    this.x -= c.width/1000;
+                }
+                else{
+                    ctx.fillStyle = background;
+                    ctx.fillRect(this.x-1, this.y - 15, this.pixels, 20);
+                    this.x += c.width/1000;
+                }
+				this.draw();
+			},
+			die: function(i){
+				ctx.fillStyle = background;
+				ctx.fillRect(this.x, this.y - 15, this.pixels, 20);
+				clearInterval(intervalList[i]);
+				remove(i);
+			}
 		};
-	})();
-	writingGame.init();
+        if(isMyText==false){
+            obj.c="#ff0000";
+        }
+		//Set Pixel length
+		ctx.font = "20px Arial";
+		obj.pixels = ctx.measureText(obj.txt).width +2;
+		
+		//draw the object
+		obj.draw();
+		
+		//create interval for this text.
+		txtinterval(obj);
+		
+		//add text to array list.
+		stringList.push(obj);
+	};
 
-	new Audio('sounds/writingIsFun.mp3').play()
+    //make interval for strings
+    var txtinterval = function(obj){
+		var timer = setInterval(function(){
+			if(obj.x >= 0&&obj.x <= c.width){
+				obj.fall();
+			}
+			else{
+				if(obj.isMine==true){
+                    //user missed line, remove length of the line from their health.
+                    console.log("lost "+obj.txt.length+" health to "+obj.txt);
+                    
+                    //request a new string
+                    reqString(difficulty,.5,obj.isMine);
+                    
+                    //update life value for other player
+                    socket.emit("changeLife",username,oppname,life.html() - obj.txt.length,oppLife.html());
+                }
+
+				clearInterval(timer)
+				obj.die(stringList.indexOf(obj));
+			}
+		},obj.txt.length+5);
+		intervalList.push(timer);
+	}
+    
+    //check to see if strings are the same. if they are, remove string.
+	var comp = function(str1, str2, index,isMine){
+		if(str1.localeCompare(str2) == 0){
+            if(isMine){
+                if(str1.length==difficulty+2){
+                    reqString(difficulty,stringList[index].x/c.width,true,str1);
+                    reqString(difficulty,(c.width-stringList[index].x)/c.width,false,str1);
+                }
+                else{
+                    reqString(str1.length+1,(c.width-stringList[index].x)/c.width,false,str1);
+                }
+            }
+			stringList[index].die(index);
+            console.log("string death:"+str1+", isMine: "+isMine)
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+    
+    //remove from arrays
+	var remove  = function(index){
+		if(index >= 0){
+			stringList.splice(index, 1);
+			intervalList.splice(index, 1);
+			if(intervalList.length > 0){
+				//console.log(stringList);
+			}
+		}
+	}
+    
+    //color the user's life
+	var userColor = function(){
+		var lifePts = life.html();
+		if(parseInt(lifePts)<80){
+			life.css("color","#80007f");
+		}
+		if(parseInt(lifePts)<60){
+			life.css("color","#b3003f");
+		}
+		if(parseInt(lifePts)<40){
+			life.css("color", "#e6001f");
+		}
+		if(parseInt(lifePts)<20){
+			life.css("color", "#ff0000");
+		}
+        
+		var oppLifePts = oppLife.html();
+		if(parseInt(oppLifePts)<80){
+			oppLife.css("color","#ff003f");
+		}
+		if(parseInt(oppLifePts)<60){
+			oppLife.css("color","#ff001f");
+		}
+		if(parseInt(oppLifePts)<40){
+			oppLife.css("color", "#ff000f");
+		}
+		if(parseInt(oppLifePts)<20){
+			oppLife.css("color", "#ff0000");
+		}
+	}
+    
+    //requests a new string
+	var reqString = function(length,x,isMine,deadString){
+        socket.emit("reqString",username,oppname,length,x,isMine,deadString)
+	}
+    
+    //check through strings for matches
+    var checkString = function(str,isMine) {
+        var found = false;
+        var line;
+        
+        for(var i = 0; i < stringList.length; i++){
+            if(stringList[i].isMine==isMine){
+                found = comp(str, stringList[i].txt, i,isMine);
+            }
+        }
+        if(isMine){
+            if(found){
+                score+=str.length;
+                correct.play();    
+            }
+            else{
+                incorrect.play();
+            }
+            textBox.value = "";
+            textBox.focus();
+        }
+    }
+    
+    //player loses
+    var die = function() {
+        if(!dead){
+            dead=true;
+            clearInterval(reqStringInterval);
+            loseGame.play();
+            $("#postGameMessage").html("You Lose");
+            $("#postGameMessage").css("color","#ff0000");
+            $(".writingGame").hide();
+            $("#postGame").show();
+            for(var i = 0; i < stringList.length;i++){
+                stringList[i].die(i);
+            }
+        }
+    }
+    
+    //player wins
+    var win = function() {
+        if(!dead){
+            dead=true;
+            clearInterval(reqStringInterval);
+            winGame.play();
+            $("#postGameMessage").html("You Win");
+            $("#postGameMessage").css("color","#00ff00");
+            $(".writingGame").hide();
+            $("#postGame").show();
+            submitScore();
+            for(var i = 0; i < stringList.length;i++){
+                stringList[i].die(i);
+            }
+        }
+    }
+    
+    var submitScore = function(){
+        socket.emit("postWritingScore",username,score);
+    }
+    
+//declare socket responses
+    socket.on("placeString",function(receiver,observer,x,str,deadString){
+        //console.log("placeString rec: "+receiver+", obs: "+observer+", str: "+str+", deadString: "+deadString);
+        
+        if(receiver==username||observer==username){
+            isMine= username==receiver;
+            var xpos = x*c.width;
+            if (!isMine){
+                xpos = c.width-xpos;
+            }
+            else{
+                if(deadString!=null){
+                    console.log("Length: "+deadString.length);
+                    checkString(deadString,false);
+                }
+            }
+            console.log("placeString "+str+" isMine:"+isMine.toString()+",x:"+xpos)
+            text(str,username==receiver,xpos);
+        }
+    });
+
+    socket.on("updateLife",function(player1,player2,p1Life,p2Life){
+        console.log("updateLife p1: "+player1+", p2: "+player2+", p1Life: "+p1Life+", p2Life: "+p2Life);
+        if(player1==username||player2==username){
+            if (username==player1){
+                life.html(p1Life);
+                oppLife.html(p2Life);
+            }
+            else{
+                life.html(p2Life);
+                oppLife.html(p1Life);
+            }
+            userColor();
+            if(life.html()<1){
+                die();
+            }
+            if(oppLife.html()<1){
+                win();
+            }
+        }
+    });
+//game logic
+    
+	//show canvas and hide mainPage
+    $('#multiplayerLobby').hide();
+	$("#writingCanvas").show();
+    $(".writingGame").show();
+    
+	background = "#E7D894";
 	
-	console.log(writingGame);
-	window.addEventListener('resize', writingGame.resize, false);
-}
+	//Set canvas
+    c.width = window.innerWidth;
+    c.height = window.innerHeight-50;
+	ctx = c.getContext("2d");
+	ctx.fillStyle = background;
+	ctx.fillRect(0,0,c.width,c.height);
 
-var writingGame = {
-	WIDTH: 0,
-	HEIGHT: 0,
-	offset: {top: 0, left: 0},
-	currentWidth: null,
-	currentHeight: null,
-	canvas: null,
-	ctx: null,
-	ua:  null,
-	android: null,
-	ios:  null,
-	init: function(){
-		writingGame.canvas = document.getElementsByTagName('canvas')[0];
-		var background = new Image();
-		background.src = 'images/writinggamebackground.jpg';
-		writingGame.WIDTH = $(window).width();
-		writingGame.HEIGHT = $(window).height();
-		writingGame.canvas.width = writingGame.WIDTH;
-		writingGame.canvas.height = writingGame.HEIGHT;
-		writingGame.currentHeight = writingGame.HEIGHT;
-		writingGame.currentWidth = writingGame.WIDTH;
-		writingGame.ctx = writingGame.canvas.getContext('2d');
-		//writingGame.ctx.drawImage(background,0,0);
-		background.onload = function(){
-			writingGame.ctx.drawImage(background,0,0);   
-		}
-		writingGame.ua = navigator.userAgent.toLowerCase();
-		writingGame.android = writingGame.ua.indexOf('android') > -1 ? true : false;
-		writingGame.ios = ( writingGame.ua.indexOf('iphone') > -1 || writingGame.ua.indexOf('ipad') > -1  ) ? true : false;
-		
-		//Event Listeners, click and touch.
-		window.addEventListener('click', function(e) {
-			e.preventDefault();
-			writingGame.Input.set(e);
-		}, false);
-		window.addEventListener('touchstart', function(e) {
-			e.preventDefault();
-			writingGame.Input.set(e.touches[0]);
-		}, false);
-		window.addEventListener('touchmove', function(e) {
-			e.preventDefault();
-		}, false);
-		window.addEventListener('touchend', function(e) {
-			e.preventDefault();
-		}, false);
-		
-		writingGame.resize();
-		writingGame.loop();
-	},
-		
-	update: function() {
-	},
-
-	render: function() {
-	},
-
-	loop: function() {
-		requestAnimFrame(writingGame.loop);
-		writingGame.update();
-		writingGame.render();
-	},
-
-	resize: function(){
-		if (writingGame.android || writingGame.ios) {
-		document.body.style.height = (window.innerHeight + 50) + 'px';
-		}
-		writingGame.canvas.style.width = writingGame.currentWidth + 'px';
-		writingGame.canvas.style.height = writingGame.currentHeight + 'px';
-		writingGame.offset.top = writingGame.canvas.offsetTop;
-		writingGame.offset.left = writingGame.canvas.offsetLeft;
-		window.setTimeout(function() {
-			window.scrollTo(0,1);
-		}, 1);
-	}
-}
-
-writingGame.Draw = {
-	clear: function() {
-		writingGame.ctx.clearRect(0, 0, writingGame.WIDTH, writingGame.HEIGHT);
-	},
-	rect: function(x, y, w, h, col) {
-		writingGame.ctx.fillStyle = col;
-		writingGame.ctx.fillRect(x, y, w, h);
-	},
-	circle: function(x, y, r, col) {
-		writingGame.ctx.fillStyle = col;
-		writingGame.ctx.beginPath();
-		writingGame.ctx.arc(x + 5, y + 5, r, 0,  writing.PI * 2, true);
-		writingGame.ctx.closePath();
-		writingGame.ctx.fill();
-	},
-	text: function(string, x, y, size, col) {
-		writingGame.ctx.font = 'bold '+size+'px Monospace';
-		writingGame.ctx.fillStyle = col;
-		writingGame.ctx.fillText(string, x, y);
-	}
-};
-
-writingGame.Input = {
-	x: 0,
-	y: 0,
-	tapped :false,
-	set: function(data) {
-		this.x = (data.pageX - writingGame.offset.left);
-		this.y = (data.pageY - writingGame.offset.top);
-		this.tapped = true;
-		writingGame.Draw.circle(this.x, this.y, 10, 'red');
-	}
+	//Life
+	life = $("#lifePoints");
+	oppLife = $("#oppLifePoints");
+    
+    reqString(difficulty,.5,true,null);
+    
+	textBox.focus();
+	
+	//check entered string
+	$(document).keypress(function(key){
+		if(key.which == 13||key.keycode == 13) {
+            checkString(textBox.value,true)
+        }
+    });
+	
+	//Interval to get new strings
+	reqStringInterval = setInterval(function(){
+		reqString(difficulty,.5,true,null);
+	},timerOffset);
 };
