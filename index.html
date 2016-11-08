@@ -23,7 +23,7 @@
   <script src="js\readingGame.js"></script>
   <script src="js\writingGame.js"></script>
   <script src="js\pageScript.js"></script>
-
+  <script type="application/javascript" src="js\readingGame.js"></script>
   <!-- Bootstrap Stylesheet Import -->
   <link rel="stylesheet" href="js\bootstrap-3.3.7-dist\css\bootstrap.css"/>
   <!-- Bootstrap Javascript Import -->
@@ -238,6 +238,42 @@
     <div id='postGame'>
         <h1 id='postGameMessage' class="text-center"></h1>
         <button id="exitWritingGame" class="form-control">Exit Game</button>
+    </div>
+    <div class="readingGame">
+      <input class="btn btn-danger" type='button' id='btnExit' value='Exit Game' onclick='exitGame();'>
+      <input class="btn btn-info" onclick="window.open('./creator.html');" type='button' value='Story Developer'>
+      <div class="row">
+     	<div class="col-md-6">
+     		<canvas id="rgcanvas" width="150" height="150"></canvas>
+     	</div>
+     	<div class="col-md-4"></div>
+     	<div class="col-md-2" id="myscore"></div>
+      </div>
+
+        <div><br><br></div>
+        <center>
+     		<div id="picture">Difficulty: 1</div>
+     		<div id="question"></div>
+     		<div id="choices"></div>
+     		<button id="beginbtn" onclick="init()">Start Game</button>
+     	<div class="row">
+     		<div class="col-xs-4"></div>
+     		<div  class="col-xs-4" id="difficulty"></div>
+     		<div class="col-xs-4" id="amount"></div>
+     	</div>
+     	<div class="row" id="fieldset">
+     		<div>
+     		<form id="jsonFile" name="jsonFile" enctype="multipart/form-data" method="post">
+     		  <fieldset>
+     			 <input type='file' id='fileinput'>
+     			 <input type='button' id='btnLoad' value='Load' onclick='loadFile();'>
+
+
+     		  </fieldset>
+     		</form>
+     		</div>
+     	</div>
+        </center>
     </div>
 </body>
   <!-- Invisible Div that appears when user clicks the sign up button -->

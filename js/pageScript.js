@@ -100,6 +100,11 @@ $(document).ready(function(){
 
   };
 
+  $(".btn-reading").click(function(){
+      $("#readingGame").show();
+      $('#mainPage').hide();
+  });
+
   $("#mathHS").click(function(){
     socket.emit('getMathHighScores',"");
     $("#page-content-wrapper").html(mathHighScores);
