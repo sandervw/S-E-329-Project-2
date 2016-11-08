@@ -20,7 +20,7 @@ function logIn_hide(){
   $(".loginError").html("");
 }
 var mathHighScores;
-var socket = io.connect();
+var socket = io.connect('http://192.168.1.4:4000');
 var accountID;
 
 $(document).ready(function(){
@@ -33,6 +33,7 @@ $(document).ready(function(){
   $("#multiplayerLobby").hide();
   $("#postGame").hide();
   $(".writingGame").hide();
+  $("#profiledocument").hide();
   $(".btn-math").click(function(){
         start_MathGame();
 	});
@@ -46,6 +47,10 @@ $(document).ready(function(){
         $("#mainPage").show();
 	});
 
+  $("#backButton").click(function(){
+        $("#profiledocument").hide();
+        $("#maindocument").show();
+  });
   socket.on('returnMathHighScores',function(rows){
     //Start table
     var table = "<h1>High Scores<br><small>Math Game</small></h1><table class='table table-responsive table-hover table-bordered table-condensed'><thead><tr><th style='width:30px;'>Rank</th><th>Username</th><th>Score</th></tr></thead><tbody>";
@@ -62,6 +67,38 @@ $(document).ready(function(){
 
     $("#MHS").html(mathHighScores);
   });
+
+  $("#signOutButton").click(function(){
+      accountID = null;
+      $("#userDisplay").html("");
+      $("#userDisplay").hide();
+      $("#loginButton").show();
+      $("#signupButton").show();
+      $("#signOutButton").hide();
+  });
+
+  $("#userDisplay").click(function(){
+    $("#profiledocument").show();
+    $("#maindocument").hide();
+    getProfileData(accountID);
+  });
+
+  function getProfileData(profID){
+    socket.emit("getProfileData", accountID, profID);
+    socket.on("returnProfileData",function(userID, uname, memberDate, location, gender, mathHS, writingHS, readingHS){
+      console.log(userID + " " + uname + " " + memberDate + " " + location + " " + gender + " " + mathHS + " " + writingHS + " " + readingHS);
+      if(userID == accountID){
+        $("#uname").html(uname);
+        $("#memberDate").html(memberDate);
+        $("#location").html(location);
+        $("#gender").html(gender);
+        $("#mathHS").html(mathHS);
+      //  $("#writHS").html(writingHS);
+      //  $("#readHS").html(readingHS);
+      }
+    });
+
+  };
 
   $("#mathHS").click(function(){
     socket.emit('getMathHighScores',"");
@@ -176,6 +213,11 @@ $(document).ready(function(){
   				setUsername($("#popupLogin").text());
   			}
           accountID = response;
+        $("#userDisplay").html(user);
+        $("#userDisplay").show();
+        $("#loginButton").hide();
+        $("#signupButton").hide();
+        $("#signOutButton").show();
         console.log('accIDLoginpost' + accountID);
   		});
   });

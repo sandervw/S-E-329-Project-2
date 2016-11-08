@@ -75,6 +75,58 @@ io.sockets.on('connection', function(socket) {
             });
         });
 
+    socket.on('getProfileData', function(accountID, profID){
+      var username = "";
+      var location = "";
+      var mathHS   = "";
+      var readHS   = "";
+      var writHS   = "";
+      var gender   = "";
+      var member   = "";
+      var mathHS = 0;
+      var writHS = 0;
+      var readHS = 0;
+      var id       = mysql.escape(profID);
+
+      connection.query("SELECT * FROM ACCOUNTS WHERE ID = "+ id +";", function(err,rows){
+        console.log(err);
+        console.log(rows);
+        if (rows.length > 0) {
+          username = rows[0].Username;
+          location = rows[0].Location;
+          gender = rows[0].Gender;
+          connection.query("Select max(HighScore) as mathhigh from highscoremath Where accountID = "+ id +";", function(err2,mathRes){
+            console.log(err2);
+            if(mathRes.length > 0){
+              console.log(mathRes[0].mathhigh);
+
+            }
+          });
+          connection.query("Select max(HighScore) as writhigh from highscorewriting Where accountID = "+ id +";", function(err2,writRes){
+            console.log(err2);
+            if(writRes.length > 0){
+              console.log(writRes[0].writhigh);
+
+            }
+          });
+          connection.query("Select max(HighScore) as readhigh from highscorereading Where accountID = "+ id +";", function(err2,readRes){
+            console.log(err2);
+            if(readRes.length > 0){
+              console.log(readRes[0].writhigh);
+            }
+          });
+        }
+        socket.emit('returnProfileData', accountID, username, member, location, gender, mathHS, writHS, readHS);
+      /*  if(rows.length > 0){
+          console.log(rows[0].ID);
+          socket.emit('loginResponse', rows[0].ID);
+        }
+        else
+          socket.emit('loginResponse','Invalid username/password');*/
+        });
+
+    });
+
     //Handle logging out and taking the user out of the user arrays
     socket.on('logout', function(username){
         console.log("got logout request!");
@@ -138,10 +190,6 @@ io.sockets.on('connection', function(socket) {
 		}
         socket.emit('updateUsersOn', yourUsers);
     });
-    //Update Math High Scores
-    socket.on('highScoreMath',function(score){
-        
-    });
     //join lobby
     socket.on('readyUp',function(difficulty,username){
         if(difficulty==3){
@@ -180,7 +228,7 @@ io.sockets.on('connection', function(socket) {
     });
     //give a new string
     socket.on('reqString',function(sender,opponent,length,x,toSender,deadString){
-        
+
         console.log('reqstring sender:'+sender+',opponent:'+opponent+',length:'+length+',x:'+x+',toSender:'+toSender+',deadString: '+deadString);
         var str;
         var index = Math.floor(Math.random()*30);
@@ -218,7 +266,7 @@ io.sockets.on('connection', function(socket) {
     //update player life totals
     socket.on("changeLife",function(p1,p2,p1Life,p2Life){
         io.sockets.emit("updateLife",p1,p2,p1Life,p2Life)
-    }); 
+    });
 	/*
     Remove players from the lobby array and pass
     to initializeGame to handle game specific details
@@ -238,7 +286,7 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on('getMathHighScores', function(Account){
-      connection.query("Select acc.Username, HIGHSCORE from HIGHSCOREMATH LEFT JOIN ACCOUNTS acc ON AccountID = acc.ID;", function(err,rows){
+      connection.query("Select acc.Username, HIGHSCORE from HIGHSCOREMATH LEFT JOIN ACCOUNTS acc ON AccountID = acc.ID order by highscore desc;", function(err,rows){
         socket.emit('returnMathHighScores',rows);
       });
     });

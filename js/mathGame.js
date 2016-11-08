@@ -279,6 +279,7 @@ function setMenuState(newState){
 			mathGame.gameAudio.currentTime = 0;
 			$('#mainPage').show();
 			$("#game").hide();
+			socket.emit('getMathHighScores',"");
 		}
 		else if(newState == 2){
 			mathGame.mainMenu.items = ['Arcade  Classic', 'Matrix', 'Underwater', 'Back'];
